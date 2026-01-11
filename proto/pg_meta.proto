@@ -19,6 +19,7 @@ message PGColumn {
     bool IsGenerated = 12;
     string GenerationExpression = 13;
     string Comment = 14;
+    bool IsPrimaryKey = 15;      // Column is part of primary key
 }
 
 // Represents an index on a PostgreSQL table
