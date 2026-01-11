@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package pgmeta;
+
+option go_package = "github.com/genelet/sqlmeta/xmeta";
+
+import "proto/types.proto";
+
+// Represents a column in a PostgreSQL table
+message PGColumn {
+    string Name = 1;
+    sqlmeta.DataType DataType = 2;   // Uses sqlight.Type to capture full type info (size, precision, etc.)
+    bool IsNullable = 3;
+    string DefaultValue = 4;     // Default expression string (e.g. "nextval('seq')")
+    int32 OrdinalPosition = 8;
+    bool IsIdentity = 9;
+    string IdentityGeneration = 10; // "ALWAYS" or "BY DEFAULT"
+    string IdentitySequence = 11;
+    bool IsGenerated = 12;
+    string GenerationExpression = 13;
+    string Comment = 14;
+}
+
+// Represents an index on a PostgreSQL table
+message PGIndex {
+    string Name = 1;
+    sqlmeta.ObjectName TableName = 2; // Includes Schema if present
+    bool IsUnique = 4;
+    bool IsPrimary = 5;
+    bool IsClustered = 6;
+    bool IsValid = 7;
+    string AccessMethod = 8;     // e.g., "btree"
+    repeated string Columns = 9;
+    string Definition = 10;
+    string Comment = 11;
+}
+
+// Represents a foreign key constraint
+message PGForeignKey {
+    string Name = 1;
+    sqlmeta.ObjectName TableName = 2;         // Source Table
+    repeated string LocalColumns = 4;
+    sqlmeta.ObjectName ForeignTable = 5;      // Target Table
+    repeated string ForeignColumns = 7;
+    string OnUpdate = 8;
+    string OnDelete = 9;
+    string MatchOption = 10;
+    string Definition = 11;
+    string Comment = 12;
+}
+
+// Represents other constraints (Primary Key, Unique, Check, Exclusion)
+message PGConstraint {
+    string Name = 1;
+    sqlmeta.ObjectName TableName = 3;
+    string Type = 4;             // "p", "u", "c", "x"
+    repeated string Columns = 5;
+    string Definition = 6;
+    string Comment = 7;
+    bool IsDeferrable = 8;
+    bool IsDeferred = 9;
+}
+
+// Represents a PostgreSQL Sequence
+message PGSequence {
+    sqlmeta.ObjectName Name = 1;
+    sqlmeta.DataType DataType = 3;
+    int64 StartValue = 4;
+    int64 MinValue = 5;
+    int64 MaxValue = 6;
+    int64 IncrementBy = 7;
+    bool Cycle = 8;
+    int64 CacheSize = 9;
+    int64 LastValue = 10;
+    sqlmeta.ObjectName OwnerTable = 11;
+    string OwnerColumn = 12;
+    string Comment = 13;
+}
+
+// Represents a PostgreSQL Table
+message PGTable {
+    sqlmeta.ObjectName Name = 1; // Includes Schema
+    string Owner = 3;
+    string TableType = 4;        // "BASE TABLE", "VIEW", etc.
+    repeated PGColumn Columns = 5;
+    repeated PGIndex Indexes = 6;
+    repeated PGConstraint Constraints = 7;
+    repeated PGForeignKey ForeignKeys = 8;
+    repeated string Triggers = 9;
+    string Persistence = 10;
+    bool HasRowSecurity = 11;
+    bool RowSecurityForced = 12;
+    string Comment = 13;
+    int64 EstimatedRows = 14;
+    int64 TotalBytes = 15;
+}
+
+// Represents a PostgreSQL View
+message PGView {
+    sqlmeta.ObjectName Name = 1;
+    string Owner = 3;
+    string Definition = 4;
+    bool IsMaterialized = 5;
+    repeated PGColumn Columns = 6;
+    string Comment = 7;
+}
+
+// Represents a PostgreSQL Schema (Namespace)
+message PGSchema {
+    string Name = 1;
+    string Owner = 2;
+    repeated PGTable Tables = 3;
+    repeated PGView Views = 4;
+    repeated PGSequence Sequences = 5;
+    repeated PGConstraint Domains = 6;
+    string Comment = 7;
+}
+
+message PGDatabase {
+    string Name = 1;
+    string Version = 2;
+    repeated PGSchema Schemas = 3;
+    repeated string Extensions = 4;
+    string Comment = 5;
+}

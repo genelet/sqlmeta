@@ -1,0 +1,113 @@
+syntax = "proto3";
+package sqlmeta;
+
+option go_package = "github.com/genelet/sqlmeta/xmeta";
+
+message ObjectName {
+    repeated string Idents = 1;
+}
+
+message BigInt {
+    bool IsUnsigned = 1;
+}
+
+message SmallInt {
+    bool IsUnsigned = 1;
+}
+
+message Int {
+    bool IsUnsigned = 1;
+}
+
+message Real {
+    bool IsUnsigned = 1;
+}
+
+message Float {
+    uint32 Size = 1;
+    bool IsUnsigned = 2;
+}
+
+message Decimal {
+    uint32 Precision = 1;
+    uint32 Scale = 2;
+    bool IsUnsigned = 3;
+}
+
+message CharType {
+    uint32 Size = 1;
+}
+
+message VarcharType {
+    uint32 Size = 1;
+}
+
+message Timestamp {
+    bool WithTimeZone = 1;
+}
+
+enum DataTypeSingle {
+    DataTypeSingleUnknown = 0;
+    Double = 1;
+    Boolean = 2;
+    Time = 3;
+    Date = 4;
+    Bytea = 5;
+    Text = 6;
+    Regclass = 7;
+    UUID = 8;
+}
+
+message BitType {
+    uint32 Size = 1;
+    bool Varying = 2;
+}
+
+message DoubleType {
+    bool is_double_precision = 1;
+}
+
+message CollateType {
+    DataType Type = 1;
+    string CollationName = 2;
+}
+
+message MetaColumnDef {
+    string Name = 1;
+    DataType DataType = 2;
+}
+
+message StructData {
+    repeated MetaColumnDef Fields = 1;
+}
+
+message ArrayData {
+    DataType Type = 1;
+}
+
+message DataType {
+    oneof TypeClause {
+        Int IntData = 1;
+        SmallInt SmallIntData = 2;
+        BigInt BigIntData = 3;
+        Decimal DecimalData = 4;
+        CharType CharData = 8;
+        VarcharType VarcharData = 9;
+        ObjectName CustomData = 10;
+        ArrayData ArrayData = 11;
+        StructData StructData = 12;
+        DataTypeSingle UUIDData = 14;
+        Timestamp TimestampData = 15;
+        DataTypeSingle BooleanData = 13;
+        DataTypeSingle DateData = 16;
+        DataTypeSingle TimeData = 17;
+        DoubleType DoubleData = 18;
+        Float FloatData = 19;
+        Real RealData = 20;
+        DataTypeSingle TextData = 21;
+        BitType BitData = 22;
+        DataTypeSingle RegclassData = 23;
+        DataTypeSingle ByteaData = 24;
+        CollateType CollateData = 25;
+    }
+}

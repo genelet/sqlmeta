@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package bqmeta;
+
+option go_package = "github.com/genelet/sqlmeta/xmeta";
+
+import "proto/types.proto";
+
+// Represents a column in a BigQuery table
+message BQColumn {
+    string Name = 1;
+    sqlmeta.DataType DataType = 2; // Supports STRUCT/ARRAY via sqlight.StructData/ArrayData
+    string Mode = 3;           // "NULLABLE", "REQUIRED", "REPEATED"
+    string Description = 4;
+    repeated string PolicyTags = 5;
+    string DefaultValueExpression = 6;
+    int32 OrdinalPosition = 7;
+    string Collation = 8;
+}
+
+// Time-unit partitioning configuration
+message BQTimePartitioning {
+    string Type = 1;           // "DAY", "HOUR", "MONTH", "YEAR"
+    string Field = 2;          // Column name
+    int64 ExpirationMs = 3;
+    bool RequirePartitionFilter = 4;
+}
+
+// Integer range partitioning configuration
+message BQRangePartitioning {
+    string Field = 1;
+    int64 Start = 2;
+    int64 End = 3;
+    int64 Interval = 4;
+}
+
+// Represents a BigQuery Table
+message BQTable {
+    sqlmeta.ObjectName Name = 1; // Project.Dataset.Table
+    string FriendlyName = 2;
+    string Type = 3;           // "TABLE", "VIEW", "EXTERNAL", "SNAPSHOT"
+    repeated BQColumn Schema = 4;
+    
+    // Partitioning
+    oneof Partitioning {
+        BQTimePartitioning TimePartitioning = 5;
+        BQRangePartitioning RangePartitioning = 6;
+    }
+    
+    repeated string Clustering = 7; // Clustered columns
+    
+    int64 NumRows = 8;
+    int64 TotalBytes = 9;
+    string CreationTime = 10;
+    string ExpirationTime = 11;
+    string Description = 12;
+    map<string, string> Labels = 13;
+    string ViewQuery = 14;      // If Type == VIEW
+}
+
+// Represents a BigQuery Dataset
+message BQDataset {
+    sqlmeta.ObjectName Name = 1; // Project.Dataset
+    string Location = 2;       // "US", "EU", etc.
+    string Description = 3;
+    map<string, string> Labels = 4;
+    int64 DefaultTableExpirationMs = 5;
+    repeated BQTable Tables = 6;
+    string CreatorParameters = 7; // Internal/Access info
+}
+
+// Represents a BigQuery Project / Catalogue
+message BQProject {
+    string ProjectId = 1;
+    string FriendlyName = 2;
+    repeated BQDataset Datasets = 3;
+}

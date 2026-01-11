@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package sqlitemeta;
+
+option go_package = "github.com/genelet/sqlmeta/xmeta";
+
+import "proto/types.proto";
+
+// Represents a column in SQLite
+message SQLiteColumn {
+    string Name = 1;
+    sqlmeta.DataType DataType = 2;   // SQLite types are affinity-based (INT, TEXT, BLOB, REAL, NUMERIC)
+    bool IsNullable = 3;
+    string DefaultValue = 4;
+    bool IsPrimaryKey = 5;
+    bool AutoIncrement = 6;
+    string Collation = 7;        // BINARY, NOCASE, RTRIM
+    string Comment = 8;
+}
+
+// Represents an index in SQLite
+message SQLiteIndex {
+    string Name = 1;
+    string TableName = 2;
+    bool IsUnique = 3;
+    repeated string Columns = 4;
+    string PartialWhere = 5; // Support for Partial Indexes (WHERE expression)
+    string Origin = 6;           // "c" (create index), "u" (unique constraint), "pk" (primary key)
+    string Definition = 7;       // SQL definition
+}
+
+// Represents a Table in SQLite
+message SQLiteTable {
+    string Name = 1;
+    string Type = 2;             // "table", "view", "shadow", "virtual"
+    repeated SQLiteColumn Columns = 3;
+    repeated SQLiteIndex Indexes = 4;
+    
+    // SQLite Specific Options
+    bool WithoutRowId = 5;       // WITHOUT ROWID optimization
+    bool Strict = 6;             // STRICT tables (SQLite 3.37+)
+    
+    string Definition = 7;       // Original CREATE statement
+    int64 RootPage = 8;          // Root page number in DB file
+}
+
+// Represents a View
+message SQLiteView {
+    string Name = 1;
+    string Definition = 2;
+    repeated SQLiteColumn Columns = 3; // Inferred columns
+}
+
+// Represents a Database File (or Attached DB)
+message SQLiteDatabase {
+    string Name = 1;             // "main", "temp", or attached name
+    string FilePath = 2;
+    repeated SQLiteTable Tables = 3;
+    repeated SQLiteView Views = 4;
+    repeated string Triggers = 5;
+}
