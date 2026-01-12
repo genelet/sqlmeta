@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package mymeta;
+
+option go_package = "github.com/genelet/sqlmeta/xmeta";
+
+import "proto/types.proto";
+
+// Represents a column in a MySQL table
+message MYColumn {
+    string Name = 1;
+    sqlmeta.DataType DataType = 2;
+    bool IsNullable = 3;
+    string DefaultValue = 4;
+    bool IsPrimaryKey = 5;
+    bool AutoIncrement = 6;
+    string Charset = 7;
+    string Collation = 8;
+    string Comment = 9;
+    bool IsUnsigned = 10;
+    uint32 DisplayWidth = 11; // e.g., int(11)
+}
+
+// Represents an index in a MySQL table
+message MYIndex {
+    string Name = 1;
+    sqlmeta.ObjectName TableName = 2;
+    bool IsUnique = 3;
+    string IndexType = 4;        // BTREE, HASH, FULLTEXT, SPATIAL
+    repeated string Columns = 5;
+    string IndexComment = 6;
+}
+
+// Represents a foreign key constraint in MySQL
+message MYForeignKey {
+    string Name = 1;
+    sqlmeta.ObjectName TableName = 2;
+    repeated string LocalColumns = 3;
+    sqlmeta.ObjectName ForeignTable = 4;
+    repeated string ForeignColumns = 5;
+    string OnUpdate = 6;         // CASCADE, SET NULL, NO ACTION, RESTRICT
+    string OnDelete = 7;         // CASCADE, SET NULL, NO ACTION, RESTRICT
+}
+
+// Represents a MySQL table
+message MYTable {
+    sqlmeta.ObjectName Name = 1;
+    string Engine = 2;           // InnoDB, MyISAM, etc.
+    string Charset = 3;
+    string Collation = 4;
+    repeated MYColumn Columns = 5;
+    repeated MYIndex Indexes = 6;
+    repeated MYForeignKey ForeignKeys = 7;
+    string Comment = 8;
+    int64 AutoIncrement = 9;     // Next auto_increment value
+    string CreateOptions = 10;   // row_format=DYNAMIC, etc.
+}
+
+// Represents a MySQL database (schema)
+message MYDatabase {
+    string Name = 1;
+    repeated MYTable Tables = 2;
+    // Views, routines, etc. can be added later
+}
