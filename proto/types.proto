@@ -85,6 +85,16 @@ message ArrayData {
     DataType Type = 1;
 }
 
+// MySQL ENUM type
+message EnumType {
+    repeated string Values = 1;
+}
+
+// MySQL SET type
+message SetType {
+    repeated string Values = 1;
+}
+
 message DataType {
     oneof TypeClause {
         Int IntData = 1;
@@ -109,5 +119,8 @@ message DataType {
         DataTypeSingle RegclassData = 23;
         DataTypeSingle ByteaData = 24;
         CollateType CollateData = 25;
+        EnumType EnumData = 26;
+        SetType SetData = 27;
     }
 }
+
