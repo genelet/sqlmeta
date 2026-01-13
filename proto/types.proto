@@ -85,7 +85,7 @@ message CollateType {
 // StructData now uses the enhanced MetaColumnDef with DefaultValue and Constraints
 
 message StructData {
-    repeated MetaColumnDef Fields = 1;
+    repeated ColumnDef Fields = 1;
 }
 
 message ArrayData {
@@ -216,61 +216,87 @@ message DataType {
 }
 
 // =============================================================================
-// META COLUMN AND TABLE DEFINITIONS
-// String-based versions for schema metadata storage (no SQL expression types)
+// COLUMN AND TABLE DEFINITIONS (Unified)
 // =============================================================================
 
-// Metadata-only column constraint (with string-based CHECK expression)
-message MetaColumnConstraintSpec {
-    oneof MetaColumnConstraintSpecClause {
+import "google/protobuf/any.proto";
+
+message ColumnConstraintSpec {
+    oneof ColumnConstraintSpecClause {
         UniqueColumnSpec UniqueItem = 1;
-        string CheckExpression = 2;           // e.g., "amount > 0"
+        google.protobuf.Any CheckItem = 2;
         ReferencesColumnSpec ReferenceItem = 3;
         NotNullColumnSpec NotNullItem = 4;
     }
 }
 
-// Metadata-only column constraint wrapper
-message MetaColumnConstraint {
+message ColumnConstraint {
     string Name = 1;
-    MetaColumnConstraintSpec Spec = 2;
+    ColumnConstraintSpec Spec = 2;
     bool NotEnforced = 3;
 }
 
-// Metadata-only column definition (with string-based DEFAULT value)
-message MetaColumnDef {
+message ColumnDef {
     string Name = 1;
     DataType DataType = 2;
-    string DefaultValue = 3;                  // e.g., "CURRENT_TIMESTAMP", "0"
+    google.protobuf.Any Default = 3;
     repeated AutoIncrement MyDecos = 4;
-    repeated MetaColumnConstraint Constraints = 5;
+    repeated ColumnConstraint Constraints = 5;
+    string Comment = 6;
+    map<string, string> Options = 7;
 }
 
-// Metadata-only table constraint (with string-based CHECK expression)
-message MetaTableConstraintSpec {
-    oneof MetaTableConstraintSpecClause {
+message MetaTable {
+    ObjectName Name = 1;
+    string Type = 2; // BASE TABLE, VIEW, etc.
+    repeated TableElement Elements = 3;
+    string Comment = 4;
+    map<string, string> Options = 5;
+}
+
+message MetaView {
+    ObjectName Name = 1;
+    string Definition = 2;
+    string Comment = 3;
+    map<string, string> Options = 4;
+}
+
+message MetaSequence {
+    ObjectName Name = 1;
+    string Comment = 2;
+    map<string, string> Options = 3;
+}
+
+message MetaDatabase {
+    string Name = 1;
+    repeated MetaTable Tables = 2;
+    repeated MetaView Views = 3;
+    repeated MetaSequence Sequences = 4;
+    map<string, string> Options = 5;
+}
+
+message TableConstraintSpec {
+    oneof TableConstraintSpecClause {
         ReferentialTableConstraint ReferenceItem = 1;
-        string CheckExpression = 2;           // e.g., "amount > 0"
+        google.protobuf.Any CheckItem = 2;
         UniqueTableConstraint UniqueItem = 3;
     }
 }
 
-// Metadata-only table constraint wrapper
-message MetaTableConstraint {
+message TableConstraint {
     string Name = 1;
-    MetaTableConstraintSpec Spec = 2;
+    TableConstraintSpec Spec = 2;
     bool NotEnforced = 3;
 }
 
-// Metadata-only table element (column or constraint)
-message MetaTableElement {
-    oneof MetaTableElementClause {
-        MetaColumnDef ColumnDefElement = 1;
-        MetaTableConstraint TableConstraintElement = 2;
+message TableElement {
+    oneof TableElementClause {
+        ColumnDef ColumnDefElement = 1;
+        TableConstraint TableConstraintElement = 2;
     }
 }
 
-// Metadata-only struct type (uses MetaColumnDef for fields)
-message MetaStructData {
-    repeated MetaColumnDef Fields = 1;
-}
+// StructData uses the unified ColumnDef
+// Note: StructData was defined at line 87, ensuring backward compatibility or update.
+// If StructData at line 87 used MetaColumnDef, we should update usage.
+// Since we are removing MetaColumnDef, we should rely on ColumnDef.

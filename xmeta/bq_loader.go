@@ -140,9 +140,9 @@ func mapBQType(field *bigquery.FieldSchema) *DataType {
 		t.TypeClause = &DataType_ByteaData{ByteaData: DataTypeSingle_Bytea}
 	case "STRUCT", "RECORD":
 		// Recursive mapping for STRUCT
-		var subCols []*MetaColumnDef
+		var subCols []*ColumnDef
 		for _, sub := range field.Schema {
-			subCols = append(subCols, &MetaColumnDef{
+			subCols = append(subCols, &ColumnDef{
 				Name:     sub.Name,
 				DataType: mapBQType(sub),
 			})

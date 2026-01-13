@@ -9,6 +9,7 @@ package xmeta
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -1046,7 +1047,7 @@ func (x *CollateType) GetCollationName() string {
 
 type StructData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Fields        []*MetaColumnDef       `protobuf:"bytes,1,rep,name=Fields,proto3" json:"Fields,omitempty"`
+	Fields        []*ColumnDef           `protobuf:"bytes,1,rep,name=Fields,proto3" json:"Fields,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1081,7 +1082,7 @@ func (*StructData) Descriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *StructData) GetFields() []*MetaColumnDef {
+func (x *StructData) GetFields() []*ColumnDef {
 	if x != nil {
 		return x.Fields
 	}
@@ -2057,34 +2058,33 @@ func (*DataType_MediumIntData) isDataType_TypeClause() {}
 
 func (*DataType_YearData) isDataType_TypeClause() {}
 
-// Metadata-only column constraint (with string-based CHECK expression)
-type MetaColumnConstraintSpec struct {
+type ColumnConstraintSpec struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to MetaColumnConstraintSpecClause:
+	// Types that are valid to be assigned to ColumnConstraintSpecClause:
 	//
-	//	*MetaColumnConstraintSpec_UniqueItem
-	//	*MetaColumnConstraintSpec_CheckExpression
-	//	*MetaColumnConstraintSpec_ReferenceItem
-	//	*MetaColumnConstraintSpec_NotNullItem
-	MetaColumnConstraintSpecClause isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause `protobuf_oneof:"MetaColumnConstraintSpecClause"`
-	unknownFields                  protoimpl.UnknownFields
-	sizeCache                      protoimpl.SizeCache
+	//	*ColumnConstraintSpec_UniqueItem
+	//	*ColumnConstraintSpec_CheckItem
+	//	*ColumnConstraintSpec_ReferenceItem
+	//	*ColumnConstraintSpec_NotNullItem
+	ColumnConstraintSpecClause isColumnConstraintSpec_ColumnConstraintSpecClause `protobuf_oneof:"ColumnConstraintSpecClause"`
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
-func (x *MetaColumnConstraintSpec) Reset() {
-	*x = MetaColumnConstraintSpec{}
+func (x *ColumnConstraintSpec) Reset() {
+	*x = ColumnConstraintSpec{}
 	mi := &file_proto_types_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MetaColumnConstraintSpec) String() string {
+func (x *ColumnConstraintSpec) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MetaColumnConstraintSpec) ProtoMessage() {}
+func (*ColumnConstraintSpec) ProtoMessage() {}
 
-func (x *MetaColumnConstraintSpec) ProtoReflect() protoreflect.Message {
+func (x *ColumnConstraintSpec) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_types_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2096,110 +2096,105 @@ func (x *MetaColumnConstraintSpec) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MetaColumnConstraintSpec.ProtoReflect.Descriptor instead.
-func (*MetaColumnConstraintSpec) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColumnConstraintSpec.ProtoReflect.Descriptor instead.
+func (*ColumnConstraintSpec) Descriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *MetaColumnConstraintSpec) GetMetaColumnConstraintSpecClause() isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause {
+func (x *ColumnConstraintSpec) GetColumnConstraintSpecClause() isColumnConstraintSpec_ColumnConstraintSpecClause {
 	if x != nil {
-		return x.MetaColumnConstraintSpecClause
+		return x.ColumnConstraintSpecClause
 	}
 	return nil
 }
 
-func (x *MetaColumnConstraintSpec) GetUniqueItem() *UniqueColumnSpec {
+func (x *ColumnConstraintSpec) GetUniqueItem() *UniqueColumnSpec {
 	if x != nil {
-		if x, ok := x.MetaColumnConstraintSpecClause.(*MetaColumnConstraintSpec_UniqueItem); ok {
+		if x, ok := x.ColumnConstraintSpecClause.(*ColumnConstraintSpec_UniqueItem); ok {
 			return x.UniqueItem
 		}
 	}
 	return nil
 }
 
-func (x *MetaColumnConstraintSpec) GetCheckExpression() string {
+func (x *ColumnConstraintSpec) GetCheckItem() *anypb.Any {
 	if x != nil {
-		if x, ok := x.MetaColumnConstraintSpecClause.(*MetaColumnConstraintSpec_CheckExpression); ok {
-			return x.CheckExpression
+		if x, ok := x.ColumnConstraintSpecClause.(*ColumnConstraintSpec_CheckItem); ok {
+			return x.CheckItem
 		}
 	}
-	return ""
+	return nil
 }
 
-func (x *MetaColumnConstraintSpec) GetReferenceItem() *ReferencesColumnSpec {
+func (x *ColumnConstraintSpec) GetReferenceItem() *ReferencesColumnSpec {
 	if x != nil {
-		if x, ok := x.MetaColumnConstraintSpecClause.(*MetaColumnConstraintSpec_ReferenceItem); ok {
+		if x, ok := x.ColumnConstraintSpecClause.(*ColumnConstraintSpec_ReferenceItem); ok {
 			return x.ReferenceItem
 		}
 	}
 	return nil
 }
 
-func (x *MetaColumnConstraintSpec) GetNotNullItem() NotNullColumnSpec {
+func (x *ColumnConstraintSpec) GetNotNullItem() NotNullColumnSpec {
 	if x != nil {
-		if x, ok := x.MetaColumnConstraintSpecClause.(*MetaColumnConstraintSpec_NotNullItem); ok {
+		if x, ok := x.ColumnConstraintSpecClause.(*ColumnConstraintSpec_NotNullItem); ok {
 			return x.NotNullItem
 		}
 	}
 	return NotNullColumnSpec_NotNullColumnSpecUnknown
 }
 
-type isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause interface {
-	isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause()
+type isColumnConstraintSpec_ColumnConstraintSpecClause interface {
+	isColumnConstraintSpec_ColumnConstraintSpecClause()
 }
 
-type MetaColumnConstraintSpec_UniqueItem struct {
+type ColumnConstraintSpec_UniqueItem struct {
 	UniqueItem *UniqueColumnSpec `protobuf:"bytes,1,opt,name=UniqueItem,proto3,oneof"`
 }
 
-type MetaColumnConstraintSpec_CheckExpression struct {
-	CheckExpression string `protobuf:"bytes,2,opt,name=CheckExpression,proto3,oneof"` // e.g., "amount > 0"
+type ColumnConstraintSpec_CheckItem struct {
+	CheckItem *anypb.Any `protobuf:"bytes,2,opt,name=CheckItem,proto3,oneof"`
 }
 
-type MetaColumnConstraintSpec_ReferenceItem struct {
+type ColumnConstraintSpec_ReferenceItem struct {
 	ReferenceItem *ReferencesColumnSpec `protobuf:"bytes,3,opt,name=ReferenceItem,proto3,oneof"`
 }
 
-type MetaColumnConstraintSpec_NotNullItem struct {
+type ColumnConstraintSpec_NotNullItem struct {
 	NotNullItem NotNullColumnSpec `protobuf:"varint,4,opt,name=NotNullItem,proto3,enum=sqlmeta.NotNullColumnSpec,oneof"`
 }
 
-func (*MetaColumnConstraintSpec_UniqueItem) isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause() {
-}
+func (*ColumnConstraintSpec_UniqueItem) isColumnConstraintSpec_ColumnConstraintSpecClause() {}
 
-func (*MetaColumnConstraintSpec_CheckExpression) isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause() {
-}
+func (*ColumnConstraintSpec_CheckItem) isColumnConstraintSpec_ColumnConstraintSpecClause() {}
 
-func (*MetaColumnConstraintSpec_ReferenceItem) isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause() {
-}
+func (*ColumnConstraintSpec_ReferenceItem) isColumnConstraintSpec_ColumnConstraintSpecClause() {}
 
-func (*MetaColumnConstraintSpec_NotNullItem) isMetaColumnConstraintSpec_MetaColumnConstraintSpecClause() {
-}
+func (*ColumnConstraintSpec_NotNullItem) isColumnConstraintSpec_ColumnConstraintSpecClause() {}
 
-// Metadata-only column constraint wrapper
-type MetaColumnConstraint struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Name          string                    `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
-	Spec          *MetaColumnConstraintSpec `protobuf:"bytes,2,opt,name=Spec,proto3" json:"Spec,omitempty"`
-	NotEnforced   bool                      `protobuf:"varint,3,opt,name=NotEnforced,proto3" json:"NotEnforced,omitempty"`
+type ColumnConstraint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Spec          *ColumnConstraintSpec  `protobuf:"bytes,2,opt,name=Spec,proto3" json:"Spec,omitempty"`
+	NotEnforced   bool                   `protobuf:"varint,3,opt,name=NotEnforced,proto3" json:"NotEnforced,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *MetaColumnConstraint) Reset() {
-	*x = MetaColumnConstraint{}
+func (x *ColumnConstraint) Reset() {
+	*x = ColumnConstraint{}
 	mi := &file_proto_types_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MetaColumnConstraint) String() string {
+func (x *ColumnConstraint) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MetaColumnConstraint) ProtoMessage() {}
+func (*ColumnConstraint) ProtoMessage() {}
 
-func (x *MetaColumnConstraint) ProtoReflect() protoreflect.Message {
+func (x *ColumnConstraint) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_types_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2211,58 +2206,59 @@ func (x *MetaColumnConstraint) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MetaColumnConstraint.ProtoReflect.Descriptor instead.
-func (*MetaColumnConstraint) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColumnConstraint.ProtoReflect.Descriptor instead.
+func (*ColumnConstraint) Descriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *MetaColumnConstraint) GetName() string {
+func (x *ColumnConstraint) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *MetaColumnConstraint) GetSpec() *MetaColumnConstraintSpec {
+func (x *ColumnConstraint) GetSpec() *ColumnConstraintSpec {
 	if x != nil {
 		return x.Spec
 	}
 	return nil
 }
 
-func (x *MetaColumnConstraint) GetNotEnforced() bool {
+func (x *ColumnConstraint) GetNotEnforced() bool {
 	if x != nil {
 		return x.NotEnforced
 	}
 	return false
 }
 
-// Metadata-only column definition (with string-based DEFAULT value)
-type MetaColumnDef struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Name          string                  `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
-	DataType      *DataType               `protobuf:"bytes,2,opt,name=DataType,proto3" json:"DataType,omitempty"`
-	DefaultValue  string                  `protobuf:"bytes,3,opt,name=DefaultValue,proto3" json:"DefaultValue,omitempty"` // e.g., "CURRENT_TIMESTAMP", "0"
-	MyDecos       []AutoIncrement         `protobuf:"varint,4,rep,packed,name=MyDecos,proto3,enum=sqlmeta.AutoIncrement" json:"MyDecos,omitempty"`
-	Constraints   []*MetaColumnConstraint `protobuf:"bytes,5,rep,name=Constraints,proto3" json:"Constraints,omitempty"`
+type ColumnDef struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	DataType      *DataType              `protobuf:"bytes,2,opt,name=DataType,proto3" json:"DataType,omitempty"`
+	Default       *anypb.Any             `protobuf:"bytes,3,opt,name=Default,proto3" json:"Default,omitempty"`
+	MyDecos       []AutoIncrement        `protobuf:"varint,4,rep,packed,name=MyDecos,proto3,enum=sqlmeta.AutoIncrement" json:"MyDecos,omitempty"`
+	Constraints   []*ColumnConstraint    `protobuf:"bytes,5,rep,name=Constraints,proto3" json:"Constraints,omitempty"`
+	Comment       string                 `protobuf:"bytes,6,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	Options       map[string]string      `protobuf:"bytes,7,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *MetaColumnDef) Reset() {
-	*x = MetaColumnDef{}
+func (x *ColumnDef) Reset() {
+	*x = ColumnDef{}
 	mi := &file_proto_types_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MetaColumnDef) String() string {
+func (x *ColumnDef) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MetaColumnDef) ProtoMessage() {}
+func (*ColumnDef) ProtoMessage() {}
 
-func (x *MetaColumnDef) ProtoReflect() protoreflect.Message {
+func (x *ColumnDef) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_types_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2274,172 +2270,160 @@ func (x *MetaColumnDef) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MetaColumnDef.ProtoReflect.Descriptor instead.
-func (*MetaColumnDef) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColumnDef.ProtoReflect.Descriptor instead.
+func (*ColumnDef) Descriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *MetaColumnDef) GetName() string {
+func (x *ColumnDef) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *MetaColumnDef) GetDataType() *DataType {
+func (x *ColumnDef) GetDataType() *DataType {
 	if x != nil {
 		return x.DataType
 	}
 	return nil
 }
 
-func (x *MetaColumnDef) GetDefaultValue() string {
+func (x *ColumnDef) GetDefault() *anypb.Any {
 	if x != nil {
-		return x.DefaultValue
+		return x.Default
 	}
-	return ""
+	return nil
 }
 
-func (x *MetaColumnDef) GetMyDecos() []AutoIncrement {
+func (x *ColumnDef) GetMyDecos() []AutoIncrement {
 	if x != nil {
 		return x.MyDecos
 	}
 	return nil
 }
 
-func (x *MetaColumnDef) GetConstraints() []*MetaColumnConstraint {
+func (x *ColumnDef) GetConstraints() []*ColumnConstraint {
 	if x != nil {
 		return x.Constraints
 	}
 	return nil
 }
 
-// Metadata-only table constraint (with string-based CHECK expression)
-type MetaTableConstraintSpec struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to MetaTableConstraintSpecClause:
-	//
-	//	*MetaTableConstraintSpec_ReferenceItem
-	//	*MetaTableConstraintSpec_CheckExpression
-	//	*MetaTableConstraintSpec_UniqueItem
-	MetaTableConstraintSpecClause isMetaTableConstraintSpec_MetaTableConstraintSpecClause `protobuf_oneof:"MetaTableConstraintSpecClause"`
-	unknownFields                 protoimpl.UnknownFields
-	sizeCache                     protoimpl.SizeCache
-}
-
-func (x *MetaTableConstraintSpec) Reset() {
-	*x = MetaTableConstraintSpec{}
-	mi := &file_proto_types_proto_msgTypes[28]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *MetaTableConstraintSpec) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MetaTableConstraintSpec) ProtoMessage() {}
-
-func (x *MetaTableConstraintSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[28]
+func (x *ColumnDef) GetComment() string {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MetaTableConstraintSpec.ProtoReflect.Descriptor instead.
-func (*MetaTableConstraintSpec) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{28}
-}
-
-func (x *MetaTableConstraintSpec) GetMetaTableConstraintSpecClause() isMetaTableConstraintSpec_MetaTableConstraintSpecClause {
-	if x != nil {
-		return x.MetaTableConstraintSpecClause
-	}
-	return nil
-}
-
-func (x *MetaTableConstraintSpec) GetReferenceItem() *ReferentialTableConstraint {
-	if x != nil {
-		if x, ok := x.MetaTableConstraintSpecClause.(*MetaTableConstraintSpec_ReferenceItem); ok {
-			return x.ReferenceItem
-		}
-	}
-	return nil
-}
-
-func (x *MetaTableConstraintSpec) GetCheckExpression() string {
-	if x != nil {
-		if x, ok := x.MetaTableConstraintSpecClause.(*MetaTableConstraintSpec_CheckExpression); ok {
-			return x.CheckExpression
-		}
+		return x.Comment
 	}
 	return ""
 }
 
-func (x *MetaTableConstraintSpec) GetUniqueItem() *UniqueTableConstraint {
+func (x *ColumnDef) GetOptions() map[string]string {
 	if x != nil {
-		if x, ok := x.MetaTableConstraintSpecClause.(*MetaTableConstraintSpec_UniqueItem); ok {
-			return x.UniqueItem
-		}
+		return x.Options
 	}
 	return nil
 }
 
-type isMetaTableConstraintSpec_MetaTableConstraintSpecClause interface {
-	isMetaTableConstraintSpec_MetaTableConstraintSpecClause()
-}
-
-type MetaTableConstraintSpec_ReferenceItem struct {
-	ReferenceItem *ReferentialTableConstraint `protobuf:"bytes,1,opt,name=ReferenceItem,proto3,oneof"`
-}
-
-type MetaTableConstraintSpec_CheckExpression struct {
-	CheckExpression string `protobuf:"bytes,2,opt,name=CheckExpression,proto3,oneof"` // e.g., "amount > 0"
-}
-
-type MetaTableConstraintSpec_UniqueItem struct {
-	UniqueItem *UniqueTableConstraint `protobuf:"bytes,3,opt,name=UniqueItem,proto3,oneof"`
-}
-
-func (*MetaTableConstraintSpec_ReferenceItem) isMetaTableConstraintSpec_MetaTableConstraintSpecClause() {
-}
-
-func (*MetaTableConstraintSpec_CheckExpression) isMetaTableConstraintSpec_MetaTableConstraintSpecClause() {
-}
-
-func (*MetaTableConstraintSpec_UniqueItem) isMetaTableConstraintSpec_MetaTableConstraintSpecClause() {
-}
-
-// Metadata-only table constraint wrapper
-type MetaTableConstraint struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Name          string                   `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
-	Spec          *MetaTableConstraintSpec `protobuf:"bytes,2,opt,name=Spec,proto3" json:"Spec,omitempty"`
-	NotEnforced   bool                     `protobuf:"varint,3,opt,name=NotEnforced,proto3" json:"NotEnforced,omitempty"`
+type MetaTable struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *ObjectName            `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=Type,proto3" json:"Type,omitempty"` // BASE TABLE, VIEW, etc.
+	Elements      []*TableElement        `protobuf:"bytes,3,rep,name=Elements,proto3" json:"Elements,omitempty"`
+	Comment       string                 `protobuf:"bytes,4,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	Options       map[string]string      `protobuf:"bytes,5,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *MetaTableConstraint) Reset() {
-	*x = MetaTableConstraint{}
+func (x *MetaTable) Reset() {
+	*x = MetaTable{}
+	mi := &file_proto_types_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MetaTable) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MetaTable) ProtoMessage() {}
+
+func (x *MetaTable) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MetaTable.ProtoReflect.Descriptor instead.
+func (*MetaTable) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *MetaTable) GetName() *ObjectName {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+func (x *MetaTable) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *MetaTable) GetElements() []*TableElement {
+	if x != nil {
+		return x.Elements
+	}
+	return nil
+}
+
+func (x *MetaTable) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *MetaTable) GetOptions() map[string]string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type MetaView struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *ObjectName            `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Definition    string                 `protobuf:"bytes,2,opt,name=Definition,proto3" json:"Definition,omitempty"`
+	Comment       string                 `protobuf:"bytes,3,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	Options       map[string]string      `protobuf:"bytes,4,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MetaView) Reset() {
+	*x = MetaView{}
 	mi := &file_proto_types_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MetaTableConstraint) String() string {
+func (x *MetaView) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MetaTableConstraint) ProtoMessage() {}
+func (*MetaView) ProtoMessage() {}
 
-func (x *MetaTableConstraint) ProtoReflect() protoreflect.Message {
+func (x *MetaView) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_types_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2451,59 +2435,359 @@ func (x *MetaTableConstraint) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MetaTableConstraint.ProtoReflect.Descriptor instead.
-func (*MetaTableConstraint) Descriptor() ([]byte, []int) {
+// Deprecated: Use MetaView.ProtoReflect.Descriptor instead.
+func (*MetaView) Descriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *MetaTableConstraint) GetName() string {
+func (x *MetaView) GetName() *ObjectName {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+func (x *MetaView) GetDefinition() string {
+	if x != nil {
+		return x.Definition
+	}
+	return ""
+}
+
+func (x *MetaView) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *MetaView) GetOptions() map[string]string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type MetaSequence struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *ObjectName            `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Comment       string                 `protobuf:"bytes,2,opt,name=Comment,proto3" json:"Comment,omitempty"`
+	Options       map[string]string      `protobuf:"bytes,3,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MetaSequence) Reset() {
+	*x = MetaSequence{}
+	mi := &file_proto_types_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MetaSequence) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MetaSequence) ProtoMessage() {}
+
+func (x *MetaSequence) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MetaSequence.ProtoReflect.Descriptor instead.
+func (*MetaSequence) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *MetaSequence) GetName() *ObjectName {
+	if x != nil {
+		return x.Name
+	}
+	return nil
+}
+
+func (x *MetaSequence) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *MetaSequence) GetOptions() map[string]string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type MetaDatabase struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Tables        []*MetaTable           `protobuf:"bytes,2,rep,name=Tables,proto3" json:"Tables,omitempty"`
+	Views         []*MetaView            `protobuf:"bytes,3,rep,name=Views,proto3" json:"Views,omitempty"`
+	Sequences     []*MetaSequence        `protobuf:"bytes,4,rep,name=Sequences,proto3" json:"Sequences,omitempty"`
+	Options       map[string]string      `protobuf:"bytes,5,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MetaDatabase) Reset() {
+	*x = MetaDatabase{}
+	mi := &file_proto_types_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MetaDatabase) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MetaDatabase) ProtoMessage() {}
+
+func (x *MetaDatabase) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MetaDatabase.ProtoReflect.Descriptor instead.
+func (*MetaDatabase) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *MetaDatabase) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *MetaTableConstraint) GetSpec() *MetaTableConstraintSpec {
+func (x *MetaDatabase) GetTables() []*MetaTable {
+	if x != nil {
+		return x.Tables
+	}
+	return nil
+}
+
+func (x *MetaDatabase) GetViews() []*MetaView {
+	if x != nil {
+		return x.Views
+	}
+	return nil
+}
+
+func (x *MetaDatabase) GetSequences() []*MetaSequence {
+	if x != nil {
+		return x.Sequences
+	}
+	return nil
+}
+
+func (x *MetaDatabase) GetOptions() map[string]string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type TableConstraintSpec struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to TableConstraintSpecClause:
+	//
+	//	*TableConstraintSpec_ReferenceItem
+	//	*TableConstraintSpec_CheckItem
+	//	*TableConstraintSpec_UniqueItem
+	TableConstraintSpecClause isTableConstraintSpec_TableConstraintSpecClause `protobuf_oneof:"TableConstraintSpecClause"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *TableConstraintSpec) Reset() {
+	*x = TableConstraintSpec{}
+	mi := &file_proto_types_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TableConstraintSpec) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TableConstraintSpec) ProtoMessage() {}
+
+func (x *TableConstraintSpec) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TableConstraintSpec.ProtoReflect.Descriptor instead.
+func (*TableConstraintSpec) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *TableConstraintSpec) GetTableConstraintSpecClause() isTableConstraintSpec_TableConstraintSpecClause {
+	if x != nil {
+		return x.TableConstraintSpecClause
+	}
+	return nil
+}
+
+func (x *TableConstraintSpec) GetReferenceItem() *ReferentialTableConstraint {
+	if x != nil {
+		if x, ok := x.TableConstraintSpecClause.(*TableConstraintSpec_ReferenceItem); ok {
+			return x.ReferenceItem
+		}
+	}
+	return nil
+}
+
+func (x *TableConstraintSpec) GetCheckItem() *anypb.Any {
+	if x != nil {
+		if x, ok := x.TableConstraintSpecClause.(*TableConstraintSpec_CheckItem); ok {
+			return x.CheckItem
+		}
+	}
+	return nil
+}
+
+func (x *TableConstraintSpec) GetUniqueItem() *UniqueTableConstraint {
+	if x != nil {
+		if x, ok := x.TableConstraintSpecClause.(*TableConstraintSpec_UniqueItem); ok {
+			return x.UniqueItem
+		}
+	}
+	return nil
+}
+
+type isTableConstraintSpec_TableConstraintSpecClause interface {
+	isTableConstraintSpec_TableConstraintSpecClause()
+}
+
+type TableConstraintSpec_ReferenceItem struct {
+	ReferenceItem *ReferentialTableConstraint `protobuf:"bytes,1,opt,name=ReferenceItem,proto3,oneof"`
+}
+
+type TableConstraintSpec_CheckItem struct {
+	CheckItem *anypb.Any `protobuf:"bytes,2,opt,name=CheckItem,proto3,oneof"`
+}
+
+type TableConstraintSpec_UniqueItem struct {
+	UniqueItem *UniqueTableConstraint `protobuf:"bytes,3,opt,name=UniqueItem,proto3,oneof"`
+}
+
+func (*TableConstraintSpec_ReferenceItem) isTableConstraintSpec_TableConstraintSpecClause() {}
+
+func (*TableConstraintSpec_CheckItem) isTableConstraintSpec_TableConstraintSpecClause() {}
+
+func (*TableConstraintSpec_UniqueItem) isTableConstraintSpec_TableConstraintSpecClause() {}
+
+type TableConstraint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Spec          *TableConstraintSpec   `protobuf:"bytes,2,opt,name=Spec,proto3" json:"Spec,omitempty"`
+	NotEnforced   bool                   `protobuf:"varint,3,opt,name=NotEnforced,proto3" json:"NotEnforced,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TableConstraint) Reset() {
+	*x = TableConstraint{}
+	mi := &file_proto_types_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TableConstraint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TableConstraint) ProtoMessage() {}
+
+func (x *TableConstraint) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TableConstraint.ProtoReflect.Descriptor instead.
+func (*TableConstraint) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *TableConstraint) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TableConstraint) GetSpec() *TableConstraintSpec {
 	if x != nil {
 		return x.Spec
 	}
 	return nil
 }
 
-func (x *MetaTableConstraint) GetNotEnforced() bool {
+func (x *TableConstraint) GetNotEnforced() bool {
 	if x != nil {
 		return x.NotEnforced
 	}
 	return false
 }
 
-// Metadata-only table element (column or constraint)
-type MetaTableElement struct {
+type TableElement struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to MetaTableElementClause:
+	// Types that are valid to be assigned to TableElementClause:
 	//
-	//	*MetaTableElement_ColumnDefElement
-	//	*MetaTableElement_TableConstraintElement
-	MetaTableElementClause isMetaTableElement_MetaTableElementClause `protobuf_oneof:"MetaTableElementClause"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	//	*TableElement_ColumnDefElement
+	//	*TableElement_TableConstraintElement
+	TableElementClause isTableElement_TableElementClause `protobuf_oneof:"TableElementClause"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
-func (x *MetaTableElement) Reset() {
-	*x = MetaTableElement{}
-	mi := &file_proto_types_proto_msgTypes[30]
+func (x *TableElement) Reset() {
+	*x = TableElement{}
+	mi := &file_proto_types_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MetaTableElement) String() string {
+func (x *TableElement) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MetaTableElement) ProtoMessage() {}
+func (*TableElement) ProtoMessage() {}
 
-func (x *MetaTableElement) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[30]
+func (x *TableElement) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_types_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2514,102 +2798,57 @@ func (x *MetaTableElement) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MetaTableElement.ProtoReflect.Descriptor instead.
-func (*MetaTableElement) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{30}
+// Deprecated: Use TableElement.ProtoReflect.Descriptor instead.
+func (*TableElement) Descriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *MetaTableElement) GetMetaTableElementClause() isMetaTableElement_MetaTableElementClause {
+func (x *TableElement) GetTableElementClause() isTableElement_TableElementClause {
 	if x != nil {
-		return x.MetaTableElementClause
+		return x.TableElementClause
 	}
 	return nil
 }
 
-func (x *MetaTableElement) GetColumnDefElement() *MetaColumnDef {
+func (x *TableElement) GetColumnDefElement() *ColumnDef {
 	if x != nil {
-		if x, ok := x.MetaTableElementClause.(*MetaTableElement_ColumnDefElement); ok {
+		if x, ok := x.TableElementClause.(*TableElement_ColumnDefElement); ok {
 			return x.ColumnDefElement
 		}
 	}
 	return nil
 }
 
-func (x *MetaTableElement) GetTableConstraintElement() *MetaTableConstraint {
+func (x *TableElement) GetTableConstraintElement() *TableConstraint {
 	if x != nil {
-		if x, ok := x.MetaTableElementClause.(*MetaTableElement_TableConstraintElement); ok {
+		if x, ok := x.TableElementClause.(*TableElement_TableConstraintElement); ok {
 			return x.TableConstraintElement
 		}
 	}
 	return nil
 }
 
-type isMetaTableElement_MetaTableElementClause interface {
-	isMetaTableElement_MetaTableElementClause()
+type isTableElement_TableElementClause interface {
+	isTableElement_TableElementClause()
 }
 
-type MetaTableElement_ColumnDefElement struct {
-	ColumnDefElement *MetaColumnDef `protobuf:"bytes,1,opt,name=ColumnDefElement,proto3,oneof"`
+type TableElement_ColumnDefElement struct {
+	ColumnDefElement *ColumnDef `protobuf:"bytes,1,opt,name=ColumnDefElement,proto3,oneof"`
 }
 
-type MetaTableElement_TableConstraintElement struct {
-	TableConstraintElement *MetaTableConstraint `protobuf:"bytes,2,opt,name=TableConstraintElement,proto3,oneof"`
+type TableElement_TableConstraintElement struct {
+	TableConstraintElement *TableConstraint `protobuf:"bytes,2,opt,name=TableConstraintElement,proto3,oneof"`
 }
 
-func (*MetaTableElement_ColumnDefElement) isMetaTableElement_MetaTableElementClause() {}
+func (*TableElement_ColumnDefElement) isTableElement_TableElementClause() {}
 
-func (*MetaTableElement_TableConstraintElement) isMetaTableElement_MetaTableElementClause() {}
-
-// Metadata-only struct type (uses MetaColumnDef for fields)
-type MetaStructData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Fields        []*MetaColumnDef       `protobuf:"bytes,1,rep,name=Fields,proto3" json:"Fields,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *MetaStructData) Reset() {
-	*x = MetaStructData{}
-	mi := &file_proto_types_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *MetaStructData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MetaStructData) ProtoMessage() {}
-
-func (x *MetaStructData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MetaStructData.ProtoReflect.Descriptor instead.
-func (*MetaStructData) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{31}
-}
-
-func (x *MetaStructData) GetFields() []*MetaColumnDef {
-	if x != nil {
-		return x.Fields
-	}
-	return nil
-}
+func (*TableElement_TableConstraintElement) isTableElement_TableElementClause() {}
 
 var File_proto_types_proto protoreflect.FileDescriptor
 
 const file_proto_types_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/types.proto\x12\asqlmeta\"$\n" +
+	"\x11proto/types.proto\x12\asqlmeta\x1a\x19google/protobuf/any.proto\"$\n" +
 	"\n" +
 	"ObjectName\x12\x16\n" +
 	"\x06Idents\x18\x01 \x03(\tR\x06Idents\"(\n" +
@@ -2662,10 +2901,10 @@ const file_proto_types_proto_rawDesc = "" +
 	"\x13is_double_precision\x18\x01 \x01(\bR\x11isDoublePrecision\"Z\n" +
 	"\vCollateType\x12%\n" +
 	"\x04Type\x18\x01 \x01(\v2\x11.sqlmeta.DataTypeR\x04Type\x12$\n" +
-	"\rCollationName\x18\x02 \x01(\tR\rCollationName\"<\n" +
+	"\rCollationName\x18\x02 \x01(\tR\rCollationName\"8\n" +
 	"\n" +
-	"StructData\x12.\n" +
-	"\x06Fields\x18\x01 \x03(\v2\x16.sqlmeta.MetaColumnDefR\x06Fields\"2\n" +
+	"StructData\x12*\n" +
+	"\x06Fields\x18\x01 \x03(\v2\x12.sqlmeta.ColumnDefR\x06Fields\"2\n" +
 	"\tArrayData\x12%\n" +
 	"\x04Type\x18\x01 \x01(\v2\x11.sqlmeta.DataTypeR\x04Type\"\"\n" +
 	"\bEnumType\x12\x16\n" +
@@ -2740,42 +2979,80 @@ const file_proto_types_proto_rawDesc = "" +
 	"\rMediumIntData\x18\x1d \x01(\v2\x12.sqlmeta.MediumIntH\x00R\rMediumIntData\x125\n" +
 	"\bYearData\x18\x1e \x01(\x0e2\x17.sqlmeta.DataTypeSingleH\x00R\bYearDataB\f\n" +
 	"\n" +
-	"TypeClause\"\xac\x02\n" +
-	"\x18MetaColumnConstraintSpec\x12;\n" +
+	"TypeClause\"\xae\x02\n" +
+	"\x14ColumnConstraintSpec\x12;\n" +
 	"\n" +
 	"UniqueItem\x18\x01 \x01(\v2\x19.sqlmeta.UniqueColumnSpecH\x00R\n" +
-	"UniqueItem\x12*\n" +
-	"\x0fCheckExpression\x18\x02 \x01(\tH\x00R\x0fCheckExpression\x12E\n" +
+	"UniqueItem\x124\n" +
+	"\tCheckItem\x18\x02 \x01(\v2\x14.google.protobuf.AnyH\x00R\tCheckItem\x12E\n" +
 	"\rReferenceItem\x18\x03 \x01(\v2\x1d.sqlmeta.ReferencesColumnSpecH\x00R\rReferenceItem\x12>\n" +
-	"\vNotNullItem\x18\x04 \x01(\x0e2\x1a.sqlmeta.NotNullColumnSpecH\x00R\vNotNullItemB \n" +
-	"\x1eMetaColumnConstraintSpecClause\"\x83\x01\n" +
-	"\x14MetaColumnConstraint\x12\x12\n" +
-	"\x04Name\x18\x01 \x01(\tR\x04Name\x125\n" +
-	"\x04Spec\x18\x02 \x01(\v2!.sqlmeta.MetaColumnConstraintSpecR\x04Spec\x12 \n" +
-	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xe9\x01\n" +
-	"\rMetaColumnDef\x12\x12\n" +
+	"\vNotNullItem\x18\x04 \x01(\x0e2\x1a.sqlmeta.NotNullColumnSpecH\x00R\vNotNullItemB\x1c\n" +
+	"\x1aColumnConstraintSpecClause\"{\n" +
+	"\x10ColumnConstraint\x12\x12\n" +
+	"\x04Name\x18\x01 \x01(\tR\x04Name\x121\n" +
+	"\x04Spec\x18\x02 \x01(\v2\x1d.sqlmeta.ColumnConstraintSpecR\x04Spec\x12 \n" +
+	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xfe\x02\n" +
+	"\tColumnDef\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
-	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12\"\n" +
-	"\fDefaultValue\x18\x03 \x01(\tR\fDefaultValue\x120\n" +
-	"\aMyDecos\x18\x04 \x03(\x0e2\x16.sqlmeta.AutoIncrementR\aMyDecos\x12?\n" +
-	"\vConstraints\x18\x05 \x03(\v2\x1d.sqlmeta.MetaColumnConstraintR\vConstraints\"\xf5\x01\n" +
-	"\x17MetaTableConstraintSpec\x12K\n" +
-	"\rReferenceItem\x18\x01 \x01(\v2#.sqlmeta.ReferentialTableConstraintH\x00R\rReferenceItem\x12*\n" +
-	"\x0fCheckExpression\x18\x02 \x01(\tH\x00R\x0fCheckExpression\x12@\n" +
+	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12.\n" +
+	"\aDefault\x18\x03 \x01(\v2\x14.google.protobuf.AnyR\aDefault\x120\n" +
+	"\aMyDecos\x18\x04 \x03(\x0e2\x16.sqlmeta.AutoIncrementR\aMyDecos\x12;\n" +
+	"\vConstraints\x18\x05 \x03(\v2\x19.sqlmeta.ColumnConstraintR\vConstraints\x12\x18\n" +
+	"\aComment\x18\x06 \x01(\tR\aComment\x129\n" +
+	"\aOptions\x18\a \x03(\v2\x1f.sqlmeta.ColumnDef.OptionsEntryR\aOptions\x1a:\n" +
+	"\fOptionsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8c\x02\n" +
+	"\tMetaTable\x12'\n" +
+	"\x04Name\x18\x01 \x01(\v2\x13.sqlmeta.ObjectNameR\x04Name\x12\x12\n" +
+	"\x04Type\x18\x02 \x01(\tR\x04Type\x121\n" +
+	"\bElements\x18\x03 \x03(\v2\x15.sqlmeta.TableElementR\bElements\x12\x18\n" +
+	"\aComment\x18\x04 \x01(\tR\aComment\x129\n" +
+	"\aOptions\x18\x05 \x03(\v2\x1f.sqlmeta.MetaTable.OptionsEntryR\aOptions\x1a:\n" +
+	"\fOptionsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe3\x01\n" +
+	"\bMetaView\x12'\n" +
+	"\x04Name\x18\x01 \x01(\v2\x13.sqlmeta.ObjectNameR\x04Name\x12\x1e\n" +
+	"\n" +
+	"Definition\x18\x02 \x01(\tR\n" +
+	"Definition\x12\x18\n" +
+	"\aComment\x18\x03 \x01(\tR\aComment\x128\n" +
+	"\aOptions\x18\x04 \x03(\v2\x1e.sqlmeta.MetaView.OptionsEntryR\aOptions\x1a:\n" +
+	"\fOptionsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xcb\x01\n" +
+	"\fMetaSequence\x12'\n" +
+	"\x04Name\x18\x01 \x01(\v2\x13.sqlmeta.ObjectNameR\x04Name\x12\x18\n" +
+	"\aComment\x18\x02 \x01(\tR\aComment\x12<\n" +
+	"\aOptions\x18\x03 \x03(\v2\".sqlmeta.MetaSequence.OptionsEntryR\aOptions\x1a:\n" +
+	"\fOptionsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa6\x02\n" +
+	"\fMetaDatabase\x12\x12\n" +
+	"\x04Name\x18\x01 \x01(\tR\x04Name\x12*\n" +
+	"\x06Tables\x18\x02 \x03(\v2\x12.sqlmeta.MetaTableR\x06Tables\x12'\n" +
+	"\x05Views\x18\x03 \x03(\v2\x11.sqlmeta.MetaViewR\x05Views\x123\n" +
+	"\tSequences\x18\x04 \x03(\v2\x15.sqlmeta.MetaSequenceR\tSequences\x12<\n" +
+	"\aOptions\x18\x05 \x03(\v2\".sqlmeta.MetaDatabase.OptionsEntryR\aOptions\x1a:\n" +
+	"\fOptionsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf7\x01\n" +
+	"\x13TableConstraintSpec\x12K\n" +
+	"\rReferenceItem\x18\x01 \x01(\v2#.sqlmeta.ReferentialTableConstraintH\x00R\rReferenceItem\x124\n" +
+	"\tCheckItem\x18\x02 \x01(\v2\x14.google.protobuf.AnyH\x00R\tCheckItem\x12@\n" +
 	"\n" +
 	"UniqueItem\x18\x03 \x01(\v2\x1e.sqlmeta.UniqueTableConstraintH\x00R\n" +
-	"UniqueItemB\x1f\n" +
-	"\x1dMetaTableConstraintSpecClause\"\x81\x01\n" +
-	"\x13MetaTableConstraint\x12\x12\n" +
-	"\x04Name\x18\x01 \x01(\tR\x04Name\x124\n" +
-	"\x04Spec\x18\x02 \x01(\v2 .sqlmeta.MetaTableConstraintSpecR\x04Spec\x12 \n" +
-	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xca\x01\n" +
-	"\x10MetaTableElement\x12D\n" +
-	"\x10ColumnDefElement\x18\x01 \x01(\v2\x16.sqlmeta.MetaColumnDefH\x00R\x10ColumnDefElement\x12V\n" +
-	"\x16TableConstraintElement\x18\x02 \x01(\v2\x1c.sqlmeta.MetaTableConstraintH\x00R\x16TableConstraintElementB\x18\n" +
-	"\x16MetaTableElementClause\"@\n" +
-	"\x0eMetaStructData\x12.\n" +
-	"\x06Fields\x18\x01 \x03(\v2\x16.sqlmeta.MetaColumnDefR\x06Fields*\x8f\x01\n" +
+	"UniqueItemB\x1b\n" +
+	"\x19TableConstraintSpecClause\"y\n" +
+	"\x0fTableConstraint\x12\x12\n" +
+	"\x04Name\x18\x01 \x01(\tR\x04Name\x120\n" +
+	"\x04Spec\x18\x02 \x01(\v2\x1c.sqlmeta.TableConstraintSpecR\x04Spec\x12 \n" +
+	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xba\x01\n" +
+	"\fTableElement\x12@\n" +
+	"\x10ColumnDefElement\x18\x01 \x01(\v2\x12.sqlmeta.ColumnDefH\x00R\x10ColumnDefElement\x12R\n" +
+	"\x16TableConstraintElement\x18\x02 \x01(\v2\x18.sqlmeta.TableConstraintH\x00R\x16TableConstraintElementB\x14\n" +
+	"\x12TableElementClause*\x8f\x01\n" +
 	"\x0eDataTypeSingle\x12\x19\n" +
 	"\x15DataTypeSingleUnknown\x10\x00\x12\n" +
 	"\n" +
@@ -2823,7 +3100,7 @@ func file_proto_types_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_types_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_proto_types_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_proto_types_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_proto_types_proto_goTypes = []any{
 	(DataTypeSingle)(0),                // 0: sqlmeta.DataTypeSingle
 	(ReferentialAction)(0),             // 1: sqlmeta.ReferentialAction
@@ -2856,17 +3133,26 @@ var file_proto_types_proto_goTypes = []any{
 	(*UniqueTableConstraint)(nil),      // 28: sqlmeta.UniqueTableConstraint
 	(*ReferentialTableConstraint)(nil), // 29: sqlmeta.ReferentialTableConstraint
 	(*DataType)(nil),                   // 30: sqlmeta.DataType
-	(*MetaColumnConstraintSpec)(nil),   // 31: sqlmeta.MetaColumnConstraintSpec
-	(*MetaColumnConstraint)(nil),       // 32: sqlmeta.MetaColumnConstraint
-	(*MetaColumnDef)(nil),              // 33: sqlmeta.MetaColumnDef
-	(*MetaTableConstraintSpec)(nil),    // 34: sqlmeta.MetaTableConstraintSpec
-	(*MetaTableConstraint)(nil),        // 35: sqlmeta.MetaTableConstraint
-	(*MetaTableElement)(nil),           // 36: sqlmeta.MetaTableElement
-	(*MetaStructData)(nil),             // 37: sqlmeta.MetaStructData
+	(*ColumnConstraintSpec)(nil),       // 31: sqlmeta.ColumnConstraintSpec
+	(*ColumnConstraint)(nil),           // 32: sqlmeta.ColumnConstraint
+	(*ColumnDef)(nil),                  // 33: sqlmeta.ColumnDef
+	(*MetaTable)(nil),                  // 34: sqlmeta.MetaTable
+	(*MetaView)(nil),                   // 35: sqlmeta.MetaView
+	(*MetaSequence)(nil),               // 36: sqlmeta.MetaSequence
+	(*MetaDatabase)(nil),               // 37: sqlmeta.MetaDatabase
+	(*TableConstraintSpec)(nil),        // 38: sqlmeta.TableConstraintSpec
+	(*TableConstraint)(nil),            // 39: sqlmeta.TableConstraint
+	(*TableElement)(nil),               // 40: sqlmeta.TableElement
+	nil,                                // 41: sqlmeta.ColumnDef.OptionsEntry
+	nil,                                // 42: sqlmeta.MetaTable.OptionsEntry
+	nil,                                // 43: sqlmeta.MetaView.OptionsEntry
+	nil,                                // 44: sqlmeta.MetaSequence.OptionsEntry
+	nil,                                // 45: sqlmeta.MetaDatabase.OptionsEntry
+	(*anypb.Any)(nil),                  // 46: google.protobuf.Any
 }
 var file_proto_types_proto_depIdxs = []int32{
 	30, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
-	33, // 1: sqlmeta.StructData.Fields:type_name -> sqlmeta.MetaColumnDef
+	33, // 1: sqlmeta.StructData.Fields:type_name -> sqlmeta.ColumnDef
 	30, // 2: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
 	6,  // 3: sqlmeta.ReferencesColumnSpec.TableName:type_name -> sqlmeta.ObjectName
 	1,  // 4: sqlmeta.ReferencesColumnSpec.OnDelete:type_name -> sqlmeta.ReferentialAction
@@ -2903,24 +3189,38 @@ var file_proto_types_proto_depIdxs = []int32{
 	10, // 35: sqlmeta.DataType.TinyIntData:type_name -> sqlmeta.TinyInt
 	11, // 36: sqlmeta.DataType.MediumIntData:type_name -> sqlmeta.MediumInt
 	0,  // 37: sqlmeta.DataType.YearData:type_name -> sqlmeta.DataTypeSingle
-	25, // 38: sqlmeta.MetaColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
-	27, // 39: sqlmeta.MetaColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
-	5,  // 40: sqlmeta.MetaColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
-	31, // 41: sqlmeta.MetaColumnConstraint.Spec:type_name -> sqlmeta.MetaColumnConstraintSpec
-	30, // 42: sqlmeta.MetaColumnDef.DataType:type_name -> sqlmeta.DataType
-	4,  // 43: sqlmeta.MetaColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
-	32, // 44: sqlmeta.MetaColumnDef.Constraints:type_name -> sqlmeta.MetaColumnConstraint
-	29, // 45: sqlmeta.MetaTableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
-	28, // 46: sqlmeta.MetaTableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
-	34, // 47: sqlmeta.MetaTableConstraint.Spec:type_name -> sqlmeta.MetaTableConstraintSpec
-	33, // 48: sqlmeta.MetaTableElement.ColumnDefElement:type_name -> sqlmeta.MetaColumnDef
-	35, // 49: sqlmeta.MetaTableElement.TableConstraintElement:type_name -> sqlmeta.MetaTableConstraint
-	33, // 50: sqlmeta.MetaStructData.Fields:type_name -> sqlmeta.MetaColumnDef
-	51, // [51:51] is the sub-list for method output_type
-	51, // [51:51] is the sub-list for method input_type
-	51, // [51:51] is the sub-list for extension type_name
-	51, // [51:51] is the sub-list for extension extendee
-	0,  // [0:51] is the sub-list for field type_name
+	25, // 38: sqlmeta.ColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
+	46, // 39: sqlmeta.ColumnConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	27, // 40: sqlmeta.ColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
+	5,  // 41: sqlmeta.ColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
+	31, // 42: sqlmeta.ColumnConstraint.Spec:type_name -> sqlmeta.ColumnConstraintSpec
+	30, // 43: sqlmeta.ColumnDef.DataType:type_name -> sqlmeta.DataType
+	46, // 44: sqlmeta.ColumnDef.Default:type_name -> google.protobuf.Any
+	4,  // 45: sqlmeta.ColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
+	32, // 46: sqlmeta.ColumnDef.Constraints:type_name -> sqlmeta.ColumnConstraint
+	41, // 47: sqlmeta.ColumnDef.Options:type_name -> sqlmeta.ColumnDef.OptionsEntry
+	6,  // 48: sqlmeta.MetaTable.Name:type_name -> sqlmeta.ObjectName
+	40, // 49: sqlmeta.MetaTable.Elements:type_name -> sqlmeta.TableElement
+	42, // 50: sqlmeta.MetaTable.Options:type_name -> sqlmeta.MetaTable.OptionsEntry
+	6,  // 51: sqlmeta.MetaView.Name:type_name -> sqlmeta.ObjectName
+	43, // 52: sqlmeta.MetaView.Options:type_name -> sqlmeta.MetaView.OptionsEntry
+	6,  // 53: sqlmeta.MetaSequence.Name:type_name -> sqlmeta.ObjectName
+	44, // 54: sqlmeta.MetaSequence.Options:type_name -> sqlmeta.MetaSequence.OptionsEntry
+	34, // 55: sqlmeta.MetaDatabase.Tables:type_name -> sqlmeta.MetaTable
+	35, // 56: sqlmeta.MetaDatabase.Views:type_name -> sqlmeta.MetaView
+	36, // 57: sqlmeta.MetaDatabase.Sequences:type_name -> sqlmeta.MetaSequence
+	45, // 58: sqlmeta.MetaDatabase.Options:type_name -> sqlmeta.MetaDatabase.OptionsEntry
+	29, // 59: sqlmeta.TableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
+	46, // 60: sqlmeta.TableConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	28, // 61: sqlmeta.TableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
+	38, // 62: sqlmeta.TableConstraint.Spec:type_name -> sqlmeta.TableConstraintSpec
+	33, // 63: sqlmeta.TableElement.ColumnDefElement:type_name -> sqlmeta.ColumnDef
+	39, // 64: sqlmeta.TableElement.TableConstraintElement:type_name -> sqlmeta.TableConstraint
+	65, // [65:65] is the sub-list for method output_type
+	65, // [65:65] is the sub-list for method input_type
+	65, // [65:65] is the sub-list for extension type_name
+	65, // [65:65] is the sub-list for extension extendee
+	0,  // [0:65] is the sub-list for field type_name
 }
 
 func init() { file_proto_types_proto_init() }
@@ -2958,19 +3258,19 @@ func file_proto_types_proto_init() {
 		(*DataType_YearData)(nil),
 	}
 	file_proto_types_proto_msgTypes[25].OneofWrappers = []any{
-		(*MetaColumnConstraintSpec_UniqueItem)(nil),
-		(*MetaColumnConstraintSpec_CheckExpression)(nil),
-		(*MetaColumnConstraintSpec_ReferenceItem)(nil),
-		(*MetaColumnConstraintSpec_NotNullItem)(nil),
+		(*ColumnConstraintSpec_UniqueItem)(nil),
+		(*ColumnConstraintSpec_CheckItem)(nil),
+		(*ColumnConstraintSpec_ReferenceItem)(nil),
+		(*ColumnConstraintSpec_NotNullItem)(nil),
 	}
-	file_proto_types_proto_msgTypes[28].OneofWrappers = []any{
-		(*MetaTableConstraintSpec_ReferenceItem)(nil),
-		(*MetaTableConstraintSpec_CheckExpression)(nil),
-		(*MetaTableConstraintSpec_UniqueItem)(nil),
+	file_proto_types_proto_msgTypes[32].OneofWrappers = []any{
+		(*TableConstraintSpec_ReferenceItem)(nil),
+		(*TableConstraintSpec_CheckItem)(nil),
+		(*TableConstraintSpec_UniqueItem)(nil),
 	}
-	file_proto_types_proto_msgTypes[30].OneofWrappers = []any{
-		(*MetaTableElement_ColumnDefElement)(nil),
-		(*MetaTableElement_TableConstraintElement)(nil),
+	file_proto_types_proto_msgTypes[34].OneofWrappers = []any{
+		(*TableElement_ColumnDefElement)(nil),
+		(*TableElement_TableConstraintElement)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2978,7 +3278,7 @@ func file_proto_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_types_proto_rawDesc), len(file_proto_types_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   32,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
