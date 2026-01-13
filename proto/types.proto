@@ -95,6 +95,24 @@ message SetType {
     repeated string Values = 1;
 }
 
+// Foreign Key referential actions (shared across dialects)
+enum ReferentialAction {
+    ReferentialAction_Unknown = 0;
+    ReferentialAction_NoAction = 1;
+    ReferentialAction_Restrict = 2;
+    ReferentialAction_Cascade = 3;
+    ReferentialAction_SetNull = 4;
+    ReferentialAction_SetDefault = 5;
+}
+
+// Foreign Key match options (shared across dialects)
+enum MatchOption {
+    MatchOption_Unknown = 0;
+    MatchOption_Simple = 1;
+    MatchOption_Partial = 2;
+    MatchOption_Full = 3;
+}
+
 message DataType {
     oneof TypeClause {
         Int IntData = 1;

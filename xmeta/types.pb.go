@@ -88,6 +88,118 @@ func (DataTypeSingle) EnumDescriptor() ([]byte, []int) {
 	return file_proto_types_proto_rawDescGZIP(), []int{0}
 }
 
+// Foreign Key referential actions (shared across dialects)
+type ReferentialAction int32
+
+const (
+	ReferentialAction_ReferentialAction_Unknown    ReferentialAction = 0
+	ReferentialAction_ReferentialAction_NoAction   ReferentialAction = 1
+	ReferentialAction_ReferentialAction_Restrict   ReferentialAction = 2
+	ReferentialAction_ReferentialAction_Cascade    ReferentialAction = 3
+	ReferentialAction_ReferentialAction_SetNull    ReferentialAction = 4
+	ReferentialAction_ReferentialAction_SetDefault ReferentialAction = 5
+)
+
+// Enum value maps for ReferentialAction.
+var (
+	ReferentialAction_name = map[int32]string{
+		0: "ReferentialAction_Unknown",
+		1: "ReferentialAction_NoAction",
+		2: "ReferentialAction_Restrict",
+		3: "ReferentialAction_Cascade",
+		4: "ReferentialAction_SetNull",
+		5: "ReferentialAction_SetDefault",
+	}
+	ReferentialAction_value = map[string]int32{
+		"ReferentialAction_Unknown":    0,
+		"ReferentialAction_NoAction":   1,
+		"ReferentialAction_Restrict":   2,
+		"ReferentialAction_Cascade":    3,
+		"ReferentialAction_SetNull":    4,
+		"ReferentialAction_SetDefault": 5,
+	}
+)
+
+func (x ReferentialAction) Enum() *ReferentialAction {
+	p := new(ReferentialAction)
+	*p = x
+	return p
+}
+
+func (x ReferentialAction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ReferentialAction) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_types_proto_enumTypes[1].Descriptor()
+}
+
+func (ReferentialAction) Type() protoreflect.EnumType {
+	return &file_proto_types_proto_enumTypes[1]
+}
+
+func (x ReferentialAction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ReferentialAction.Descriptor instead.
+func (ReferentialAction) EnumDescriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{1}
+}
+
+// Foreign Key match options (shared across dialects)
+type MatchOption int32
+
+const (
+	MatchOption_MatchOption_Unknown MatchOption = 0
+	MatchOption_MatchOption_Simple  MatchOption = 1
+	MatchOption_MatchOption_Partial MatchOption = 2
+	MatchOption_MatchOption_Full    MatchOption = 3
+)
+
+// Enum value maps for MatchOption.
+var (
+	MatchOption_name = map[int32]string{
+		0: "MatchOption_Unknown",
+		1: "MatchOption_Simple",
+		2: "MatchOption_Partial",
+		3: "MatchOption_Full",
+	}
+	MatchOption_value = map[string]int32{
+		"MatchOption_Unknown": 0,
+		"MatchOption_Simple":  1,
+		"MatchOption_Partial": 2,
+		"MatchOption_Full":    3,
+	}
+)
+
+func (x MatchOption) Enum() *MatchOption {
+	p := new(MatchOption)
+	*p = x
+	return p
+}
+
+func (x MatchOption) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MatchOption) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_types_proto_enumTypes[2].Descriptor()
+}
+
+func (MatchOption) Type() protoreflect.EnumType {
+	return &file_proto_types_proto_enumTypes[2]
+}
+
+func (x MatchOption) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MatchOption.Descriptor instead.
+func (MatchOption) EnumDescriptor() ([]byte, []int) {
+	return file_proto_types_proto_rawDescGZIP(), []int{2}
+}
+
 type ObjectName struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Idents        []string               `protobuf:"bytes,1,rep,name=Idents,proto3" json:"Idents,omitempty"`
@@ -1473,7 +1585,19 @@ const file_proto_types_proto_rawDesc = "" +
 	"\x05Bytea\x10\x05\x12\b\n" +
 	"\x04Text\x10\x06\x12\f\n" +
 	"\bRegclass\x10\a\x12\b\n" +
-	"\x04UUID\x10\bB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
+	"\x04UUID\x10\b*\xd2\x01\n" +
+	"\x11ReferentialAction\x12\x1d\n" +
+	"\x19ReferentialAction_Unknown\x10\x00\x12\x1e\n" +
+	"\x1aReferentialAction_NoAction\x10\x01\x12\x1e\n" +
+	"\x1aReferentialAction_Restrict\x10\x02\x12\x1d\n" +
+	"\x19ReferentialAction_Cascade\x10\x03\x12\x1d\n" +
+	"\x19ReferentialAction_SetNull\x10\x04\x12 \n" +
+	"\x1cReferentialAction_SetDefault\x10\x05*m\n" +
+	"\vMatchOption\x12\x17\n" +
+	"\x13MatchOption_Unknown\x10\x00\x12\x16\n" +
+	"\x12MatchOption_Simple\x10\x01\x12\x17\n" +
+	"\x13MatchOption_Partial\x10\x02\x12\x14\n" +
+	"\x10MatchOption_Full\x10\x03B\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_proto_types_proto_rawDescOnce sync.Once
@@ -1487,59 +1611,61 @@ func file_proto_types_proto_rawDescGZIP() []byte {
 	return file_proto_types_proto_rawDescData
 }
 
-var file_proto_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_proto_types_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_proto_types_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_proto_types_proto_goTypes = []any{
-	(DataTypeSingle)(0),   // 0: sqlmeta.DataTypeSingle
-	(*ObjectName)(nil),    // 1: sqlmeta.ObjectName
-	(*BigInt)(nil),        // 2: sqlmeta.BigInt
-	(*SmallInt)(nil),      // 3: sqlmeta.SmallInt
-	(*Int)(nil),           // 4: sqlmeta.Int
-	(*Real)(nil),          // 5: sqlmeta.Real
-	(*Float)(nil),         // 6: sqlmeta.Float
-	(*Decimal)(nil),       // 7: sqlmeta.Decimal
-	(*CharType)(nil),      // 8: sqlmeta.CharType
-	(*VarcharType)(nil),   // 9: sqlmeta.VarcharType
-	(*Timestamp)(nil),     // 10: sqlmeta.Timestamp
-	(*BitType)(nil),       // 11: sqlmeta.BitType
-	(*DoubleType)(nil),    // 12: sqlmeta.DoubleType
-	(*CollateType)(nil),   // 13: sqlmeta.CollateType
-	(*MetaColumnDef)(nil), // 14: sqlmeta.MetaColumnDef
-	(*StructData)(nil),    // 15: sqlmeta.StructData
-	(*ArrayData)(nil),     // 16: sqlmeta.ArrayData
-	(*EnumType)(nil),      // 17: sqlmeta.EnumType
-	(*SetType)(nil),       // 18: sqlmeta.SetType
-	(*DataType)(nil),      // 19: sqlmeta.DataType
+	(DataTypeSingle)(0),    // 0: sqlmeta.DataTypeSingle
+	(ReferentialAction)(0), // 1: sqlmeta.ReferentialAction
+	(MatchOption)(0),       // 2: sqlmeta.MatchOption
+	(*ObjectName)(nil),     // 3: sqlmeta.ObjectName
+	(*BigInt)(nil),         // 4: sqlmeta.BigInt
+	(*SmallInt)(nil),       // 5: sqlmeta.SmallInt
+	(*Int)(nil),            // 6: sqlmeta.Int
+	(*Real)(nil),           // 7: sqlmeta.Real
+	(*Float)(nil),          // 8: sqlmeta.Float
+	(*Decimal)(nil),        // 9: sqlmeta.Decimal
+	(*CharType)(nil),       // 10: sqlmeta.CharType
+	(*VarcharType)(nil),    // 11: sqlmeta.VarcharType
+	(*Timestamp)(nil),      // 12: sqlmeta.Timestamp
+	(*BitType)(nil),        // 13: sqlmeta.BitType
+	(*DoubleType)(nil),     // 14: sqlmeta.DoubleType
+	(*CollateType)(nil),    // 15: sqlmeta.CollateType
+	(*MetaColumnDef)(nil),  // 16: sqlmeta.MetaColumnDef
+	(*StructData)(nil),     // 17: sqlmeta.StructData
+	(*ArrayData)(nil),      // 18: sqlmeta.ArrayData
+	(*EnumType)(nil),       // 19: sqlmeta.EnumType
+	(*SetType)(nil),        // 20: sqlmeta.SetType
+	(*DataType)(nil),       // 21: sqlmeta.DataType
 }
 var file_proto_types_proto_depIdxs = []int32{
-	19, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
-	19, // 1: sqlmeta.MetaColumnDef.DataType:type_name -> sqlmeta.DataType
-	14, // 2: sqlmeta.StructData.Fields:type_name -> sqlmeta.MetaColumnDef
-	19, // 3: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
-	4,  // 4: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
-	3,  // 5: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
-	2,  // 6: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
-	7,  // 7: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
-	8,  // 8: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
-	9,  // 9: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
-	1,  // 10: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
-	16, // 11: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
-	15, // 12: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
+	21, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
+	21, // 1: sqlmeta.MetaColumnDef.DataType:type_name -> sqlmeta.DataType
+	16, // 2: sqlmeta.StructData.Fields:type_name -> sqlmeta.MetaColumnDef
+	21, // 3: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
+	6,  // 4: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
+	5,  // 5: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
+	4,  // 6: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
+	9,  // 7: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
+	10, // 8: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
+	11, // 9: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
+	3,  // 10: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
+	18, // 11: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
+	17, // 12: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
 	0,  // 13: sqlmeta.DataType.UUIDData:type_name -> sqlmeta.DataTypeSingle
-	10, // 14: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
+	12, // 14: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
 	0,  // 15: sqlmeta.DataType.BooleanData:type_name -> sqlmeta.DataTypeSingle
 	0,  // 16: sqlmeta.DataType.DateData:type_name -> sqlmeta.DataTypeSingle
 	0,  // 17: sqlmeta.DataType.TimeData:type_name -> sqlmeta.DataTypeSingle
-	12, // 18: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
-	6,  // 19: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
-	5,  // 20: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
+	14, // 18: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
+	8,  // 19: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
+	7,  // 20: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
 	0,  // 21: sqlmeta.DataType.TextData:type_name -> sqlmeta.DataTypeSingle
-	11, // 22: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
+	13, // 22: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
 	0,  // 23: sqlmeta.DataType.RegclassData:type_name -> sqlmeta.DataTypeSingle
 	0,  // 24: sqlmeta.DataType.ByteaData:type_name -> sqlmeta.DataTypeSingle
-	13, // 25: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
-	17, // 26: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
-	18, // 27: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
+	15, // 25: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
+	19, // 26: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
+	20, // 27: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
 	28, // [28:28] is the sub-list for method output_type
 	28, // [28:28] is the sub-list for method input_type
 	28, // [28:28] is the sub-list for extension type_name
@@ -1583,7 +1709,7 @@ func file_proto_types_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_types_proto_rawDesc), len(file_proto_types_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      3,
 			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   0,
