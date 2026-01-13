@@ -29,6 +29,7 @@ message MYIndex {
     string IndexType = 4;        // BTREE, HASH, FULLTEXT, SPATIAL
     repeated string Columns = 5;
     string IndexComment = 6;
+    repeated uint32 PrefixLengths = 7;  // Prefix length per column (0 = no prefix)
 }
 
 // Represents a foreign key constraint in MySQL

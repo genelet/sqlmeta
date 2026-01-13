@@ -19,6 +19,14 @@ message Int {
     bool IsUnsigned = 1;
 }
 
+message TinyInt {
+    bool IsUnsigned = 1;
+}
+
+message MediumInt {
+    bool IsUnsigned = 1;
+}
+
 message Real {
     bool IsUnsigned = 1;
 }
@@ -56,6 +64,7 @@ enum DataTypeSingle {
     Text = 6;
     Regclass = 7;
     UUID = 8;
+    Year = 9;
 }
 
 message BitType {
@@ -72,10 +81,8 @@ message CollateType {
     string CollationName = 2;
 }
 
-message MetaColumnDef {
-    string Name = 1;
-    DataType DataType = 2;
-}
+// Simple MetaColumnDef (name + type only) moved to enhanced version below
+// StructData now uses the enhanced MetaColumnDef with DefaultValue and Constraints
 
 message StructData {
     repeated MetaColumnDef Fields = 1;
@@ -113,6 +120,69 @@ enum MatchOption {
     MatchOption_Full = 3;
 }
 
+// =============================================================================
+// COLUMN AND TABLE CONSTRAINT TYPES
+// =============================================================================
+
+// Null value indicator (for SQL expression tracking)
+enum NullValue {
+    NullValueUnknown = 0;
+    NullValueConfirm = 1;
+}
+
+// Auto-increment indicator (MySQL AUTO_INCREMENT, etc.)
+enum AutoIncrement {
+    AutoIncrementUnknown = 0;
+    AutoIncrementConfirm = 1;
+}
+
+// NOT NULL constraint indicator
+enum NotNullColumnSpec {
+    NotNullColumnSpecUnknown = 0;
+    NotNullColumnSpecConfirm = 1;
+}
+
+// Primary Key / Unique constraint for a column
+message UniqueColumnSpec {
+    bool IsPrimaryKey = 1;
+}
+
+// Foreign key column reference expression
+message ReferenceKeyExpr {
+    string TableName = 1;
+    repeated string Columns = 2;
+}
+
+// Column-level REFERENCES constraint (FOREIGN KEY)
+message ReferencesColumnSpec {
+    ObjectName TableName = 1;
+    repeated string Columns = 2;
+    ReferentialAction OnDelete = 3;
+    ReferentialAction OnUpdate = 4;
+    MatchOption Match = 5;
+    bool Deferrable = 6;
+    bool InitiallyDeferred = 7;
+}
+
+// Table-level UNIQUE/PRIMARY KEY constraint
+message UniqueTableConstraint {
+    bool IsPrimary = 1;
+    repeated string Columns = 2;
+    string IndexName = 3;
+    bool IsJustIndex = 4;
+}
+
+// Table-level FOREIGN KEY constraint
+message ReferentialTableConstraint {
+    repeated string Columns = 1;
+    ReferenceKeyExpr KeyExpr = 2;
+    ReferentialAction OnDelete = 3;
+    ReferentialAction OnUpdate = 4;
+    MatchOption Match = 5;
+    bool Deferrable = 6;
+    bool InitiallyDeferred = 7;
+}
+
 message DataType {
     oneof TypeClause {
         Int IntData = 1;
@@ -139,6 +209,68 @@ message DataType {
         CollateType CollateData = 25;
         EnumType EnumData = 26;
         SetType SetData = 27;
+        TinyInt TinyIntData = 28;
+        MediumInt MediumIntData = 29;
+        DataTypeSingle YearData = 30;
     }
 }
 
+// =============================================================================
+// META COLUMN AND TABLE DEFINITIONS
+// String-based versions for schema metadata storage (no SQL expression types)
+// =============================================================================
+
+// Metadata-only column constraint (with string-based CHECK expression)
+message MetaColumnConstraintSpec {
+    oneof MetaColumnConstraintSpecClause {
+        UniqueColumnSpec UniqueItem = 1;
+        string CheckExpression = 2;           // e.g., "amount > 0"
+        ReferencesColumnSpec ReferenceItem = 3;
+        NotNullColumnSpec NotNullItem = 4;
+    }
+}
+
+// Metadata-only column constraint wrapper
+message MetaColumnConstraint {
+    string Name = 1;
+    MetaColumnConstraintSpec Spec = 2;
+    bool NotEnforced = 3;
+}
+
+// Metadata-only column definition (with string-based DEFAULT value)
+message MetaColumnDef {
+    string Name = 1;
+    DataType DataType = 2;
+    string DefaultValue = 3;                  // e.g., "CURRENT_TIMESTAMP", "0"
+    repeated AutoIncrement MyDecos = 4;
+    repeated MetaColumnConstraint Constraints = 5;
+}
+
+// Metadata-only table constraint (with string-based CHECK expression)
+message MetaTableConstraintSpec {
+    oneof MetaTableConstraintSpecClause {
+        ReferentialTableConstraint ReferenceItem = 1;
+        string CheckExpression = 2;           // e.g., "amount > 0"
+        UniqueTableConstraint UniqueItem = 3;
+    }
+}
+
+// Metadata-only table constraint wrapper
+message MetaTableConstraint {
+    string Name = 1;
+    MetaTableConstraintSpec Spec = 2;
+    bool NotEnforced = 3;
+}
+
+// Metadata-only table element (column or constraint)
+message MetaTableElement {
+    oneof MetaTableElementClause {
+        MetaColumnDef ColumnDefElement = 1;
+        MetaTableConstraint TableConstraintElement = 2;
+    }
+}
+
+// Metadata-only struct type (uses MetaColumnDef for fields)
+message MetaStructData {
+    repeated MetaColumnDef Fields = 1;
+}
