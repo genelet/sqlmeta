@@ -3,6 +3,8 @@ package xmeta
 // diff.go implements the schema comparison logic.
 
 import (
+	"strings"
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -158,22 +160,22 @@ func diffConstraints(tableName *ObjectName, current, desired map[string]*TableCo
 // Helper Functions
 // =============================================================================
 
-// tablesByName creates a map of tables keyed by their simple name.
+// tablesByName creates a map of tables keyed by their qualified name.
 func tablesByName(tables []*MetaTable) map[string]*MetaTable {
-	m := make(map[string]*MetaTable)
+	m := make(map[string]*MetaTable, len(tables))
 	for _, t := range tables {
-		name := tableName(t.Name)
-		m[name] = t
+		key := objectNameKey(t.Name)
+		m[key] = t
 	}
 	return m
 }
 
-// tableName extracts the simple table name from an ObjectName.
-func tableName(on *ObjectName) string {
+// objectNameKey formats an ObjectName using all identifiers.
+func objectNameKey(on *ObjectName) string {
 	if on == nil || len(on.Idents) == 0 {
 		return ""
 	}
-	return on.Idents[len(on.Idents)-1]
+	return strings.Join(on.Idents, ".")
 }
 
 // columnsFromElements extracts columns from TableElements into a map.

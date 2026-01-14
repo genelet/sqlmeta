@@ -123,6 +123,7 @@ The **Diff Engine** compares two `MetaDatabase` states and outputs a list of cha
 **Features:**
 - `IsDestructive()` method identifies dangerous changes (DropTable, DropColumn).
 - Changes are automatically sorted for safe execution order (drop constraints before tables).
+- Diffs are schema-aware: table identity uses the full `ObjectName.Idents` chain (e.g., `schema.table`).
 
 ## Complete Migration Workflow Example
 
