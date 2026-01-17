@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.31.1
-// source: proto/sqlite_meta.proto
+// source: sqlite_meta.proto
 
 package xmeta
 
@@ -38,7 +38,7 @@ type SQLiteColumn struct {
 
 func (x *SQLiteColumn) Reset() {
 	*x = SQLiteColumn{}
-	mi := &file_proto_sqlite_meta_proto_msgTypes[0]
+	mi := &file_sqlite_meta_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +50,7 @@ func (x *SQLiteColumn) String() string {
 func (*SQLiteColumn) ProtoMessage() {}
 
 func (x *SQLiteColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_sqlite_meta_proto_msgTypes[0]
+	mi := &file_sqlite_meta_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *SQLiteColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SQLiteColumn.ProtoReflect.Descriptor instead.
 func (*SQLiteColumn) Descriptor() ([]byte, []int) {
-	return file_proto_sqlite_meta_proto_rawDescGZIP(), []int{0}
+	return file_sqlite_meta_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SQLiteColumn) GetName() string {
@@ -138,7 +138,7 @@ type SQLiteIndex struct {
 
 func (x *SQLiteIndex) Reset() {
 	*x = SQLiteIndex{}
-	mi := &file_proto_sqlite_meta_proto_msgTypes[1]
+	mi := &file_sqlite_meta_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -150,7 +150,7 @@ func (x *SQLiteIndex) String() string {
 func (*SQLiteIndex) ProtoMessage() {}
 
 func (x *SQLiteIndex) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_sqlite_meta_proto_msgTypes[1]
+	mi := &file_sqlite_meta_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +163,7 @@ func (x *SQLiteIndex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SQLiteIndex.ProtoReflect.Descriptor instead.
 func (*SQLiteIndex) Descriptor() ([]byte, []int) {
-	return file_proto_sqlite_meta_proto_rawDescGZIP(), []int{1}
+	return file_sqlite_meta_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SQLiteIndex) GetName() string {
@@ -233,7 +233,7 @@ type SQLiteTable struct {
 
 func (x *SQLiteTable) Reset() {
 	*x = SQLiteTable{}
-	mi := &file_proto_sqlite_meta_proto_msgTypes[2]
+	mi := &file_sqlite_meta_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -245,7 +245,7 @@ func (x *SQLiteTable) String() string {
 func (*SQLiteTable) ProtoMessage() {}
 
 func (x *SQLiteTable) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_sqlite_meta_proto_msgTypes[2]
+	mi := &file_sqlite_meta_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -258,7 +258,7 @@ func (x *SQLiteTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SQLiteTable.ProtoReflect.Descriptor instead.
 func (*SQLiteTable) Descriptor() ([]byte, []int) {
-	return file_proto_sqlite_meta_proto_rawDescGZIP(), []int{2}
+	return file_sqlite_meta_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SQLiteTable) GetName() string {
@@ -329,7 +329,7 @@ type SQLiteView struct {
 
 func (x *SQLiteView) Reset() {
 	*x = SQLiteView{}
-	mi := &file_proto_sqlite_meta_proto_msgTypes[3]
+	mi := &file_sqlite_meta_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -341,7 +341,7 @@ func (x *SQLiteView) String() string {
 func (*SQLiteView) ProtoMessage() {}
 
 func (x *SQLiteView) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_sqlite_meta_proto_msgTypes[3]
+	mi := &file_sqlite_meta_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -354,7 +354,7 @@ func (x *SQLiteView) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SQLiteView.ProtoReflect.Descriptor instead.
 func (*SQLiteView) Descriptor() ([]byte, []int) {
-	return file_proto_sqlite_meta_proto_rawDescGZIP(), []int{3}
+	return file_sqlite_meta_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SQLiteView) GetName() string {
@@ -392,7 +392,7 @@ type SQLiteDatabase struct {
 
 func (x *SQLiteDatabase) Reset() {
 	*x = SQLiteDatabase{}
-	mi := &file_proto_sqlite_meta_proto_msgTypes[4]
+	mi := &file_sqlite_meta_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -404,7 +404,7 @@ func (x *SQLiteDatabase) String() string {
 func (*SQLiteDatabase) ProtoMessage() {}
 
 func (x *SQLiteDatabase) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_sqlite_meta_proto_msgTypes[4]
+	mi := &file_sqlite_meta_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -417,7 +417,7 @@ func (x *SQLiteDatabase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SQLiteDatabase.ProtoReflect.Descriptor instead.
 func (*SQLiteDatabase) Descriptor() ([]byte, []int) {
-	return file_proto_sqlite_meta_proto_rawDescGZIP(), []int{4}
+	return file_sqlite_meta_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SQLiteDatabase) GetName() string {
@@ -455,12 +455,12 @@ func (x *SQLiteDatabase) GetTriggers() []string {
 	return nil
 }
 
-var File_proto_sqlite_meta_proto protoreflect.FileDescriptor
+var File_sqlite_meta_proto protoreflect.FileDescriptor
 
-const file_proto_sqlite_meta_proto_rawDesc = "" +
+const file_sqlite_meta_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/sqlite_meta.proto\x12\n" +
-	"sqlitemeta\x1a\x11proto/types.proto\"\x97\x02\n" +
+	"\x11sqlite_meta.proto\x12\n" +
+	"sqlitemeta\x1a\vtypes.proto\"\x97\x02\n" +
 	"\fSQLiteColumn\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
 	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12\x1e\n" +
@@ -508,19 +508,19 @@ const file_proto_sqlite_meta_proto_rawDesc = "" +
 	"\bTriggers\x18\x05 \x03(\tR\bTriggersB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
-	file_proto_sqlite_meta_proto_rawDescOnce sync.Once
-	file_proto_sqlite_meta_proto_rawDescData []byte
+	file_sqlite_meta_proto_rawDescOnce sync.Once
+	file_sqlite_meta_proto_rawDescData []byte
 )
 
-func file_proto_sqlite_meta_proto_rawDescGZIP() []byte {
-	file_proto_sqlite_meta_proto_rawDescOnce.Do(func() {
-		file_proto_sqlite_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_sqlite_meta_proto_rawDesc), len(file_proto_sqlite_meta_proto_rawDesc)))
+func file_sqlite_meta_proto_rawDescGZIP() []byte {
+	file_sqlite_meta_proto_rawDescOnce.Do(func() {
+		file_sqlite_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_sqlite_meta_proto_rawDesc), len(file_sqlite_meta_proto_rawDesc)))
 	})
-	return file_proto_sqlite_meta_proto_rawDescData
+	return file_sqlite_meta_proto_rawDescData
 }
 
-var file_proto_sqlite_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_proto_sqlite_meta_proto_goTypes = []any{
+var file_sqlite_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_sqlite_meta_proto_goTypes = []any{
 	(*SQLiteColumn)(nil),   // 0: sqlitemeta.SQLiteColumn
 	(*SQLiteIndex)(nil),    // 1: sqlitemeta.SQLiteIndex
 	(*SQLiteTable)(nil),    // 2: sqlitemeta.SQLiteTable
@@ -528,7 +528,7 @@ var file_proto_sqlite_meta_proto_goTypes = []any{
 	(*SQLiteDatabase)(nil), // 4: sqlitemeta.SQLiteDatabase
 	(*DataType)(nil),       // 5: sqlmeta.DataType
 }
-var file_proto_sqlite_meta_proto_depIdxs = []int32{
+var file_sqlite_meta_proto_depIdxs = []int32{
 	5, // 0: sqlitemeta.SQLiteColumn.DataType:type_name -> sqlmeta.DataType
 	0, // 1: sqlitemeta.SQLiteTable.Columns:type_name -> sqlitemeta.SQLiteColumn
 	1, // 2: sqlitemeta.SQLiteTable.Indexes:type_name -> sqlitemeta.SQLiteIndex
@@ -542,27 +542,27 @@ var file_proto_sqlite_meta_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_proto_sqlite_meta_proto_init() }
-func file_proto_sqlite_meta_proto_init() {
-	if File_proto_sqlite_meta_proto != nil {
+func init() { file_sqlite_meta_proto_init() }
+func file_sqlite_meta_proto_init() {
+	if File_sqlite_meta_proto != nil {
 		return
 	}
-	file_proto_types_proto_init()
+	file_types_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_sqlite_meta_proto_rawDesc), len(file_proto_sqlite_meta_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_sqlite_meta_proto_rawDesc), len(file_sqlite_meta_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_sqlite_meta_proto_goTypes,
-		DependencyIndexes: file_proto_sqlite_meta_proto_depIdxs,
-		MessageInfos:      file_proto_sqlite_meta_proto_msgTypes,
+		GoTypes:           file_sqlite_meta_proto_goTypes,
+		DependencyIndexes: file_sqlite_meta_proto_depIdxs,
+		MessageInfos:      file_sqlite_meta_proto_msgTypes,
 	}.Build()
-	File_proto_sqlite_meta_proto = out.File
-	file_proto_sqlite_meta_proto_goTypes = nil
-	file_proto_sqlite_meta_proto_depIdxs = nil
+	File_sqlite_meta_proto = out.File
+	file_sqlite_meta_proto_goTypes = nil
+	file_sqlite_meta_proto_depIdxs = nil
 }

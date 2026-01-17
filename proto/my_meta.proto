@@ -4,7 +4,7 @@ package mymeta;
 
 option go_package = "github.com/genelet/sqlmeta/xmeta";
 
-import "proto/types.proto";
+import "types.proto";
 
 // Represents a column in a MySQL table
 message MYColumn {

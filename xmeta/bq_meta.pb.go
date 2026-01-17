@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.31.1
-// source: proto/bq_meta.proto
+// source: bq_meta.proto
 
 package xmeta
 
@@ -38,7 +38,7 @@ type BQColumn struct {
 
 func (x *BQColumn) Reset() {
 	*x = BQColumn{}
-	mi := &file_proto_bq_meta_proto_msgTypes[0]
+	mi := &file_bq_meta_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +50,7 @@ func (x *BQColumn) String() string {
 func (*BQColumn) ProtoMessage() {}
 
 func (x *BQColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[0]
+	mi := &file_bq_meta_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *BQColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQColumn.ProtoReflect.Descriptor instead.
 func (*BQColumn) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{0}
+	return file_bq_meta_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *BQColumn) GetName() string {
@@ -135,7 +135,7 @@ type BQTimePartitioning struct {
 
 func (x *BQTimePartitioning) Reset() {
 	*x = BQTimePartitioning{}
-	mi := &file_proto_bq_meta_proto_msgTypes[1]
+	mi := &file_bq_meta_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -147,7 +147,7 @@ func (x *BQTimePartitioning) String() string {
 func (*BQTimePartitioning) ProtoMessage() {}
 
 func (x *BQTimePartitioning) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[1]
+	mi := &file_bq_meta_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -160,7 +160,7 @@ func (x *BQTimePartitioning) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQTimePartitioning.ProtoReflect.Descriptor instead.
 func (*BQTimePartitioning) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{1}
+	return file_bq_meta_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *BQTimePartitioning) GetType() string {
@@ -204,7 +204,7 @@ type BQRangePartitioning struct {
 
 func (x *BQRangePartitioning) Reset() {
 	*x = BQRangePartitioning{}
-	mi := &file_proto_bq_meta_proto_msgTypes[2]
+	mi := &file_bq_meta_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +216,7 @@ func (x *BQRangePartitioning) String() string {
 func (*BQRangePartitioning) ProtoMessage() {}
 
 func (x *BQRangePartitioning) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[2]
+	mi := &file_bq_meta_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,7 +229,7 @@ func (x *BQRangePartitioning) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQRangePartitioning.ProtoReflect.Descriptor instead.
 func (*BQRangePartitioning) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{2}
+	return file_bq_meta_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *BQRangePartitioning) GetField() string {
@@ -288,7 +288,7 @@ type BQTable struct {
 
 func (x *BQTable) Reset() {
 	*x = BQTable{}
-	mi := &file_proto_bq_meta_proto_msgTypes[3]
+	mi := &file_bq_meta_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -300,7 +300,7 @@ func (x *BQTable) String() string {
 func (*BQTable) ProtoMessage() {}
 
 func (x *BQTable) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[3]
+	mi := &file_bq_meta_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -313,7 +313,7 @@ func (x *BQTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQTable.ProtoReflect.Descriptor instead.
 func (*BQTable) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{3}
+	return file_bq_meta_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *BQTable) GetName() *ObjectName {
@@ -457,7 +457,7 @@ type BQDataset struct {
 
 func (x *BQDataset) Reset() {
 	*x = BQDataset{}
-	mi := &file_proto_bq_meta_proto_msgTypes[4]
+	mi := &file_bq_meta_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -469,7 +469,7 @@ func (x *BQDataset) String() string {
 func (*BQDataset) ProtoMessage() {}
 
 func (x *BQDataset) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[4]
+	mi := &file_bq_meta_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -482,7 +482,7 @@ func (x *BQDataset) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQDataset.ProtoReflect.Descriptor instead.
 func (*BQDataset) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{4}
+	return file_bq_meta_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *BQDataset) GetName() *ObjectName {
@@ -546,7 +546,7 @@ type BQProject struct {
 
 func (x *BQProject) Reset() {
 	*x = BQProject{}
-	mi := &file_proto_bq_meta_proto_msgTypes[5]
+	mi := &file_bq_meta_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -558,7 +558,7 @@ func (x *BQProject) String() string {
 func (*BQProject) ProtoMessage() {}
 
 func (x *BQProject) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_bq_meta_proto_msgTypes[5]
+	mi := &file_bq_meta_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -571,7 +571,7 @@ func (x *BQProject) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BQProject.ProtoReflect.Descriptor instead.
 func (*BQProject) Descriptor() ([]byte, []int) {
-	return file_proto_bq_meta_proto_rawDescGZIP(), []int{5}
+	return file_bq_meta_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *BQProject) GetProjectId() string {
@@ -595,11 +595,11 @@ func (x *BQProject) GetDatasets() []*BQDataset {
 	return nil
 }
 
-var File_proto_bq_meta_proto protoreflect.FileDescriptor
+var File_bq_meta_proto protoreflect.FileDescriptor
 
-const file_proto_bq_meta_proto_rawDesc = "" +
+const file_bq_meta_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/bq_meta.proto\x12\x06bqmeta\x1a\x11proto/types.proto\"\xa3\x02\n" +
+	"\rbq_meta.proto\x12\x06bqmeta\x1a\vtypes.proto\"\xa3\x02\n" +
 	"\bBQColumn\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
 	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12\x12\n" +
@@ -662,19 +662,19 @@ const file_proto_bq_meta_proto_rawDesc = "" +
 	"\bDatasets\x18\x03 \x03(\v2\x11.bqmeta.BQDatasetR\bDatasetsB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
-	file_proto_bq_meta_proto_rawDescOnce sync.Once
-	file_proto_bq_meta_proto_rawDescData []byte
+	file_bq_meta_proto_rawDescOnce sync.Once
+	file_bq_meta_proto_rawDescData []byte
 )
 
-func file_proto_bq_meta_proto_rawDescGZIP() []byte {
-	file_proto_bq_meta_proto_rawDescOnce.Do(func() {
-		file_proto_bq_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_bq_meta_proto_rawDesc), len(file_proto_bq_meta_proto_rawDesc)))
+func file_bq_meta_proto_rawDescGZIP() []byte {
+	file_bq_meta_proto_rawDescOnce.Do(func() {
+		file_bq_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_bq_meta_proto_rawDesc), len(file_bq_meta_proto_rawDesc)))
 	})
-	return file_proto_bq_meta_proto_rawDescData
+	return file_bq_meta_proto_rawDescData
 }
 
-var file_proto_bq_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
-var file_proto_bq_meta_proto_goTypes = []any{
+var file_bq_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_bq_meta_proto_goTypes = []any{
 	(*BQColumn)(nil),            // 0: bqmeta.BQColumn
 	(*BQTimePartitioning)(nil),  // 1: bqmeta.BQTimePartitioning
 	(*BQRangePartitioning)(nil), // 2: bqmeta.BQRangePartitioning
@@ -686,7 +686,7 @@ var file_proto_bq_meta_proto_goTypes = []any{
 	(*DataType)(nil),            // 8: sqlmeta.DataType
 	(*ObjectName)(nil),          // 9: sqlmeta.ObjectName
 }
-var file_proto_bq_meta_proto_depIdxs = []int32{
+var file_bq_meta_proto_depIdxs = []int32{
 	8,  // 0: bqmeta.BQColumn.DataType:type_name -> sqlmeta.DataType
 	9,  // 1: bqmeta.BQTable.Name:type_name -> sqlmeta.ObjectName
 	0,  // 2: bqmeta.BQTable.Schema:type_name -> bqmeta.BQColumn
@@ -704,13 +704,13 @@ var file_proto_bq_meta_proto_depIdxs = []int32{
 	0,  // [0:10] is the sub-list for field type_name
 }
 
-func init() { file_proto_bq_meta_proto_init() }
-func file_proto_bq_meta_proto_init() {
-	if File_proto_bq_meta_proto != nil {
+func init() { file_bq_meta_proto_init() }
+func file_bq_meta_proto_init() {
+	if File_bq_meta_proto != nil {
 		return
 	}
-	file_proto_types_proto_init()
-	file_proto_bq_meta_proto_msgTypes[3].OneofWrappers = []any{
+	file_types_proto_init()
+	file_bq_meta_proto_msgTypes[3].OneofWrappers = []any{
 		(*BQTable_TimePartitioning)(nil),
 		(*BQTable_RangePartitioning)(nil),
 	}
@@ -718,17 +718,17 @@ func file_proto_bq_meta_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_bq_meta_proto_rawDesc), len(file_proto_bq_meta_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_bq_meta_proto_rawDesc), len(file_bq_meta_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_bq_meta_proto_goTypes,
-		DependencyIndexes: file_proto_bq_meta_proto_depIdxs,
-		MessageInfos:      file_proto_bq_meta_proto_msgTypes,
+		GoTypes:           file_bq_meta_proto_goTypes,
+		DependencyIndexes: file_bq_meta_proto_depIdxs,
+		MessageInfos:      file_bq_meta_proto_msgTypes,
 	}.Build()
-	File_proto_bq_meta_proto = out.File
-	file_proto_bq_meta_proto_goTypes = nil
-	file_proto_bq_meta_proto_depIdxs = nil
+	File_bq_meta_proto = out.File
+	file_bq_meta_proto_goTypes = nil
+	file_bq_meta_proto_depIdxs = nil
 }

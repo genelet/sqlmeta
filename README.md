@@ -280,11 +280,12 @@ You can edit this file directly and reload it to drive migrations.
 
 ## Development
 
-If you modify the `.proto` files, you must regenerate the Go code:
+If you modify the `.proto` files, you must regenerate the Go code. The output location is fixed to `xmeta/`.
 
 ```bash
-# From the project root
-protoc -I=. --go_out=xmeta --go_opt=paths=source_relative proto/*.proto
+# From proto/
+cd /home/peter/Workspace/sqlmeta/proto
+protoc -I=. --go_out=../xmeta --go_opt=paths=source_relative *.proto
 ```
 
 Ensure you have the Protobuf compiler and Go plugins installed.

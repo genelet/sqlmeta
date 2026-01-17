@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.31.1
-// source: proto/pg_meta.proto
+// source: pg_meta.proto
 
 package xmeta
 
@@ -42,7 +42,7 @@ type PGColumn struct {
 
 func (x *PGColumn) Reset() {
 	*x = PGColumn{}
-	mi := &file_proto_pg_meta_proto_msgTypes[0]
+	mi := &file_pg_meta_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -54,7 +54,7 @@ func (x *PGColumn) String() string {
 func (*PGColumn) ProtoMessage() {}
 
 func (x *PGColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[0]
+	mi := &file_pg_meta_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -67,7 +67,7 @@ func (x *PGColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGColumn.ProtoReflect.Descriptor instead.
 func (*PGColumn) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{0}
+	return file_pg_meta_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PGColumn) GetName() string {
@@ -173,7 +173,7 @@ type PGIndex struct {
 
 func (x *PGIndex) Reset() {
 	*x = PGIndex{}
-	mi := &file_proto_pg_meta_proto_msgTypes[1]
+	mi := &file_pg_meta_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -185,7 +185,7 @@ func (x *PGIndex) String() string {
 func (*PGIndex) ProtoMessage() {}
 
 func (x *PGIndex) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[1]
+	mi := &file_pg_meta_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -198,7 +198,7 @@ func (x *PGIndex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGIndex.ProtoReflect.Descriptor instead.
 func (*PGIndex) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{1}
+	return file_pg_meta_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PGIndex) GetName() string {
@@ -290,7 +290,7 @@ type PGForeignKey struct {
 
 func (x *PGForeignKey) Reset() {
 	*x = PGForeignKey{}
-	mi := &file_proto_pg_meta_proto_msgTypes[2]
+	mi := &file_pg_meta_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -302,7 +302,7 @@ func (x *PGForeignKey) String() string {
 func (*PGForeignKey) ProtoMessage() {}
 
 func (x *PGForeignKey) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[2]
+	mi := &file_pg_meta_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,7 +315,7 @@ func (x *PGForeignKey) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGForeignKey.ProtoReflect.Descriptor instead.
 func (*PGForeignKey) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{2}
+	return file_pg_meta_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PGForeignKey) GetName() string {
@@ -405,7 +405,7 @@ type PGConstraint struct {
 
 func (x *PGConstraint) Reset() {
 	*x = PGConstraint{}
-	mi := &file_proto_pg_meta_proto_msgTypes[3]
+	mi := &file_pg_meta_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +417,7 @@ func (x *PGConstraint) String() string {
 func (*PGConstraint) ProtoMessage() {}
 
 func (x *PGConstraint) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[3]
+	mi := &file_pg_meta_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,7 +430,7 @@ func (x *PGConstraint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGConstraint.ProtoReflect.Descriptor instead.
 func (*PGConstraint) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{3}
+	return file_pg_meta_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *PGConstraint) GetName() string {
@@ -510,7 +510,7 @@ type PGSequence struct {
 
 func (x *PGSequence) Reset() {
 	*x = PGSequence{}
-	mi := &file_proto_pg_meta_proto_msgTypes[4]
+	mi := &file_pg_meta_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -522,7 +522,7 @@ func (x *PGSequence) String() string {
 func (*PGSequence) ProtoMessage() {}
 
 func (x *PGSequence) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[4]
+	mi := &file_pg_meta_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -535,7 +535,7 @@ func (x *PGSequence) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGSequence.ProtoReflect.Descriptor instead.
 func (*PGSequence) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{4}
+	return file_pg_meta_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PGSequence) GetName() *ObjectName {
@@ -645,7 +645,7 @@ type PGTable struct {
 
 func (x *PGTable) Reset() {
 	*x = PGTable{}
-	mi := &file_proto_pg_meta_proto_msgTypes[5]
+	mi := &file_pg_meta_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -657,7 +657,7 @@ func (x *PGTable) String() string {
 func (*PGTable) ProtoMessage() {}
 
 func (x *PGTable) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[5]
+	mi := &file_pg_meta_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -670,7 +670,7 @@ func (x *PGTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGTable.ProtoReflect.Descriptor instead.
 func (*PGTable) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{5}
+	return file_pg_meta_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PGTable) GetName() *ObjectName {
@@ -786,7 +786,7 @@ type PGView struct {
 
 func (x *PGView) Reset() {
 	*x = PGView{}
-	mi := &file_proto_pg_meta_proto_msgTypes[6]
+	mi := &file_pg_meta_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +798,7 @@ func (x *PGView) String() string {
 func (*PGView) ProtoMessage() {}
 
 func (x *PGView) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[6]
+	mi := &file_pg_meta_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,7 +811,7 @@ func (x *PGView) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGView.ProtoReflect.Descriptor instead.
 func (*PGView) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{6}
+	return file_pg_meta_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PGView) GetName() *ObjectName {
@@ -872,7 +872,7 @@ type PGSchema struct {
 
 func (x *PGSchema) Reset() {
 	*x = PGSchema{}
-	mi := &file_proto_pg_meta_proto_msgTypes[7]
+	mi := &file_pg_meta_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -884,7 +884,7 @@ func (x *PGSchema) String() string {
 func (*PGSchema) ProtoMessage() {}
 
 func (x *PGSchema) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[7]
+	mi := &file_pg_meta_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -897,7 +897,7 @@ func (x *PGSchema) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGSchema.ProtoReflect.Descriptor instead.
 func (*PGSchema) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{7}
+	return file_pg_meta_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PGSchema) GetName() string {
@@ -962,7 +962,7 @@ type PGDatabase struct {
 
 func (x *PGDatabase) Reset() {
 	*x = PGDatabase{}
-	mi := &file_proto_pg_meta_proto_msgTypes[8]
+	mi := &file_pg_meta_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -974,7 +974,7 @@ func (x *PGDatabase) String() string {
 func (*PGDatabase) ProtoMessage() {}
 
 func (x *PGDatabase) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_pg_meta_proto_msgTypes[8]
+	mi := &file_pg_meta_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -987,7 +987,7 @@ func (x *PGDatabase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PGDatabase.ProtoReflect.Descriptor instead.
 func (*PGDatabase) Descriptor() ([]byte, []int) {
-	return file_proto_pg_meta_proto_rawDescGZIP(), []int{8}
+	return file_pg_meta_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PGDatabase) GetName() string {
@@ -1025,11 +1025,11 @@ func (x *PGDatabase) GetComment() string {
 	return ""
 }
 
-var File_proto_pg_meta_proto protoreflect.FileDescriptor
+var File_pg_meta_proto protoreflect.FileDescriptor
 
-const file_proto_pg_meta_proto_rawDesc = "" +
+const file_pg_meta_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/pg_meta.proto\x12\x06pgmeta\x1a\x11proto/types.proto\"\xcb\x03\n" +
+	"\rpg_meta.proto\x12\x06pgmeta\x1a\vtypes.proto\"\xcb\x03\n" +
 	"\bPGColumn\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
 	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12\x1e\n" +
@@ -1154,19 +1154,19 @@ const file_proto_pg_meta_proto_rawDesc = "" +
 	"\aComment\x18\x05 \x01(\tR\aCommentB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
-	file_proto_pg_meta_proto_rawDescOnce sync.Once
-	file_proto_pg_meta_proto_rawDescData []byte
+	file_pg_meta_proto_rawDescOnce sync.Once
+	file_pg_meta_proto_rawDescData []byte
 )
 
-func file_proto_pg_meta_proto_rawDescGZIP() []byte {
-	file_proto_pg_meta_proto_rawDescOnce.Do(func() {
-		file_proto_pg_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_pg_meta_proto_rawDesc), len(file_proto_pg_meta_proto_rawDesc)))
+func file_pg_meta_proto_rawDescGZIP() []byte {
+	file_pg_meta_proto_rawDescOnce.Do(func() {
+		file_pg_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_pg_meta_proto_rawDesc), len(file_pg_meta_proto_rawDesc)))
 	})
-	return file_proto_pg_meta_proto_rawDescData
+	return file_pg_meta_proto_rawDescData
 }
 
-var file_proto_pg_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
-var file_proto_pg_meta_proto_goTypes = []any{
+var file_pg_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_pg_meta_proto_goTypes = []any{
 	(*PGColumn)(nil),     // 0: pgmeta.PGColumn
 	(*PGIndex)(nil),      // 1: pgmeta.PGIndex
 	(*PGForeignKey)(nil), // 2: pgmeta.PGForeignKey
@@ -1179,7 +1179,7 @@ var file_proto_pg_meta_proto_goTypes = []any{
 	(*DataType)(nil),     // 9: sqlmeta.DataType
 	(*ObjectName)(nil),   // 10: sqlmeta.ObjectName
 }
-var file_proto_pg_meta_proto_depIdxs = []int32{
+var file_pg_meta_proto_depIdxs = []int32{
 	9,  // 0: pgmeta.PGColumn.DataType:type_name -> sqlmeta.DataType
 	10, // 1: pgmeta.PGIndex.TableName:type_name -> sqlmeta.ObjectName
 	10, // 2: pgmeta.PGForeignKey.TableName:type_name -> sqlmeta.ObjectName
@@ -1207,27 +1207,27 @@ var file_proto_pg_meta_proto_depIdxs = []int32{
 	0,  // [0:20] is the sub-list for field type_name
 }
 
-func init() { file_proto_pg_meta_proto_init() }
-func file_proto_pg_meta_proto_init() {
-	if File_proto_pg_meta_proto != nil {
+func init() { file_pg_meta_proto_init() }
+func file_pg_meta_proto_init() {
+	if File_pg_meta_proto != nil {
 		return
 	}
-	file_proto_types_proto_init()
+	file_types_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_pg_meta_proto_rawDesc), len(file_proto_pg_meta_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pg_meta_proto_rawDesc), len(file_pg_meta_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_pg_meta_proto_goTypes,
-		DependencyIndexes: file_proto_pg_meta_proto_depIdxs,
-		MessageInfos:      file_proto_pg_meta_proto_msgTypes,
+		GoTypes:           file_pg_meta_proto_goTypes,
+		DependencyIndexes: file_pg_meta_proto_depIdxs,
+		MessageInfos:      file_pg_meta_proto_msgTypes,
 	}.Build()
-	File_proto_pg_meta_proto = out.File
-	file_proto_pg_meta_proto_goTypes = nil
-	file_proto_pg_meta_proto_depIdxs = nil
+	File_pg_meta_proto = out.File
+	file_pg_meta_proto_goTypes = nil
+	file_pg_meta_proto_depIdxs = nil
 }

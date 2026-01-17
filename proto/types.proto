@@ -65,6 +65,8 @@ enum DataTypeSingle {
     Regclass = 7;
     UUID = 8;
     Year = 9;
+    JSON = 10;
+    XML = 11;
 }
 
 message BitType {
@@ -170,6 +172,19 @@ message UniqueTableConstraint {
     repeated string Columns = 2;
     string IndexName = 3;
     bool IsJustIndex = 4;
+    repeated string Include = 5;
+}
+
+message ExcludeConstraintElement {
+    google.protobuf.Any Expr = 1;
+    string Operator = 2;
+}
+
+message ExcludeTableConstraint {
+    string Method = 1;
+    repeated ExcludeConstraintElement Elements = 2;
+    repeated string Include = 3;
+    google.protobuf.Any Where = 4;
 }
 
 // Table-level FOREIGN KEY constraint
@@ -212,6 +227,8 @@ message DataType {
         TinyInt TinyIntData = 28;
         MediumInt MediumIntData = 29;
         DataTypeSingle YearData = 30;
+        DataTypeSingle JSONData = 31;
+        DataTypeSingle XMLData = 32;
     }
 }
 
@@ -244,6 +261,7 @@ message ColumnDef {
     repeated ColumnConstraint Constraints = 5;
     string Comment = 6;
     map<string, string> Options = 7;
+    bool WithOptions = 8;
 }
 
 message MetaTable {
@@ -280,6 +298,7 @@ message TableConstraintSpec {
         ReferentialTableConstraint ReferenceItem = 1;
         google.protobuf.Any CheckItem = 2;
         UniqueTableConstraint UniqueItem = 3;
+        ExcludeTableConstraint ExcludeItem = 4;
     }
 }
 

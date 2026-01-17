@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.31.1
-// source: proto/my_meta.proto
+// source: my_meta.proto
 
 package xmeta
 
@@ -41,7 +41,7 @@ type MYColumn struct {
 
 func (x *MYColumn) Reset() {
 	*x = MYColumn{}
-	mi := &file_proto_my_meta_proto_msgTypes[0]
+	mi := &file_my_meta_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -53,7 +53,7 @@ func (x *MYColumn) String() string {
 func (*MYColumn) ProtoMessage() {}
 
 func (x *MYColumn) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_my_meta_proto_msgTypes[0]
+	mi := &file_my_meta_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -66,7 +66,7 @@ func (x *MYColumn) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MYColumn.ProtoReflect.Descriptor instead.
 func (*MYColumn) Descriptor() ([]byte, []int) {
-	return file_proto_my_meta_proto_rawDescGZIP(), []int{0}
+	return file_my_meta_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *MYColumn) GetName() string {
@@ -162,7 +162,7 @@ type MYIndex struct {
 
 func (x *MYIndex) Reset() {
 	*x = MYIndex{}
-	mi := &file_proto_my_meta_proto_msgTypes[1]
+	mi := &file_my_meta_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -174,7 +174,7 @@ func (x *MYIndex) String() string {
 func (*MYIndex) ProtoMessage() {}
 
 func (x *MYIndex) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_my_meta_proto_msgTypes[1]
+	mi := &file_my_meta_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,7 +187,7 @@ func (x *MYIndex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MYIndex.ProtoReflect.Descriptor instead.
 func (*MYIndex) Descriptor() ([]byte, []int) {
-	return file_proto_my_meta_proto_rawDescGZIP(), []int{1}
+	return file_my_meta_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *MYIndex) GetName() string {
@@ -255,7 +255,7 @@ type MYForeignKey struct {
 
 func (x *MYForeignKey) Reset() {
 	*x = MYForeignKey{}
-	mi := &file_proto_my_meta_proto_msgTypes[2]
+	mi := &file_my_meta_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +267,7 @@ func (x *MYForeignKey) String() string {
 func (*MYForeignKey) ProtoMessage() {}
 
 func (x *MYForeignKey) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_my_meta_proto_msgTypes[2]
+	mi := &file_my_meta_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +280,7 @@ func (x *MYForeignKey) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MYForeignKey.ProtoReflect.Descriptor instead.
 func (*MYForeignKey) Descriptor() ([]byte, []int) {
-	return file_proto_my_meta_proto_rawDescGZIP(), []int{2}
+	return file_my_meta_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *MYForeignKey) GetName() string {
@@ -351,7 +351,7 @@ type MYTable struct {
 
 func (x *MYTable) Reset() {
 	*x = MYTable{}
-	mi := &file_proto_my_meta_proto_msgTypes[3]
+	mi := &file_my_meta_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -363,7 +363,7 @@ func (x *MYTable) String() string {
 func (*MYTable) ProtoMessage() {}
 
 func (x *MYTable) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_my_meta_proto_msgTypes[3]
+	mi := &file_my_meta_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -376,7 +376,7 @@ func (x *MYTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MYTable.ProtoReflect.Descriptor instead.
 func (*MYTable) Descriptor() ([]byte, []int) {
-	return file_proto_my_meta_proto_rawDescGZIP(), []int{3}
+	return file_my_meta_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *MYTable) GetName() *ObjectName {
@@ -460,7 +460,7 @@ type MYDatabase struct {
 
 func (x *MYDatabase) Reset() {
 	*x = MYDatabase{}
-	mi := &file_proto_my_meta_proto_msgTypes[4]
+	mi := &file_my_meta_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -472,7 +472,7 @@ func (x *MYDatabase) String() string {
 func (*MYDatabase) ProtoMessage() {}
 
 func (x *MYDatabase) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_my_meta_proto_msgTypes[4]
+	mi := &file_my_meta_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -485,7 +485,7 @@ func (x *MYDatabase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MYDatabase.ProtoReflect.Descriptor instead.
 func (*MYDatabase) Descriptor() ([]byte, []int) {
-	return file_proto_my_meta_proto_rawDescGZIP(), []int{4}
+	return file_my_meta_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *MYDatabase) GetName() string {
@@ -502,11 +502,11 @@ func (x *MYDatabase) GetTables() []*MYTable {
 	return nil
 }
 
-var File_proto_my_meta_proto protoreflect.FileDescriptor
+var File_my_meta_proto protoreflect.FileDescriptor
 
-const file_proto_my_meta_proto_rawDesc = "" +
+const file_my_meta_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/my_meta.proto\x12\x06mymeta\x1a\x11proto/types.proto\"\xf1\x02\n" +
+	"\rmy_meta.proto\x12\x06mymeta\x1a\vtypes.proto\"\xf1\x02\n" +
 	"\bMYColumn\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
 	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12\x1e\n" +
@@ -558,19 +558,19 @@ const file_proto_my_meta_proto_rawDesc = "" +
 	"\x06Tables\x18\x02 \x03(\v2\x0f.mymeta.MYTableR\x06TablesB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
-	file_proto_my_meta_proto_rawDescOnce sync.Once
-	file_proto_my_meta_proto_rawDescData []byte
+	file_my_meta_proto_rawDescOnce sync.Once
+	file_my_meta_proto_rawDescData []byte
 )
 
-func file_proto_my_meta_proto_rawDescGZIP() []byte {
-	file_proto_my_meta_proto_rawDescOnce.Do(func() {
-		file_proto_my_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_my_meta_proto_rawDesc), len(file_proto_my_meta_proto_rawDesc)))
+func file_my_meta_proto_rawDescGZIP() []byte {
+	file_my_meta_proto_rawDescOnce.Do(func() {
+		file_my_meta_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_my_meta_proto_rawDesc), len(file_my_meta_proto_rawDesc)))
 	})
-	return file_proto_my_meta_proto_rawDescData
+	return file_my_meta_proto_rawDescData
 }
 
-var file_proto_my_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_proto_my_meta_proto_goTypes = []any{
+var file_my_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_my_meta_proto_goTypes = []any{
 	(*MYColumn)(nil),     // 0: mymeta.MYColumn
 	(*MYIndex)(nil),      // 1: mymeta.MYIndex
 	(*MYForeignKey)(nil), // 2: mymeta.MYForeignKey
@@ -579,7 +579,7 @@ var file_proto_my_meta_proto_goTypes = []any{
 	(*DataType)(nil),     // 5: sqlmeta.DataType
 	(*ObjectName)(nil),   // 6: sqlmeta.ObjectName
 }
-var file_proto_my_meta_proto_depIdxs = []int32{
+var file_my_meta_proto_depIdxs = []int32{
 	5, // 0: mymeta.MYColumn.DataType:type_name -> sqlmeta.DataType
 	6, // 1: mymeta.MYIndex.TableName:type_name -> sqlmeta.ObjectName
 	6, // 2: mymeta.MYForeignKey.TableName:type_name -> sqlmeta.ObjectName
@@ -596,27 +596,27 @@ var file_proto_my_meta_proto_depIdxs = []int32{
 	0, // [0:9] is the sub-list for field type_name
 }
 
-func init() { file_proto_my_meta_proto_init() }
-func file_proto_my_meta_proto_init() {
-	if File_proto_my_meta_proto != nil {
+func init() { file_my_meta_proto_init() }
+func file_my_meta_proto_init() {
+	if File_my_meta_proto != nil {
 		return
 	}
-	file_proto_types_proto_init()
+	file_types_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_my_meta_proto_rawDesc), len(file_proto_my_meta_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_my_meta_proto_rawDesc), len(file_my_meta_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_my_meta_proto_goTypes,
-		DependencyIndexes: file_proto_my_meta_proto_depIdxs,
-		MessageInfos:      file_proto_my_meta_proto_msgTypes,
+		GoTypes:           file_my_meta_proto_goTypes,
+		DependencyIndexes: file_my_meta_proto_depIdxs,
+		MessageInfos:      file_my_meta_proto_msgTypes,
 	}.Build()
-	File_proto_my_meta_proto = out.File
-	file_proto_my_meta_proto_goTypes = nil
-	file_proto_my_meta_proto_depIdxs = nil
+	File_my_meta_proto = out.File
+	file_my_meta_proto_goTypes = nil
+	file_my_meta_proto_depIdxs = nil
 }

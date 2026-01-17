@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.31.1
-// source: proto/types.proto
+// source: types.proto
 
 package xmeta
 
@@ -35,21 +35,25 @@ const (
 	DataTypeSingle_Regclass              DataTypeSingle = 7
 	DataTypeSingle_UUID                  DataTypeSingle = 8
 	DataTypeSingle_Year                  DataTypeSingle = 9
+	DataTypeSingle_JSON                  DataTypeSingle = 10
+	DataTypeSingle_XML                   DataTypeSingle = 11
 )
 
 // Enum value maps for DataTypeSingle.
 var (
 	DataTypeSingle_name = map[int32]string{
-		0: "DataTypeSingleUnknown",
-		1: "Double",
-		2: "Boolean",
-		3: "Time",
-		4: "Date",
-		5: "Bytea",
-		6: "Text",
-		7: "Regclass",
-		8: "UUID",
-		9: "Year",
+		0:  "DataTypeSingleUnknown",
+		1:  "Double",
+		2:  "Boolean",
+		3:  "Time",
+		4:  "Date",
+		5:  "Bytea",
+		6:  "Text",
+		7:  "Regclass",
+		8:  "UUID",
+		9:  "Year",
+		10: "JSON",
+		11: "XML",
 	}
 	DataTypeSingle_value = map[string]int32{
 		"DataTypeSingleUnknown": 0,
@@ -62,6 +66,8 @@ var (
 		"Regclass":              7,
 		"UUID":                  8,
 		"Year":                  9,
+		"JSON":                  10,
+		"XML":                   11,
 	}
 )
 
@@ -76,11 +82,11 @@ func (x DataTypeSingle) String() string {
 }
 
 func (DataTypeSingle) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[0].Descriptor()
+	return file_types_proto_enumTypes[0].Descriptor()
 }
 
 func (DataTypeSingle) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[0]
+	return &file_types_proto_enumTypes[0]
 }
 
 func (x DataTypeSingle) Number() protoreflect.EnumNumber {
@@ -89,7 +95,7 @@ func (x DataTypeSingle) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DataTypeSingle.Descriptor instead.
 func (DataTypeSingle) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{0}
+	return file_types_proto_rawDescGZIP(), []int{0}
 }
 
 // Foreign Key referential actions (shared across dialects)
@@ -135,11 +141,11 @@ func (x ReferentialAction) String() string {
 }
 
 func (ReferentialAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[1].Descriptor()
+	return file_types_proto_enumTypes[1].Descriptor()
 }
 
 func (ReferentialAction) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[1]
+	return &file_types_proto_enumTypes[1]
 }
 
 func (x ReferentialAction) Number() protoreflect.EnumNumber {
@@ -148,7 +154,7 @@ func (x ReferentialAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ReferentialAction.Descriptor instead.
 func (ReferentialAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{1}
+	return file_types_proto_rawDescGZIP(), []int{1}
 }
 
 // Foreign Key match options (shared across dialects)
@@ -188,11 +194,11 @@ func (x MatchOption) String() string {
 }
 
 func (MatchOption) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[2].Descriptor()
+	return file_types_proto_enumTypes[2].Descriptor()
 }
 
 func (MatchOption) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[2]
+	return &file_types_proto_enumTypes[2]
 }
 
 func (x MatchOption) Number() protoreflect.EnumNumber {
@@ -201,7 +207,7 @@ func (x MatchOption) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use MatchOption.Descriptor instead.
 func (MatchOption) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{2}
+	return file_types_proto_rawDescGZIP(), []int{2}
 }
 
 // Null value indicator (for SQL expression tracking)
@@ -235,11 +241,11 @@ func (x NullValue) String() string {
 }
 
 func (NullValue) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[3].Descriptor()
+	return file_types_proto_enumTypes[3].Descriptor()
 }
 
 func (NullValue) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[3]
+	return &file_types_proto_enumTypes[3]
 }
 
 func (x NullValue) Number() protoreflect.EnumNumber {
@@ -248,7 +254,7 @@ func (x NullValue) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use NullValue.Descriptor instead.
 func (NullValue) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{3}
+	return file_types_proto_rawDescGZIP(), []int{3}
 }
 
 // Auto-increment indicator (MySQL AUTO_INCREMENT, etc.)
@@ -282,11 +288,11 @@ func (x AutoIncrement) String() string {
 }
 
 func (AutoIncrement) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[4].Descriptor()
+	return file_types_proto_enumTypes[4].Descriptor()
 }
 
 func (AutoIncrement) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[4]
+	return &file_types_proto_enumTypes[4]
 }
 
 func (x AutoIncrement) Number() protoreflect.EnumNumber {
@@ -295,7 +301,7 @@ func (x AutoIncrement) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AutoIncrement.Descriptor instead.
 func (AutoIncrement) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{4}
+	return file_types_proto_rawDescGZIP(), []int{4}
 }
 
 // NOT NULL constraint indicator
@@ -329,11 +335,11 @@ func (x NotNullColumnSpec) String() string {
 }
 
 func (NotNullColumnSpec) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_types_proto_enumTypes[5].Descriptor()
+	return file_types_proto_enumTypes[5].Descriptor()
 }
 
 func (NotNullColumnSpec) Type() protoreflect.EnumType {
-	return &file_proto_types_proto_enumTypes[5]
+	return &file_types_proto_enumTypes[5]
 }
 
 func (x NotNullColumnSpec) Number() protoreflect.EnumNumber {
@@ -342,7 +348,7 @@ func (x NotNullColumnSpec) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use NotNullColumnSpec.Descriptor instead.
 func (NotNullColumnSpec) EnumDescriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{5}
+	return file_types_proto_rawDescGZIP(), []int{5}
 }
 
 type ObjectName struct {
@@ -354,7 +360,7 @@ type ObjectName struct {
 
 func (x *ObjectName) Reset() {
 	*x = ObjectName{}
-	mi := &file_proto_types_proto_msgTypes[0]
+	mi := &file_types_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -366,7 +372,7 @@ func (x *ObjectName) String() string {
 func (*ObjectName) ProtoMessage() {}
 
 func (x *ObjectName) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[0]
+	mi := &file_types_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -379,7 +385,7 @@ func (x *ObjectName) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ObjectName.ProtoReflect.Descriptor instead.
 func (*ObjectName) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{0}
+	return file_types_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ObjectName) GetIdents() []string {
@@ -398,7 +404,7 @@ type BigInt struct {
 
 func (x *BigInt) Reset() {
 	*x = BigInt{}
-	mi := &file_proto_types_proto_msgTypes[1]
+	mi := &file_types_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -410,7 +416,7 @@ func (x *BigInt) String() string {
 func (*BigInt) ProtoMessage() {}
 
 func (x *BigInt) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[1]
+	mi := &file_types_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -423,7 +429,7 @@ func (x *BigInt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BigInt.ProtoReflect.Descriptor instead.
 func (*BigInt) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{1}
+	return file_types_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *BigInt) GetIsUnsigned() bool {
@@ -442,7 +448,7 @@ type SmallInt struct {
 
 func (x *SmallInt) Reset() {
 	*x = SmallInt{}
-	mi := &file_proto_types_proto_msgTypes[2]
+	mi := &file_types_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -454,7 +460,7 @@ func (x *SmallInt) String() string {
 func (*SmallInt) ProtoMessage() {}
 
 func (x *SmallInt) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[2]
+	mi := &file_types_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -467,7 +473,7 @@ func (x *SmallInt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SmallInt.ProtoReflect.Descriptor instead.
 func (*SmallInt) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{2}
+	return file_types_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SmallInt) GetIsUnsigned() bool {
@@ -486,7 +492,7 @@ type Int struct {
 
 func (x *Int) Reset() {
 	*x = Int{}
-	mi := &file_proto_types_proto_msgTypes[3]
+	mi := &file_types_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -498,7 +504,7 @@ func (x *Int) String() string {
 func (*Int) ProtoMessage() {}
 
 func (x *Int) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[3]
+	mi := &file_types_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -511,7 +517,7 @@ func (x *Int) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Int.ProtoReflect.Descriptor instead.
 func (*Int) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{3}
+	return file_types_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Int) GetIsUnsigned() bool {
@@ -530,7 +536,7 @@ type TinyInt struct {
 
 func (x *TinyInt) Reset() {
 	*x = TinyInt{}
-	mi := &file_proto_types_proto_msgTypes[4]
+	mi := &file_types_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -542,7 +548,7 @@ func (x *TinyInt) String() string {
 func (*TinyInt) ProtoMessage() {}
 
 func (x *TinyInt) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[4]
+	mi := &file_types_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -555,7 +561,7 @@ func (x *TinyInt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TinyInt.ProtoReflect.Descriptor instead.
 func (*TinyInt) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{4}
+	return file_types_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TinyInt) GetIsUnsigned() bool {
@@ -574,7 +580,7 @@ type MediumInt struct {
 
 func (x *MediumInt) Reset() {
 	*x = MediumInt{}
-	mi := &file_proto_types_proto_msgTypes[5]
+	mi := &file_types_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -586,7 +592,7 @@ func (x *MediumInt) String() string {
 func (*MediumInt) ProtoMessage() {}
 
 func (x *MediumInt) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[5]
+	mi := &file_types_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -599,7 +605,7 @@ func (x *MediumInt) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MediumInt.ProtoReflect.Descriptor instead.
 func (*MediumInt) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{5}
+	return file_types_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *MediumInt) GetIsUnsigned() bool {
@@ -618,7 +624,7 @@ type Real struct {
 
 func (x *Real) Reset() {
 	*x = Real{}
-	mi := &file_proto_types_proto_msgTypes[6]
+	mi := &file_types_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -630,7 +636,7 @@ func (x *Real) String() string {
 func (*Real) ProtoMessage() {}
 
 func (x *Real) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[6]
+	mi := &file_types_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -643,7 +649,7 @@ func (x *Real) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Real.ProtoReflect.Descriptor instead.
 func (*Real) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{6}
+	return file_types_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Real) GetIsUnsigned() bool {
@@ -663,7 +669,7 @@ type Float struct {
 
 func (x *Float) Reset() {
 	*x = Float{}
-	mi := &file_proto_types_proto_msgTypes[7]
+	mi := &file_types_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +681,7 @@ func (x *Float) String() string {
 func (*Float) ProtoMessage() {}
 
 func (x *Float) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[7]
+	mi := &file_types_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +694,7 @@ func (x *Float) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Float.ProtoReflect.Descriptor instead.
 func (*Float) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{7}
+	return file_types_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Float) GetSize() uint32 {
@@ -716,7 +722,7 @@ type Decimal struct {
 
 func (x *Decimal) Reset() {
 	*x = Decimal{}
-	mi := &file_proto_types_proto_msgTypes[8]
+	mi := &file_types_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -728,7 +734,7 @@ func (x *Decimal) String() string {
 func (*Decimal) ProtoMessage() {}
 
 func (x *Decimal) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[8]
+	mi := &file_types_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +747,7 @@ func (x *Decimal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Decimal.ProtoReflect.Descriptor instead.
 func (*Decimal) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{8}
+	return file_types_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Decimal) GetPrecision() uint32 {
@@ -774,7 +780,7 @@ type CharType struct {
 
 func (x *CharType) Reset() {
 	*x = CharType{}
-	mi := &file_proto_types_proto_msgTypes[9]
+	mi := &file_types_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -786,7 +792,7 @@ func (x *CharType) String() string {
 func (*CharType) ProtoMessage() {}
 
 func (x *CharType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[9]
+	mi := &file_types_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -799,7 +805,7 @@ func (x *CharType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CharType.ProtoReflect.Descriptor instead.
 func (*CharType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{9}
+	return file_types_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CharType) GetSize() uint32 {
@@ -818,7 +824,7 @@ type VarcharType struct {
 
 func (x *VarcharType) Reset() {
 	*x = VarcharType{}
-	mi := &file_proto_types_proto_msgTypes[10]
+	mi := &file_types_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -830,7 +836,7 @@ func (x *VarcharType) String() string {
 func (*VarcharType) ProtoMessage() {}
 
 func (x *VarcharType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[10]
+	mi := &file_types_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -843,7 +849,7 @@ func (x *VarcharType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VarcharType.ProtoReflect.Descriptor instead.
 func (*VarcharType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{10}
+	return file_types_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *VarcharType) GetSize() uint32 {
@@ -862,7 +868,7 @@ type Timestamp struct {
 
 func (x *Timestamp) Reset() {
 	*x = Timestamp{}
-	mi := &file_proto_types_proto_msgTypes[11]
+	mi := &file_types_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -874,7 +880,7 @@ func (x *Timestamp) String() string {
 func (*Timestamp) ProtoMessage() {}
 
 func (x *Timestamp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[11]
+	mi := &file_types_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -887,7 +893,7 @@ func (x *Timestamp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Timestamp.ProtoReflect.Descriptor instead.
 func (*Timestamp) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{11}
+	return file_types_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Timestamp) GetWithTimeZone() bool {
@@ -907,7 +913,7 @@ type BitType struct {
 
 func (x *BitType) Reset() {
 	*x = BitType{}
-	mi := &file_proto_types_proto_msgTypes[12]
+	mi := &file_types_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -919,7 +925,7 @@ func (x *BitType) String() string {
 func (*BitType) ProtoMessage() {}
 
 func (x *BitType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[12]
+	mi := &file_types_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -932,7 +938,7 @@ func (x *BitType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BitType.ProtoReflect.Descriptor instead.
 func (*BitType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{12}
+	return file_types_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *BitType) GetSize() uint32 {
@@ -958,7 +964,7 @@ type DoubleType struct {
 
 func (x *DoubleType) Reset() {
 	*x = DoubleType{}
-	mi := &file_proto_types_proto_msgTypes[13]
+	mi := &file_types_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -970,7 +976,7 @@ func (x *DoubleType) String() string {
 func (*DoubleType) ProtoMessage() {}
 
 func (x *DoubleType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[13]
+	mi := &file_types_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -983,7 +989,7 @@ func (x *DoubleType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DoubleType.ProtoReflect.Descriptor instead.
 func (*DoubleType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{13}
+	return file_types_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DoubleType) GetIsDoublePrecision() bool {
@@ -1003,7 +1009,7 @@ type CollateType struct {
 
 func (x *CollateType) Reset() {
 	*x = CollateType{}
-	mi := &file_proto_types_proto_msgTypes[14]
+	mi := &file_types_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1015,7 +1021,7 @@ func (x *CollateType) String() string {
 func (*CollateType) ProtoMessage() {}
 
 func (x *CollateType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[14]
+	mi := &file_types_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1028,7 +1034,7 @@ func (x *CollateType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CollateType.ProtoReflect.Descriptor instead.
 func (*CollateType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{14}
+	return file_types_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CollateType) GetType() *DataType {
@@ -1054,7 +1060,7 @@ type StructData struct {
 
 func (x *StructData) Reset() {
 	*x = StructData{}
-	mi := &file_proto_types_proto_msgTypes[15]
+	mi := &file_types_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1066,7 +1072,7 @@ func (x *StructData) String() string {
 func (*StructData) ProtoMessage() {}
 
 func (x *StructData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[15]
+	mi := &file_types_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1079,7 +1085,7 @@ func (x *StructData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StructData.ProtoReflect.Descriptor instead.
 func (*StructData) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{15}
+	return file_types_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *StructData) GetFields() []*ColumnDef {
@@ -1098,7 +1104,7 @@ type ArrayData struct {
 
 func (x *ArrayData) Reset() {
 	*x = ArrayData{}
-	mi := &file_proto_types_proto_msgTypes[16]
+	mi := &file_types_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1110,7 +1116,7 @@ func (x *ArrayData) String() string {
 func (*ArrayData) ProtoMessage() {}
 
 func (x *ArrayData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[16]
+	mi := &file_types_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1123,7 +1129,7 @@ func (x *ArrayData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ArrayData.ProtoReflect.Descriptor instead.
 func (*ArrayData) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{16}
+	return file_types_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ArrayData) GetType() *DataType {
@@ -1143,7 +1149,7 @@ type EnumType struct {
 
 func (x *EnumType) Reset() {
 	*x = EnumType{}
-	mi := &file_proto_types_proto_msgTypes[17]
+	mi := &file_types_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1155,7 +1161,7 @@ func (x *EnumType) String() string {
 func (*EnumType) ProtoMessage() {}
 
 func (x *EnumType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[17]
+	mi := &file_types_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1168,7 +1174,7 @@ func (x *EnumType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnumType.ProtoReflect.Descriptor instead.
 func (*EnumType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{17}
+	return file_types_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *EnumType) GetValues() []string {
@@ -1188,7 +1194,7 @@ type SetType struct {
 
 func (x *SetType) Reset() {
 	*x = SetType{}
-	mi := &file_proto_types_proto_msgTypes[18]
+	mi := &file_types_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1200,7 +1206,7 @@ func (x *SetType) String() string {
 func (*SetType) ProtoMessage() {}
 
 func (x *SetType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[18]
+	mi := &file_types_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1213,7 +1219,7 @@ func (x *SetType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetType.ProtoReflect.Descriptor instead.
 func (*SetType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{18}
+	return file_types_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SetType) GetValues() []string {
@@ -1233,7 +1239,7 @@ type UniqueColumnSpec struct {
 
 func (x *UniqueColumnSpec) Reset() {
 	*x = UniqueColumnSpec{}
-	mi := &file_proto_types_proto_msgTypes[19]
+	mi := &file_types_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1245,7 +1251,7 @@ func (x *UniqueColumnSpec) String() string {
 func (*UniqueColumnSpec) ProtoMessage() {}
 
 func (x *UniqueColumnSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[19]
+	mi := &file_types_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1258,7 +1264,7 @@ func (x *UniqueColumnSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UniqueColumnSpec.ProtoReflect.Descriptor instead.
 func (*UniqueColumnSpec) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{19}
+	return file_types_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UniqueColumnSpec) GetIsPrimaryKey() bool {
@@ -1279,7 +1285,7 @@ type ReferenceKeyExpr struct {
 
 func (x *ReferenceKeyExpr) Reset() {
 	*x = ReferenceKeyExpr{}
-	mi := &file_proto_types_proto_msgTypes[20]
+	mi := &file_types_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1291,7 +1297,7 @@ func (x *ReferenceKeyExpr) String() string {
 func (*ReferenceKeyExpr) ProtoMessage() {}
 
 func (x *ReferenceKeyExpr) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[20]
+	mi := &file_types_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1304,7 +1310,7 @@ func (x *ReferenceKeyExpr) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReferenceKeyExpr.ProtoReflect.Descriptor instead.
 func (*ReferenceKeyExpr) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{20}
+	return file_types_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ReferenceKeyExpr) GetTableName() string {
@@ -1337,7 +1343,7 @@ type ReferencesColumnSpec struct {
 
 func (x *ReferencesColumnSpec) Reset() {
 	*x = ReferencesColumnSpec{}
-	mi := &file_proto_types_proto_msgTypes[21]
+	mi := &file_types_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1349,7 +1355,7 @@ func (x *ReferencesColumnSpec) String() string {
 func (*ReferencesColumnSpec) ProtoMessage() {}
 
 func (x *ReferencesColumnSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[21]
+	mi := &file_types_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1362,7 +1368,7 @@ func (x *ReferencesColumnSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReferencesColumnSpec.ProtoReflect.Descriptor instead.
 func (*ReferencesColumnSpec) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{21}
+	return file_types_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ReferencesColumnSpec) GetTableName() *ObjectName {
@@ -1421,13 +1427,14 @@ type UniqueTableConstraint struct {
 	Columns       []string               `protobuf:"bytes,2,rep,name=Columns,proto3" json:"Columns,omitempty"`
 	IndexName     string                 `protobuf:"bytes,3,opt,name=IndexName,proto3" json:"IndexName,omitempty"`
 	IsJustIndex   bool                   `protobuf:"varint,4,opt,name=IsJustIndex,proto3" json:"IsJustIndex,omitempty"`
+	Include       []string               `protobuf:"bytes,5,rep,name=Include,proto3" json:"Include,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UniqueTableConstraint) Reset() {
 	*x = UniqueTableConstraint{}
-	mi := &file_proto_types_proto_msgTypes[22]
+	mi := &file_types_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1439,7 +1446,7 @@ func (x *UniqueTableConstraint) String() string {
 func (*UniqueTableConstraint) ProtoMessage() {}
 
 func (x *UniqueTableConstraint) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[22]
+	mi := &file_types_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1452,7 +1459,7 @@ func (x *UniqueTableConstraint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UniqueTableConstraint.ProtoReflect.Descriptor instead.
 func (*UniqueTableConstraint) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{22}
+	return file_types_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UniqueTableConstraint) GetIsPrimary() bool {
@@ -1483,6 +1490,133 @@ func (x *UniqueTableConstraint) GetIsJustIndex() bool {
 	return false
 }
 
+func (x *UniqueTableConstraint) GetInclude() []string {
+	if x != nil {
+		return x.Include
+	}
+	return nil
+}
+
+type ExcludeConstraintElement struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Expr          *anypb.Any             `protobuf:"bytes,1,opt,name=Expr,proto3" json:"Expr,omitempty"`
+	Operator      string                 `protobuf:"bytes,2,opt,name=Operator,proto3" json:"Operator,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExcludeConstraintElement) Reset() {
+	*x = ExcludeConstraintElement{}
+	mi := &file_types_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExcludeConstraintElement) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExcludeConstraintElement) ProtoMessage() {}
+
+func (x *ExcludeConstraintElement) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExcludeConstraintElement.ProtoReflect.Descriptor instead.
+func (*ExcludeConstraintElement) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ExcludeConstraintElement) GetExpr() *anypb.Any {
+	if x != nil {
+		return x.Expr
+	}
+	return nil
+}
+
+func (x *ExcludeConstraintElement) GetOperator() string {
+	if x != nil {
+		return x.Operator
+	}
+	return ""
+}
+
+type ExcludeTableConstraint struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Method        string                      `protobuf:"bytes,1,opt,name=Method,proto3" json:"Method,omitempty"`
+	Elements      []*ExcludeConstraintElement `protobuf:"bytes,2,rep,name=Elements,proto3" json:"Elements,omitempty"`
+	Include       []string                    `protobuf:"bytes,3,rep,name=Include,proto3" json:"Include,omitempty"`
+	Where         *anypb.Any                  `protobuf:"bytes,4,opt,name=Where,proto3" json:"Where,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExcludeTableConstraint) Reset() {
+	*x = ExcludeTableConstraint{}
+	mi := &file_types_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExcludeTableConstraint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExcludeTableConstraint) ProtoMessage() {}
+
+func (x *ExcludeTableConstraint) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExcludeTableConstraint.ProtoReflect.Descriptor instead.
+func (*ExcludeTableConstraint) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ExcludeTableConstraint) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *ExcludeTableConstraint) GetElements() []*ExcludeConstraintElement {
+	if x != nil {
+		return x.Elements
+	}
+	return nil
+}
+
+func (x *ExcludeTableConstraint) GetInclude() []string {
+	if x != nil {
+		return x.Include
+	}
+	return nil
+}
+
+func (x *ExcludeTableConstraint) GetWhere() *anypb.Any {
+	if x != nil {
+		return x.Where
+	}
+	return nil
+}
+
 // Table-level FOREIGN KEY constraint
 type ReferentialTableConstraint struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
@@ -1499,7 +1633,7 @@ type ReferentialTableConstraint struct {
 
 func (x *ReferentialTableConstraint) Reset() {
 	*x = ReferentialTableConstraint{}
-	mi := &file_proto_types_proto_msgTypes[23]
+	mi := &file_types_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1511,7 +1645,7 @@ func (x *ReferentialTableConstraint) String() string {
 func (*ReferentialTableConstraint) ProtoMessage() {}
 
 func (x *ReferentialTableConstraint) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[23]
+	mi := &file_types_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1524,7 +1658,7 @@ func (x *ReferentialTableConstraint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReferentialTableConstraint.ProtoReflect.Descriptor instead.
 func (*ReferentialTableConstraint) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{23}
+	return file_types_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ReferentialTableConstraint) GetColumns() []string {
@@ -1607,6 +1741,8 @@ type DataType struct {
 	//	*DataType_TinyIntData
 	//	*DataType_MediumIntData
 	//	*DataType_YearData
+	//	*DataType_JSONData
+	//	*DataType_XMLData
 	TypeClause    isDataType_TypeClause `protobuf_oneof:"TypeClause"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1614,7 +1750,7 @@ type DataType struct {
 
 func (x *DataType) Reset() {
 	*x = DataType{}
-	mi := &file_proto_types_proto_msgTypes[24]
+	mi := &file_types_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1626,7 +1762,7 @@ func (x *DataType) String() string {
 func (*DataType) ProtoMessage() {}
 
 func (x *DataType) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[24]
+	mi := &file_types_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1639,7 +1775,7 @@ func (x *DataType) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DataType.ProtoReflect.Descriptor instead.
 func (*DataType) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{24}
+	return file_types_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *DataType) GetTypeClause() isDataType_TypeClause {
@@ -1892,6 +2028,24 @@ func (x *DataType) GetYearData() DataTypeSingle {
 	return DataTypeSingle_DataTypeSingleUnknown
 }
 
+func (x *DataType) GetJSONData() DataTypeSingle {
+	if x != nil {
+		if x, ok := x.TypeClause.(*DataType_JSONData); ok {
+			return x.JSONData
+		}
+	}
+	return DataTypeSingle_DataTypeSingleUnknown
+}
+
+func (x *DataType) GetXMLData() DataTypeSingle {
+	if x != nil {
+		if x, ok := x.TypeClause.(*DataType_XMLData); ok {
+			return x.XMLData
+		}
+	}
+	return DataTypeSingle_DataTypeSingleUnknown
+}
+
 type isDataType_TypeClause interface {
 	isDataType_TypeClause()
 }
@@ -2004,6 +2158,14 @@ type DataType_YearData struct {
 	YearData DataTypeSingle `protobuf:"varint,30,opt,name=YearData,proto3,enum=sqlmeta.DataTypeSingle,oneof"`
 }
 
+type DataType_JSONData struct {
+	JSONData DataTypeSingle `protobuf:"varint,31,opt,name=JSONData,proto3,enum=sqlmeta.DataTypeSingle,oneof"`
+}
+
+type DataType_XMLData struct {
+	XMLData DataTypeSingle `protobuf:"varint,32,opt,name=XMLData,proto3,enum=sqlmeta.DataTypeSingle,oneof"`
+}
+
 func (*DataType_IntData) isDataType_TypeClause() {}
 
 func (*DataType_SmallIntData) isDataType_TypeClause() {}
@@ -2058,6 +2220,10 @@ func (*DataType_MediumIntData) isDataType_TypeClause() {}
 
 func (*DataType_YearData) isDataType_TypeClause() {}
 
+func (*DataType_JSONData) isDataType_TypeClause() {}
+
+func (*DataType_XMLData) isDataType_TypeClause() {}
+
 type ColumnConstraintSpec struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ColumnConstraintSpecClause:
@@ -2073,7 +2239,7 @@ type ColumnConstraintSpec struct {
 
 func (x *ColumnConstraintSpec) Reset() {
 	*x = ColumnConstraintSpec{}
-	mi := &file_proto_types_proto_msgTypes[25]
+	mi := &file_types_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2085,7 +2251,7 @@ func (x *ColumnConstraintSpec) String() string {
 func (*ColumnConstraintSpec) ProtoMessage() {}
 
 func (x *ColumnConstraintSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[25]
+	mi := &file_types_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2098,7 +2264,7 @@ func (x *ColumnConstraintSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ColumnConstraintSpec.ProtoReflect.Descriptor instead.
 func (*ColumnConstraintSpec) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{25}
+	return file_types_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ColumnConstraintSpec) GetColumnConstraintSpecClause() isColumnConstraintSpec_ColumnConstraintSpecClause {
@@ -2183,7 +2349,7 @@ type ColumnConstraint struct {
 
 func (x *ColumnConstraint) Reset() {
 	*x = ColumnConstraint{}
-	mi := &file_proto_types_proto_msgTypes[26]
+	mi := &file_types_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2195,7 +2361,7 @@ func (x *ColumnConstraint) String() string {
 func (*ColumnConstraint) ProtoMessage() {}
 
 func (x *ColumnConstraint) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[26]
+	mi := &file_types_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2208,7 +2374,7 @@ func (x *ColumnConstraint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ColumnConstraint.ProtoReflect.Descriptor instead.
 func (*ColumnConstraint) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{26}
+	return file_types_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ColumnConstraint) GetName() string {
@@ -2241,13 +2407,14 @@ type ColumnDef struct {
 	Constraints   []*ColumnConstraint    `protobuf:"bytes,5,rep,name=Constraints,proto3" json:"Constraints,omitempty"`
 	Comment       string                 `protobuf:"bytes,6,opt,name=Comment,proto3" json:"Comment,omitempty"`
 	Options       map[string]string      `protobuf:"bytes,7,rep,name=Options,proto3" json:"Options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	WithOptions   bool                   `protobuf:"varint,8,opt,name=WithOptions,proto3" json:"WithOptions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ColumnDef) Reset() {
 	*x = ColumnDef{}
-	mi := &file_proto_types_proto_msgTypes[27]
+	mi := &file_types_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2259,7 +2426,7 @@ func (x *ColumnDef) String() string {
 func (*ColumnDef) ProtoMessage() {}
 
 func (x *ColumnDef) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[27]
+	mi := &file_types_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2272,7 +2439,7 @@ func (x *ColumnDef) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ColumnDef.ProtoReflect.Descriptor instead.
 func (*ColumnDef) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{27}
+	return file_types_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ColumnDef) GetName() string {
@@ -2324,6 +2491,13 @@ func (x *ColumnDef) GetOptions() map[string]string {
 	return nil
 }
 
+func (x *ColumnDef) GetWithOptions() bool {
+	if x != nil {
+		return x.WithOptions
+	}
+	return false
+}
+
 type MetaTable struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          *ObjectName            `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
@@ -2337,7 +2511,7 @@ type MetaTable struct {
 
 func (x *MetaTable) Reset() {
 	*x = MetaTable{}
-	mi := &file_proto_types_proto_msgTypes[28]
+	mi := &file_types_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2349,7 +2523,7 @@ func (x *MetaTable) String() string {
 func (*MetaTable) ProtoMessage() {}
 
 func (x *MetaTable) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[28]
+	mi := &file_types_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2362,7 +2536,7 @@ func (x *MetaTable) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetaTable.ProtoReflect.Descriptor instead.
 func (*MetaTable) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{28}
+	return file_types_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *MetaTable) GetName() *ObjectName {
@@ -2412,7 +2586,7 @@ type MetaView struct {
 
 func (x *MetaView) Reset() {
 	*x = MetaView{}
-	mi := &file_proto_types_proto_msgTypes[29]
+	mi := &file_types_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2424,7 +2598,7 @@ func (x *MetaView) String() string {
 func (*MetaView) ProtoMessage() {}
 
 func (x *MetaView) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[29]
+	mi := &file_types_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2437,7 +2611,7 @@ func (x *MetaView) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetaView.ProtoReflect.Descriptor instead.
 func (*MetaView) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{29}
+	return file_types_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *MetaView) GetName() *ObjectName {
@@ -2479,7 +2653,7 @@ type MetaSequence struct {
 
 func (x *MetaSequence) Reset() {
 	*x = MetaSequence{}
-	mi := &file_proto_types_proto_msgTypes[30]
+	mi := &file_types_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2491,7 +2665,7 @@ func (x *MetaSequence) String() string {
 func (*MetaSequence) ProtoMessage() {}
 
 func (x *MetaSequence) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[30]
+	mi := &file_types_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2504,7 +2678,7 @@ func (x *MetaSequence) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetaSequence.ProtoReflect.Descriptor instead.
 func (*MetaSequence) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{30}
+	return file_types_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *MetaSequence) GetName() *ObjectName {
@@ -2541,7 +2715,7 @@ type MetaDatabase struct {
 
 func (x *MetaDatabase) Reset() {
 	*x = MetaDatabase{}
-	mi := &file_proto_types_proto_msgTypes[31]
+	mi := &file_types_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2553,7 +2727,7 @@ func (x *MetaDatabase) String() string {
 func (*MetaDatabase) ProtoMessage() {}
 
 func (x *MetaDatabase) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[31]
+	mi := &file_types_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2566,7 +2740,7 @@ func (x *MetaDatabase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MetaDatabase.ProtoReflect.Descriptor instead.
 func (*MetaDatabase) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{31}
+	return file_types_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *MetaDatabase) GetName() string {
@@ -2611,6 +2785,7 @@ type TableConstraintSpec struct {
 	//	*TableConstraintSpec_ReferenceItem
 	//	*TableConstraintSpec_CheckItem
 	//	*TableConstraintSpec_UniqueItem
+	//	*TableConstraintSpec_ExcludeItem
 	TableConstraintSpecClause isTableConstraintSpec_TableConstraintSpecClause `protobuf_oneof:"TableConstraintSpecClause"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
@@ -2618,7 +2793,7 @@ type TableConstraintSpec struct {
 
 func (x *TableConstraintSpec) Reset() {
 	*x = TableConstraintSpec{}
-	mi := &file_proto_types_proto_msgTypes[32]
+	mi := &file_types_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2630,7 +2805,7 @@ func (x *TableConstraintSpec) String() string {
 func (*TableConstraintSpec) ProtoMessage() {}
 
 func (x *TableConstraintSpec) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[32]
+	mi := &file_types_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2643,7 +2818,7 @@ func (x *TableConstraintSpec) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TableConstraintSpec.ProtoReflect.Descriptor instead.
 func (*TableConstraintSpec) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{32}
+	return file_types_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *TableConstraintSpec) GetTableConstraintSpecClause() isTableConstraintSpec_TableConstraintSpecClause {
@@ -2680,6 +2855,15 @@ func (x *TableConstraintSpec) GetUniqueItem() *UniqueTableConstraint {
 	return nil
 }
 
+func (x *TableConstraintSpec) GetExcludeItem() *ExcludeTableConstraint {
+	if x != nil {
+		if x, ok := x.TableConstraintSpecClause.(*TableConstraintSpec_ExcludeItem); ok {
+			return x.ExcludeItem
+		}
+	}
+	return nil
+}
+
 type isTableConstraintSpec_TableConstraintSpecClause interface {
 	isTableConstraintSpec_TableConstraintSpecClause()
 }
@@ -2696,11 +2880,17 @@ type TableConstraintSpec_UniqueItem struct {
 	UniqueItem *UniqueTableConstraint `protobuf:"bytes,3,opt,name=UniqueItem,proto3,oneof"`
 }
 
+type TableConstraintSpec_ExcludeItem struct {
+	ExcludeItem *ExcludeTableConstraint `protobuf:"bytes,4,opt,name=ExcludeItem,proto3,oneof"`
+}
+
 func (*TableConstraintSpec_ReferenceItem) isTableConstraintSpec_TableConstraintSpecClause() {}
 
 func (*TableConstraintSpec_CheckItem) isTableConstraintSpec_TableConstraintSpecClause() {}
 
 func (*TableConstraintSpec_UniqueItem) isTableConstraintSpec_TableConstraintSpecClause() {}
+
+func (*TableConstraintSpec_ExcludeItem) isTableConstraintSpec_TableConstraintSpecClause() {}
 
 type TableConstraint struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2713,7 +2903,7 @@ type TableConstraint struct {
 
 func (x *TableConstraint) Reset() {
 	*x = TableConstraint{}
-	mi := &file_proto_types_proto_msgTypes[33]
+	mi := &file_types_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2725,7 +2915,7 @@ func (x *TableConstraint) String() string {
 func (*TableConstraint) ProtoMessage() {}
 
 func (x *TableConstraint) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[33]
+	mi := &file_types_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2738,7 +2928,7 @@ func (x *TableConstraint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TableConstraint.ProtoReflect.Descriptor instead.
 func (*TableConstraint) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{33}
+	return file_types_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *TableConstraint) GetName() string {
@@ -2775,7 +2965,7 @@ type TableElement struct {
 
 func (x *TableElement) Reset() {
 	*x = TableElement{}
-	mi := &file_proto_types_proto_msgTypes[34]
+	mi := &file_types_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2787,7 +2977,7 @@ func (x *TableElement) String() string {
 func (*TableElement) ProtoMessage() {}
 
 func (x *TableElement) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_types_proto_msgTypes[34]
+	mi := &file_types_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2800,7 +2990,7 @@ func (x *TableElement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TableElement.ProtoReflect.Descriptor instead.
 func (*TableElement) Descriptor() ([]byte, []int) {
-	return file_proto_types_proto_rawDescGZIP(), []int{34}
+	return file_types_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *TableElement) GetTableElementClause() isTableElement_TableElementClause {
@@ -2844,11 +3034,11 @@ func (*TableElement_ColumnDefElement) isTableElement_TableElementClause() {}
 
 func (*TableElement_TableConstraintElement) isTableElement_TableElementClause() {}
 
-var File_proto_types_proto protoreflect.FileDescriptor
+var File_types_proto protoreflect.FileDescriptor
 
-const file_proto_types_proto_rawDesc = "" +
+const file_types_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/types.proto\x12\asqlmeta\x1a\x19google/protobuf/any.proto\"$\n" +
+	"\vtypes.proto\x12\asqlmeta\x1a\x19google/protobuf/any.proto\"$\n" +
 	"\n" +
 	"ObjectName\x12\x16\n" +
 	"\x06Idents\x18\x01 \x03(\tR\x06Idents\"(\n" +
@@ -2925,12 +3115,21 @@ const file_proto_types_proto_rawDesc = "" +
 	"\n" +
 	"Deferrable\x18\x06 \x01(\bR\n" +
 	"Deferrable\x12,\n" +
-	"\x11InitiallyDeferred\x18\a \x01(\bR\x11InitiallyDeferred\"\x8f\x01\n" +
+	"\x11InitiallyDeferred\x18\a \x01(\bR\x11InitiallyDeferred\"\xa9\x01\n" +
 	"\x15UniqueTableConstraint\x12\x1c\n" +
 	"\tIsPrimary\x18\x01 \x01(\bR\tIsPrimary\x12\x18\n" +
 	"\aColumns\x18\x02 \x03(\tR\aColumns\x12\x1c\n" +
 	"\tIndexName\x18\x03 \x01(\tR\tIndexName\x12 \n" +
-	"\vIsJustIndex\x18\x04 \x01(\bR\vIsJustIndex\"\xd5\x02\n" +
+	"\vIsJustIndex\x18\x04 \x01(\bR\vIsJustIndex\x12\x18\n" +
+	"\aInclude\x18\x05 \x03(\tR\aInclude\"`\n" +
+	"\x18ExcludeConstraintElement\x12(\n" +
+	"\x04Expr\x18\x01 \x01(\v2\x14.google.protobuf.AnyR\x04Expr\x12\x1a\n" +
+	"\bOperator\x18\x02 \x01(\tR\bOperator\"\xb5\x01\n" +
+	"\x16ExcludeTableConstraint\x12\x16\n" +
+	"\x06Method\x18\x01 \x01(\tR\x06Method\x12=\n" +
+	"\bElements\x18\x02 \x03(\v2!.sqlmeta.ExcludeConstraintElementR\bElements\x12\x18\n" +
+	"\aInclude\x18\x03 \x03(\tR\aInclude\x12*\n" +
+	"\x05Where\x18\x04 \x01(\v2\x14.google.protobuf.AnyR\x05Where\"\xd5\x02\n" +
 	"\x1aReferentialTableConstraint\x12\x18\n" +
 	"\aColumns\x18\x01 \x03(\tR\aColumns\x123\n" +
 	"\aKeyExpr\x18\x02 \x01(\v2\x19.sqlmeta.ReferenceKeyExprR\aKeyExpr\x126\n" +
@@ -2940,7 +3139,7 @@ const file_proto_types_proto_rawDesc = "" +
 	"\n" +
 	"Deferrable\x18\x06 \x01(\bR\n" +
 	"Deferrable\x12,\n" +
-	"\x11InitiallyDeferred\x18\a \x01(\bR\x11InitiallyDeferred\"\xc2\v\n" +
+	"\x11InitiallyDeferred\x18\a \x01(\bR\x11InitiallyDeferred\"\xae\f\n" +
 	"\bDataType\x12(\n" +
 	"\aIntData\x18\x01 \x01(\v2\f.sqlmeta.IntH\x00R\aIntData\x127\n" +
 	"\fSmallIntData\x18\x02 \x01(\v2\x11.sqlmeta.SmallIntH\x00R\fSmallIntData\x121\n" +
@@ -2977,7 +3176,9 @@ const file_proto_types_proto_rawDesc = "" +
 	"\aSetData\x18\x1b \x01(\v2\x10.sqlmeta.SetTypeH\x00R\aSetData\x124\n" +
 	"\vTinyIntData\x18\x1c \x01(\v2\x10.sqlmeta.TinyIntH\x00R\vTinyIntData\x12:\n" +
 	"\rMediumIntData\x18\x1d \x01(\v2\x12.sqlmeta.MediumIntH\x00R\rMediumIntData\x125\n" +
-	"\bYearData\x18\x1e \x01(\x0e2\x17.sqlmeta.DataTypeSingleH\x00R\bYearDataB\f\n" +
+	"\bYearData\x18\x1e \x01(\x0e2\x17.sqlmeta.DataTypeSingleH\x00R\bYearData\x125\n" +
+	"\bJSONData\x18\x1f \x01(\x0e2\x17.sqlmeta.DataTypeSingleH\x00R\bJSONData\x123\n" +
+	"\aXMLData\x18  \x01(\x0e2\x17.sqlmeta.DataTypeSingleH\x00R\aXMLDataB\f\n" +
 	"\n" +
 	"TypeClause\"\xae\x02\n" +
 	"\x14ColumnConstraintSpec\x12;\n" +
@@ -2991,7 +3192,7 @@ const file_proto_types_proto_rawDesc = "" +
 	"\x10ColumnConstraint\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x121\n" +
 	"\x04Spec\x18\x02 \x01(\v2\x1d.sqlmeta.ColumnConstraintSpecR\x04Spec\x12 \n" +
-	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xfe\x02\n" +
+	"\vNotEnforced\x18\x03 \x01(\bR\vNotEnforced\"\xa0\x03\n" +
 	"\tColumnDef\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12-\n" +
 	"\bDataType\x18\x02 \x01(\v2\x11.sqlmeta.DataTypeR\bDataType\x12.\n" +
@@ -2999,7 +3200,8 @@ const file_proto_types_proto_rawDesc = "" +
 	"\aMyDecos\x18\x04 \x03(\x0e2\x16.sqlmeta.AutoIncrementR\aMyDecos\x12;\n" +
 	"\vConstraints\x18\x05 \x03(\v2\x19.sqlmeta.ColumnConstraintR\vConstraints\x12\x18\n" +
 	"\aComment\x18\x06 \x01(\tR\aComment\x129\n" +
-	"\aOptions\x18\a \x03(\v2\x1f.sqlmeta.ColumnDef.OptionsEntryR\aOptions\x1a:\n" +
+	"\aOptions\x18\a \x03(\v2\x1f.sqlmeta.ColumnDef.OptionsEntryR\aOptions\x12 \n" +
+	"\vWithOptions\x18\b \x01(\bR\vWithOptions\x1a:\n" +
 	"\fOptionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8c\x02\n" +
@@ -3037,13 +3239,14 @@ const file_proto_types_proto_rawDesc = "" +
 	"\aOptions\x18\x05 \x03(\v2\".sqlmeta.MetaDatabase.OptionsEntryR\aOptions\x1a:\n" +
 	"\fOptionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf7\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xbc\x02\n" +
 	"\x13TableConstraintSpec\x12K\n" +
 	"\rReferenceItem\x18\x01 \x01(\v2#.sqlmeta.ReferentialTableConstraintH\x00R\rReferenceItem\x124\n" +
 	"\tCheckItem\x18\x02 \x01(\v2\x14.google.protobuf.AnyH\x00R\tCheckItem\x12@\n" +
 	"\n" +
 	"UniqueItem\x18\x03 \x01(\v2\x1e.sqlmeta.UniqueTableConstraintH\x00R\n" +
-	"UniqueItemB\x1b\n" +
+	"UniqueItem\x12C\n" +
+	"\vExcludeItem\x18\x04 \x01(\v2\x1f.sqlmeta.ExcludeTableConstraintH\x00R\vExcludeItemB\x1b\n" +
 	"\x19TableConstraintSpecClause\"y\n" +
 	"\x0fTableConstraint\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x120\n" +
@@ -3052,7 +3255,7 @@ const file_proto_types_proto_rawDesc = "" +
 	"\fTableElement\x12@\n" +
 	"\x10ColumnDefElement\x18\x01 \x01(\v2\x12.sqlmeta.ColumnDefH\x00R\x10ColumnDefElement\x12R\n" +
 	"\x16TableConstraintElement\x18\x02 \x01(\v2\x18.sqlmeta.TableConstraintH\x00R\x16TableConstraintElementB\x14\n" +
-	"\x12TableElementClause*\x8f\x01\n" +
+	"\x12TableElementClause*\xa2\x01\n" +
 	"\x0eDataTypeSingle\x12\x19\n" +
 	"\x15DataTypeSingleUnknown\x10\x00\x12\n" +
 	"\n" +
@@ -3064,7 +3267,10 @@ const file_proto_types_proto_rawDesc = "" +
 	"\x04Text\x10\x06\x12\f\n" +
 	"\bRegclass\x10\a\x12\b\n" +
 	"\x04UUID\x10\b\x12\b\n" +
-	"\x04Year\x10\t*\xd2\x01\n" +
+	"\x04Year\x10\t\x12\b\n" +
+	"\x04JSON\x10\n" +
+	"\x12\a\n" +
+	"\x03XML\x10\v*\xd2\x01\n" +
 	"\x11ReferentialAction\x12\x1d\n" +
 	"\x19ReferentialAction_Unknown\x10\x00\x12\x1e\n" +
 	"\x1aReferentialAction_NoAction\x10\x01\x12\x1e\n" +
@@ -3088,20 +3294,20 @@ const file_proto_types_proto_rawDesc = "" +
 	"\x18NotNullColumnSpecConfirm\x10\x01B\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
-	file_proto_types_proto_rawDescOnce sync.Once
-	file_proto_types_proto_rawDescData []byte
+	file_types_proto_rawDescOnce sync.Once
+	file_types_proto_rawDescData []byte
 )
 
-func file_proto_types_proto_rawDescGZIP() []byte {
-	file_proto_types_proto_rawDescOnce.Do(func() {
-		file_proto_types_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_types_proto_rawDesc), len(file_proto_types_proto_rawDesc)))
+func file_types_proto_rawDescGZIP() []byte {
+	file_types_proto_rawDescOnce.Do(func() {
+		file_types_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)))
 	})
-	return file_proto_types_proto_rawDescData
+	return file_types_proto_rawDescData
 }
 
-var file_proto_types_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
-var file_proto_types_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
-var file_proto_types_proto_goTypes = []any{
+var file_types_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
+var file_types_proto_goTypes = []any{
 	(DataTypeSingle)(0),                // 0: sqlmeta.DataTypeSingle
 	(ReferentialAction)(0),             // 1: sqlmeta.ReferentialAction
 	(MatchOption)(0),                   // 2: sqlmeta.MatchOption
@@ -3131,104 +3337,112 @@ var file_proto_types_proto_goTypes = []any{
 	(*ReferenceKeyExpr)(nil),           // 26: sqlmeta.ReferenceKeyExpr
 	(*ReferencesColumnSpec)(nil),       // 27: sqlmeta.ReferencesColumnSpec
 	(*UniqueTableConstraint)(nil),      // 28: sqlmeta.UniqueTableConstraint
-	(*ReferentialTableConstraint)(nil), // 29: sqlmeta.ReferentialTableConstraint
-	(*DataType)(nil),                   // 30: sqlmeta.DataType
-	(*ColumnConstraintSpec)(nil),       // 31: sqlmeta.ColumnConstraintSpec
-	(*ColumnConstraint)(nil),           // 32: sqlmeta.ColumnConstraint
-	(*ColumnDef)(nil),                  // 33: sqlmeta.ColumnDef
-	(*MetaTable)(nil),                  // 34: sqlmeta.MetaTable
-	(*MetaView)(nil),                   // 35: sqlmeta.MetaView
-	(*MetaSequence)(nil),               // 36: sqlmeta.MetaSequence
-	(*MetaDatabase)(nil),               // 37: sqlmeta.MetaDatabase
-	(*TableConstraintSpec)(nil),        // 38: sqlmeta.TableConstraintSpec
-	(*TableConstraint)(nil),            // 39: sqlmeta.TableConstraint
-	(*TableElement)(nil),               // 40: sqlmeta.TableElement
-	nil,                                // 41: sqlmeta.ColumnDef.OptionsEntry
-	nil,                                // 42: sqlmeta.MetaTable.OptionsEntry
-	nil,                                // 43: sqlmeta.MetaView.OptionsEntry
-	nil,                                // 44: sqlmeta.MetaSequence.OptionsEntry
-	nil,                                // 45: sqlmeta.MetaDatabase.OptionsEntry
-	(*anypb.Any)(nil),                  // 46: google.protobuf.Any
+	(*ExcludeConstraintElement)(nil),   // 29: sqlmeta.ExcludeConstraintElement
+	(*ExcludeTableConstraint)(nil),     // 30: sqlmeta.ExcludeTableConstraint
+	(*ReferentialTableConstraint)(nil), // 31: sqlmeta.ReferentialTableConstraint
+	(*DataType)(nil),                   // 32: sqlmeta.DataType
+	(*ColumnConstraintSpec)(nil),       // 33: sqlmeta.ColumnConstraintSpec
+	(*ColumnConstraint)(nil),           // 34: sqlmeta.ColumnConstraint
+	(*ColumnDef)(nil),                  // 35: sqlmeta.ColumnDef
+	(*MetaTable)(nil),                  // 36: sqlmeta.MetaTable
+	(*MetaView)(nil),                   // 37: sqlmeta.MetaView
+	(*MetaSequence)(nil),               // 38: sqlmeta.MetaSequence
+	(*MetaDatabase)(nil),               // 39: sqlmeta.MetaDatabase
+	(*TableConstraintSpec)(nil),        // 40: sqlmeta.TableConstraintSpec
+	(*TableConstraint)(nil),            // 41: sqlmeta.TableConstraint
+	(*TableElement)(nil),               // 42: sqlmeta.TableElement
+	nil,                                // 43: sqlmeta.ColumnDef.OptionsEntry
+	nil,                                // 44: sqlmeta.MetaTable.OptionsEntry
+	nil,                                // 45: sqlmeta.MetaView.OptionsEntry
+	nil,                                // 46: sqlmeta.MetaSequence.OptionsEntry
+	nil,                                // 47: sqlmeta.MetaDatabase.OptionsEntry
+	(*anypb.Any)(nil),                  // 48: google.protobuf.Any
 }
-var file_proto_types_proto_depIdxs = []int32{
-	30, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
-	33, // 1: sqlmeta.StructData.Fields:type_name -> sqlmeta.ColumnDef
-	30, // 2: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
+var file_types_proto_depIdxs = []int32{
+	32, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
+	35, // 1: sqlmeta.StructData.Fields:type_name -> sqlmeta.ColumnDef
+	32, // 2: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
 	6,  // 3: sqlmeta.ReferencesColumnSpec.TableName:type_name -> sqlmeta.ObjectName
 	1,  // 4: sqlmeta.ReferencesColumnSpec.OnDelete:type_name -> sqlmeta.ReferentialAction
 	1,  // 5: sqlmeta.ReferencesColumnSpec.OnUpdate:type_name -> sqlmeta.ReferentialAction
 	2,  // 6: sqlmeta.ReferencesColumnSpec.Match:type_name -> sqlmeta.MatchOption
-	26, // 7: sqlmeta.ReferentialTableConstraint.KeyExpr:type_name -> sqlmeta.ReferenceKeyExpr
-	1,  // 8: sqlmeta.ReferentialTableConstraint.OnDelete:type_name -> sqlmeta.ReferentialAction
-	1,  // 9: sqlmeta.ReferentialTableConstraint.OnUpdate:type_name -> sqlmeta.ReferentialAction
-	2,  // 10: sqlmeta.ReferentialTableConstraint.Match:type_name -> sqlmeta.MatchOption
-	9,  // 11: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
-	8,  // 12: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
-	7,  // 13: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
-	14, // 14: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
-	15, // 15: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
-	16, // 16: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
-	6,  // 17: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
-	22, // 18: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
-	21, // 19: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
-	0,  // 20: sqlmeta.DataType.UUIDData:type_name -> sqlmeta.DataTypeSingle
-	17, // 21: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
-	0,  // 22: sqlmeta.DataType.BooleanData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 23: sqlmeta.DataType.DateData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 24: sqlmeta.DataType.TimeData:type_name -> sqlmeta.DataTypeSingle
-	19, // 25: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
-	13, // 26: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
-	12, // 27: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
-	0,  // 28: sqlmeta.DataType.TextData:type_name -> sqlmeta.DataTypeSingle
-	18, // 29: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
-	0,  // 30: sqlmeta.DataType.RegclassData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 31: sqlmeta.DataType.ByteaData:type_name -> sqlmeta.DataTypeSingle
-	20, // 32: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
-	23, // 33: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
-	24, // 34: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
-	10, // 35: sqlmeta.DataType.TinyIntData:type_name -> sqlmeta.TinyInt
-	11, // 36: sqlmeta.DataType.MediumIntData:type_name -> sqlmeta.MediumInt
-	0,  // 37: sqlmeta.DataType.YearData:type_name -> sqlmeta.DataTypeSingle
-	25, // 38: sqlmeta.ColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
-	46, // 39: sqlmeta.ColumnConstraintSpec.CheckItem:type_name -> google.protobuf.Any
-	27, // 40: sqlmeta.ColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
-	5,  // 41: sqlmeta.ColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
-	31, // 42: sqlmeta.ColumnConstraint.Spec:type_name -> sqlmeta.ColumnConstraintSpec
-	30, // 43: sqlmeta.ColumnDef.DataType:type_name -> sqlmeta.DataType
-	46, // 44: sqlmeta.ColumnDef.Default:type_name -> google.protobuf.Any
-	4,  // 45: sqlmeta.ColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
-	32, // 46: sqlmeta.ColumnDef.Constraints:type_name -> sqlmeta.ColumnConstraint
-	41, // 47: sqlmeta.ColumnDef.Options:type_name -> sqlmeta.ColumnDef.OptionsEntry
-	6,  // 48: sqlmeta.MetaTable.Name:type_name -> sqlmeta.ObjectName
-	40, // 49: sqlmeta.MetaTable.Elements:type_name -> sqlmeta.TableElement
-	42, // 50: sqlmeta.MetaTable.Options:type_name -> sqlmeta.MetaTable.OptionsEntry
-	6,  // 51: sqlmeta.MetaView.Name:type_name -> sqlmeta.ObjectName
-	43, // 52: sqlmeta.MetaView.Options:type_name -> sqlmeta.MetaView.OptionsEntry
-	6,  // 53: sqlmeta.MetaSequence.Name:type_name -> sqlmeta.ObjectName
-	44, // 54: sqlmeta.MetaSequence.Options:type_name -> sqlmeta.MetaSequence.OptionsEntry
-	34, // 55: sqlmeta.MetaDatabase.Tables:type_name -> sqlmeta.MetaTable
-	35, // 56: sqlmeta.MetaDatabase.Views:type_name -> sqlmeta.MetaView
-	36, // 57: sqlmeta.MetaDatabase.Sequences:type_name -> sqlmeta.MetaSequence
-	45, // 58: sqlmeta.MetaDatabase.Options:type_name -> sqlmeta.MetaDatabase.OptionsEntry
-	29, // 59: sqlmeta.TableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
-	46, // 60: sqlmeta.TableConstraintSpec.CheckItem:type_name -> google.protobuf.Any
-	28, // 61: sqlmeta.TableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
-	38, // 62: sqlmeta.TableConstraint.Spec:type_name -> sqlmeta.TableConstraintSpec
-	33, // 63: sqlmeta.TableElement.ColumnDefElement:type_name -> sqlmeta.ColumnDef
-	39, // 64: sqlmeta.TableElement.TableConstraintElement:type_name -> sqlmeta.TableConstraint
-	65, // [65:65] is the sub-list for method output_type
-	65, // [65:65] is the sub-list for method input_type
-	65, // [65:65] is the sub-list for extension type_name
-	65, // [65:65] is the sub-list for extension extendee
-	0,  // [0:65] is the sub-list for field type_name
+	48, // 7: sqlmeta.ExcludeConstraintElement.Expr:type_name -> google.protobuf.Any
+	29, // 8: sqlmeta.ExcludeTableConstraint.Elements:type_name -> sqlmeta.ExcludeConstraintElement
+	48, // 9: sqlmeta.ExcludeTableConstraint.Where:type_name -> google.protobuf.Any
+	26, // 10: sqlmeta.ReferentialTableConstraint.KeyExpr:type_name -> sqlmeta.ReferenceKeyExpr
+	1,  // 11: sqlmeta.ReferentialTableConstraint.OnDelete:type_name -> sqlmeta.ReferentialAction
+	1,  // 12: sqlmeta.ReferentialTableConstraint.OnUpdate:type_name -> sqlmeta.ReferentialAction
+	2,  // 13: sqlmeta.ReferentialTableConstraint.Match:type_name -> sqlmeta.MatchOption
+	9,  // 14: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
+	8,  // 15: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
+	7,  // 16: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
+	14, // 17: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
+	15, // 18: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
+	16, // 19: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
+	6,  // 20: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
+	22, // 21: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
+	21, // 22: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
+	0,  // 23: sqlmeta.DataType.UUIDData:type_name -> sqlmeta.DataTypeSingle
+	17, // 24: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
+	0,  // 25: sqlmeta.DataType.BooleanData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 26: sqlmeta.DataType.DateData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 27: sqlmeta.DataType.TimeData:type_name -> sqlmeta.DataTypeSingle
+	19, // 28: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
+	13, // 29: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
+	12, // 30: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
+	0,  // 31: sqlmeta.DataType.TextData:type_name -> sqlmeta.DataTypeSingle
+	18, // 32: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
+	0,  // 33: sqlmeta.DataType.RegclassData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 34: sqlmeta.DataType.ByteaData:type_name -> sqlmeta.DataTypeSingle
+	20, // 35: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
+	23, // 36: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
+	24, // 37: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
+	10, // 38: sqlmeta.DataType.TinyIntData:type_name -> sqlmeta.TinyInt
+	11, // 39: sqlmeta.DataType.MediumIntData:type_name -> sqlmeta.MediumInt
+	0,  // 40: sqlmeta.DataType.YearData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 41: sqlmeta.DataType.JSONData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 42: sqlmeta.DataType.XMLData:type_name -> sqlmeta.DataTypeSingle
+	25, // 43: sqlmeta.ColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
+	48, // 44: sqlmeta.ColumnConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	27, // 45: sqlmeta.ColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
+	5,  // 46: sqlmeta.ColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
+	33, // 47: sqlmeta.ColumnConstraint.Spec:type_name -> sqlmeta.ColumnConstraintSpec
+	32, // 48: sqlmeta.ColumnDef.DataType:type_name -> sqlmeta.DataType
+	48, // 49: sqlmeta.ColumnDef.Default:type_name -> google.protobuf.Any
+	4,  // 50: sqlmeta.ColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
+	34, // 51: sqlmeta.ColumnDef.Constraints:type_name -> sqlmeta.ColumnConstraint
+	43, // 52: sqlmeta.ColumnDef.Options:type_name -> sqlmeta.ColumnDef.OptionsEntry
+	6,  // 53: sqlmeta.MetaTable.Name:type_name -> sqlmeta.ObjectName
+	42, // 54: sqlmeta.MetaTable.Elements:type_name -> sqlmeta.TableElement
+	44, // 55: sqlmeta.MetaTable.Options:type_name -> sqlmeta.MetaTable.OptionsEntry
+	6,  // 56: sqlmeta.MetaView.Name:type_name -> sqlmeta.ObjectName
+	45, // 57: sqlmeta.MetaView.Options:type_name -> sqlmeta.MetaView.OptionsEntry
+	6,  // 58: sqlmeta.MetaSequence.Name:type_name -> sqlmeta.ObjectName
+	46, // 59: sqlmeta.MetaSequence.Options:type_name -> sqlmeta.MetaSequence.OptionsEntry
+	36, // 60: sqlmeta.MetaDatabase.Tables:type_name -> sqlmeta.MetaTable
+	37, // 61: sqlmeta.MetaDatabase.Views:type_name -> sqlmeta.MetaView
+	38, // 62: sqlmeta.MetaDatabase.Sequences:type_name -> sqlmeta.MetaSequence
+	47, // 63: sqlmeta.MetaDatabase.Options:type_name -> sqlmeta.MetaDatabase.OptionsEntry
+	31, // 64: sqlmeta.TableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
+	48, // 65: sqlmeta.TableConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	28, // 66: sqlmeta.TableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
+	30, // 67: sqlmeta.TableConstraintSpec.ExcludeItem:type_name -> sqlmeta.ExcludeTableConstraint
+	40, // 68: sqlmeta.TableConstraint.Spec:type_name -> sqlmeta.TableConstraintSpec
+	35, // 69: sqlmeta.TableElement.ColumnDefElement:type_name -> sqlmeta.ColumnDef
+	41, // 70: sqlmeta.TableElement.TableConstraintElement:type_name -> sqlmeta.TableConstraint
+	71, // [71:71] is the sub-list for method output_type
+	71, // [71:71] is the sub-list for method input_type
+	71, // [71:71] is the sub-list for extension type_name
+	71, // [71:71] is the sub-list for extension extendee
+	0,  // [0:71] is the sub-list for field type_name
 }
 
-func init() { file_proto_types_proto_init() }
-func file_proto_types_proto_init() {
-	if File_proto_types_proto != nil {
+func init() { file_types_proto_init() }
+func file_types_proto_init() {
+	if File_types_proto != nil {
 		return
 	}
-	file_proto_types_proto_msgTypes[24].OneofWrappers = []any{
+	file_types_proto_msgTypes[26].OneofWrappers = []any{
 		(*DataType_IntData)(nil),
 		(*DataType_SmallIntData)(nil),
 		(*DataType_BigIntData)(nil),
@@ -3256,19 +3470,22 @@ func file_proto_types_proto_init() {
 		(*DataType_TinyIntData)(nil),
 		(*DataType_MediumIntData)(nil),
 		(*DataType_YearData)(nil),
+		(*DataType_JSONData)(nil),
+		(*DataType_XMLData)(nil),
 	}
-	file_proto_types_proto_msgTypes[25].OneofWrappers = []any{
+	file_types_proto_msgTypes[27].OneofWrappers = []any{
 		(*ColumnConstraintSpec_UniqueItem)(nil),
 		(*ColumnConstraintSpec_CheckItem)(nil),
 		(*ColumnConstraintSpec_ReferenceItem)(nil),
 		(*ColumnConstraintSpec_NotNullItem)(nil),
 	}
-	file_proto_types_proto_msgTypes[32].OneofWrappers = []any{
+	file_types_proto_msgTypes[34].OneofWrappers = []any{
 		(*TableConstraintSpec_ReferenceItem)(nil),
 		(*TableConstraintSpec_CheckItem)(nil),
 		(*TableConstraintSpec_UniqueItem)(nil),
+		(*TableConstraintSpec_ExcludeItem)(nil),
 	}
-	file_proto_types_proto_msgTypes[34].OneofWrappers = []any{
+	file_types_proto_msgTypes[36].OneofWrappers = []any{
 		(*TableElement_ColumnDefElement)(nil),
 		(*TableElement_TableConstraintElement)(nil),
 	}
@@ -3276,18 +3493,18 @@ func file_proto_types_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_types_proto_rawDesc), len(file_proto_types_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_proto_rawDesc), len(file_types_proto_rawDesc)),
 			NumEnums:      6,
-			NumMessages:   40,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_types_proto_goTypes,
-		DependencyIndexes: file_proto_types_proto_depIdxs,
-		EnumInfos:         file_proto_types_proto_enumTypes,
-		MessageInfos:      file_proto_types_proto_msgTypes,
+		GoTypes:           file_types_proto_goTypes,
+		DependencyIndexes: file_types_proto_depIdxs,
+		EnumInfos:         file_types_proto_enumTypes,
+		MessageInfos:      file_types_proto_msgTypes,
 	}.Build()
-	File_proto_types_proto = out.File
-	file_proto_types_proto_goTypes = nil
-	file_proto_types_proto_depIdxs = nil
+	File_types_proto = out.File
+	file_types_proto_goTypes = nil
+	file_types_proto_depIdxs = nil
 }
