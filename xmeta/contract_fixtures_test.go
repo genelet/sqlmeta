@@ -9,7 +9,7 @@ import (
 
 func TestContractFixtures(t *testing.T) {
 	names := ContractFixtureNames()
-	if got := strings.Join(names, ","); got != "auth_descendants.expanded_app_spec.json,basic_crud.app_spec.json,manual_fk.expanded_app_spec.json,manual_pk.expanded_app_spec.json" {
+	if got := strings.Join(names, ","); got != "auth_descendants.expanded_app_spec.json,basic_crud.app_spec.json,manual_fk.expanded_app_spec.json,manual_pk.expanded_app_spec.json,manual_pk_fk.expanded_app_spec.json" {
 		t.Fatalf("fixture names = %s", got)
 	}
 
@@ -37,6 +37,19 @@ func TestContractFixtures(t *testing.T) {
 	}
 	if got := strings.Join(tableGrantKeys(manualFK.GetTableGrants()), ","); got != "orders,users" {
 		t.Fatalf("manual FK grants = %s", got)
+	}
+
+	manualPKFK := mustContractExpandedAppSpec(t, "manual_pk_fk.expanded_app_spec.json")
+	if got := strings.Join(tableGrantKeys(manualPKFK.GetTableGrants()), ","); got != "posts,users" {
+		t.Fatalf("manual PK/FK grants = %s", got)
+	}
+	if got := strings.Join(componentNames(manualPKFK.GetSpec().GetComponents()), ","); got != "audit_log,posts,users" {
+		t.Fatalf("manual PK/FK components = %s", got)
+	}
+	if grant := findTableGrant(manualPKFK.GetTableGrants(), "posts"); grant == nil {
+		t.Fatal("posts grant missing")
+	} else if join := grant.GetTraversalJoins()[0]; join.GetChildColumn() != "user_public_id" || join.GetParentColumn() != "public_id" {
+		t.Fatalf("manual PK/FK traversal = %#v", join)
 	}
 }
 

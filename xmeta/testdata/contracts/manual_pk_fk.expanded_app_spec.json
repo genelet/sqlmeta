@@ -1,0 +1,217 @@
+{
+  "Spec":  {
+    "Name":  "Manual PK/FK",
+    "Datasource":  {
+      "Name":  "app.sqlite",
+      "Driver":  "sqlite",
+      "Database":  "app.sqlite"
+    },
+    "Components":  [
+      {
+        "Name":  "audit_log",
+        "TableName":  {
+          "Idents":  [
+            "audit_log"
+          ]
+        },
+        "Description":  "audit_log records",
+        "PublicOperations":  [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name":  "posts",
+        "TableName":  {
+          "Idents":  [
+            "posts"
+          ]
+        },
+        "Description":  "posts records",
+        "PublicOperations":  [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name":  "users",
+        "TableName":  {
+          "Idents":  [
+            "users"
+          ]
+        },
+        "Description":  "users records",
+        "PublicOperations":  [
+          "CRUDOperationList"
+        ]
+      }
+    ],
+    "Roles":  [
+      {
+        "Name":  "u",
+        "Description":  "Signed-in user",
+        "Auth":  {
+          "UserTable":  {
+            "Idents":  [
+              "users"
+            ]
+          },
+          "UserIDColumn":  "public_id",
+          "LoginColumn":  "email",
+          "PasswordColumn":  "passwd",
+          "FirstNameColumn":  "firstname",
+          "LastNameColumn":  "lastname"
+        },
+        "CrudPolicy":  {
+          "Operations":  [
+            "CRUDOperationList",
+            "CRUDOperationRead",
+            "CRUDOperationCreate",
+            "CRUDOperationUpdate",
+            "CRUDOperationDelete"
+          ]
+        },
+        "Scope":  {
+          "Mode":  "FKTraversalModeAuthUserDescendants",
+          "Direction":  "FKTraversalDirectionChildren",
+          "MaxDepth":  32,
+          "IncludeStartTable":  true
+        }
+      }
+    ],
+    "SchemaOverrides":  {
+      "PrimaryKeys":  [
+        {
+          "Name":  "users_public_id_pk",
+          "TableName":  {
+            "Idents":  [
+              "users"
+            ]
+          },
+          "Columns":  [
+            "public_id"
+          ]
+        }
+      ],
+      "ForeignKeys":  [
+        {
+          "Name":  "posts_user_public_id_fk",
+          "ChildTable":  {
+            "Idents":  [
+              "posts"
+            ]
+          },
+          "ChildColumns":  [
+            "user_public_id"
+          ],
+          "ParentTable":  {
+            "Idents":  [
+              "users"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "ComponentGrants":  [
+    {
+      "RoleName":  "u",
+      "ComponentName":  "posts",
+      "TableName":  {
+        "Idents":  [
+          "posts"
+        ]
+      },
+      "Operations":  [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName":  "u",
+      "ComponentName":  "users",
+      "TableName":  {
+        "Idents":  [
+          "users"
+        ]
+      },
+      "Operations":  [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    }
+  ],
+  "TableGrants":  [
+    {
+      "RoleName":  "u",
+      "TableName":  {
+        "Idents":  [
+          "posts"
+        ]
+      },
+      "Operations":  [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath":  [
+        {
+          "Idents":  [
+            "users"
+          ]
+        },
+        {
+          "Idents":  [
+            "posts"
+          ]
+        }
+      ],
+      "ScopeColumn":  "user_public_id",
+      "TraversalJoins":  [
+        {
+          "ForeignKeyName":  "posts_user_public_id_fk",
+          "ParentTable":  {
+            "Idents":  [
+              "users"
+            ]
+          },
+          "ParentColumn":  "public_id",
+          "ChildTable":  {
+            "Idents":  [
+              "posts"
+            ]
+          },
+          "ChildColumn":  "user_public_id"
+        }
+      ]
+    },
+    {
+      "RoleName":  "u",
+      "TableName":  {
+        "Idents":  [
+          "users"
+        ]
+      },
+      "Operations":  [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath":  [
+        {
+          "Idents":  [
+            "users"
+          ]
+        }
+      ]
+    }
+  ]
+}
