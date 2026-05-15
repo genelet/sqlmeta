@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package sqlmeta;
+
+option go_package = "github.com/tabilet/sqlmeta/xmeta";
+
+import "types.proto";
+
+enum CRUDOperation {
+    CRUDOperationUnknown = 0;
+    CRUDOperationList = 1;
+    CRUDOperationRead = 2;
+    CRUDOperationCreate = 3;
+    CRUDOperationUpdate = 4;
+    CRUDOperationDelete = 5;
+}
+
+enum FKTraversalMode {
+    FKTraversalModeUnspecified = 0;
+    FKTraversalModeNone = 1;
+    FKTraversalModeAuthUserDescendants = 2;
+    FKTraversalModeAllTables = 3;
+}
+
+enum FKTraversalDirection {
+    FKTraversalDirectionUnspecified = 0;
+    FKTraversalDirectionChildren = 1;
+    FKTraversalDirectionParents = 2;
+    FKTraversalDirectionBoth = 3;
+}
+
+message AppSpec {
+    string Name = 1;
+    DatasourceMetadata Datasource = 2;
+    repeated AppComponent Components = 3;
+    repeated AppRole Roles = 4;
+    map<string, string> Options = 5;
+    SchemaRelationshipOverrides SchemaOverrides = 6;
+}
+
+message DatasourceMetadata {
+    string Name = 1;
+    string Driver = 2;
+    string Database = 3;
+    map<string, string> Options = 4;
+}
+
+message AppComponent {
+    string Name = 1;
+    ObjectName TableName = 2;
+    string Description = 3;
+    repeated CRUDOperation PublicOperations = 4;
+    map<string, string> Options = 5;
+}
+
+message AppRole {
+    string Name = 1;
+    string Description = 2;
+    AuthBinding Auth = 3;
+    CRUDPolicy CrudPolicy = 4;
+    RoleScope Scope = 5;
+    map<string, string> Options = 6;
+}
+
+message AuthBinding {
+    ObjectName UserTable = 1;
+    string UserIDColumn = 2;
+    string LoginColumn = 3;
+    string PasswordColumn = 4;
+    string FirstNameColumn = 5;
+    string LastNameColumn = 6;
+    map<string, string> Options = 7;
+}
+
+message CRUDPolicy {
+    repeated CRUDOperation Operations = 1;
+}
+
+message RoleScope {
+    FKTraversalMode Mode = 1;
+    FKTraversalDirection Direction = 2;
+    uint32 MaxDepth = 3;
+    repeated ObjectName IncludeTables = 4;
+    repeated ObjectName ExcludeTables = 5;
+    bool IncludeStartTable = 6;
+}
+
+message SchemaRelationshipOverrides {
+    repeated ManualPrimaryKey PrimaryKeys = 1;
+    repeated ManualForeignKey ForeignKeys = 2;
+}
+
+message ManualPrimaryKey {
+    string Name = 1;
+    ObjectName TableName = 2;
+    repeated string Columns = 3;
+    map<string, string> Options = 4;
+}
+
+message ManualForeignKey {
+    string Name = 1;
+    ObjectName ChildTable = 2;
+    repeated string ChildColumns = 3;
+    ObjectName ParentTable = 4;
+    repeated string ParentColumns = 5;
+    map<string, string> Options = 6;
+}
+
+message ExpandedAppSpec {
+    AppSpec Spec = 1;
+    repeated ExpandedComponentGrant ComponentGrants = 2;
+    repeated ExpandedTableGrant TableGrants = 3;
+    repeated string Warnings = 4;
+}
+
+message ExpandedComponentGrant {
+    string RoleName = 1;
+    string ComponentName = 2;
+    ObjectName TableName = 3;
+    repeated CRUDOperation Operations = 4;
+}
+
+message ExpandedTableGrant {
+    string RoleName = 1;
+    ObjectName TableName = 2;
+    repeated CRUDOperation Operations = 3;
+    repeated ObjectName TraversalPath = 4;
+    string ScopeColumn = 5;
+}
