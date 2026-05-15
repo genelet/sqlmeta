@@ -160,8 +160,53 @@ func TestExpandRoleScopesUsesManualFKAndManualParentPK(t *testing.T) {
 	if got := strings.Join(tableGrantKeys(expanded.GetTableGrants()), ","); got != "orders,users" {
 		t.Fatalf("table grants = %s", got)
 	}
-	if warnings := strings.Join(expanded.GetWarnings(), "\n"); !strings.Contains(warnings, "uses manual primary key users.public_id") {
+	if warnings := strings.Join(expanded.GetWarnings(), "\n"); !strings.Contains(warnings, "includes manual primary key users.(public_id)") {
 		t.Fatalf("expected manual primary key traversal warning, got:\n%s", warnings)
+	}
+}
+
+func TestExpandRoleScopesMergesManualAndPhysicalRelationships(t *testing.T) {
+	meta := &MetaDatabase{
+		Name: "appdb",
+		Tables: []*MetaTable{
+			testAppTable("users", "id", "public_id"),
+			testAppTable("posts", "id", "user_id"),
+			testAppTable("orders", "id", "user_public_id"),
+		},
+	}
+	addTestFK(meta.Tables[1], "posts_user_fk", []string{"user_id"}, "users", []string{"id"})
+	spec, err := BuildDefaultAppSpec(meta, AppSpecOptions{
+		Name: "Example",
+		Auth: &AuthBinding{
+			UserTable:      ObjectNameFromString("users"),
+			UserIDColumn:   "id",
+			LoginColumn:    "email",
+			PasswordColumn: "passwd",
+		},
+		SchemaOverrides: &SchemaRelationshipOverrides{
+			PrimaryKeys: []*ManualPrimaryKey{{
+				Name:      "users_public_id_pk",
+				TableName: ObjectNameFromString("users"),
+				Columns:   []string{"public_id"},
+			}},
+			ForeignKeys: []*ManualForeignKey{{
+				Name:         "orders_user_public_id_fk",
+				ChildTable:   ObjectNameFromString("orders"),
+				ChildColumns: []string{"user_public_id"},
+				ParentTable:  ObjectNameFromString("users"),
+			}},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expanded, err := ExpandRoleScopes(meta, spec)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got := strings.Join(tableGrantKeys(expanded.GetTableGrants()), ","); got != "orders,posts,users" {
+		t.Fatalf("manual and physical grants should merge, got %s", got)
 	}
 }
 
