@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/genelet/*
+      GONOSUMDB: github.com/genelet/*
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Configure private module access
+        env:
+          GENELET_READ_TOKEN: ${{ secrets.GENELET_READ_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          token="${GENELET_READ_TOKEN:-$GITHUB_TOKEN}"
+          git config --global url."https://x-access-token:${token}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install protoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+
+      - name: Check generated protobuf
+        run: |
+          cd proto
+          protoc -I=. --go_out=../xmeta --go_opt=paths=source_relative *.proto
+          cd ..
+          git diff --exit-code -- xmeta
+
+      - name: Test
+        run: GOWORK=off go test ./...
