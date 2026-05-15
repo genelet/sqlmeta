@@ -131,7 +131,7 @@ func TestExpandRoleScopesUsesManualFKAndManualParentPK(t *testing.T) {
 		Name: "Example",
 		Auth: &AuthBinding{
 			UserTable:      ObjectNameFromString("users"),
-			UserIDColumn:   "id",
+			UserIDColumn:   "public_id",
 			LoginColumn:    "email",
 			PasswordColumn: "passwd",
 		},
@@ -160,8 +160,8 @@ func TestExpandRoleScopesUsesManualFKAndManualParentPK(t *testing.T) {
 	if got := strings.Join(tableGrantKeys(expanded.GetTableGrants()), ","); got != "orders,users" {
 		t.Fatalf("table grants = %s", got)
 	}
-	if warnings := strings.Join(expanded.GetWarnings(), "\n"); !strings.Contains(warnings, "includes manual primary key users.(public_id)") {
-		t.Fatalf("expected manual primary key traversal warning, got:\n%s", warnings)
+	if len(expanded.GetWarnings()) != 0 {
+		t.Fatalf("warnings = %#v", expanded.GetWarnings())
 	}
 }
 
@@ -171,7 +171,7 @@ func TestExpandRoleScopesMergesManualAndPhysicalRelationships(t *testing.T) {
 		Tables: []*MetaTable{
 			testAppTable("users", "id", "public_id"),
 			testAppTable("posts", "id", "user_id"),
-			testAppTable("orders", "id", "user_public_id"),
+			testAppTable("orders", "id", "user_id"),
 		},
 	}
 	addTestFK(meta.Tables[1], "posts_user_fk", []string{"user_id"}, "users", []string{"id"})
@@ -190,10 +190,11 @@ func TestExpandRoleScopesMergesManualAndPhysicalRelationships(t *testing.T) {
 				Columns:   []string{"public_id"},
 			}},
 			ForeignKeys: []*ManualForeignKey{{
-				Name:         "orders_user_public_id_fk",
-				ChildTable:   ObjectNameFromString("orders"),
-				ChildColumns: []string{"user_public_id"},
-				ParentTable:  ObjectNameFromString("users"),
+				Name:          "orders_user_fk",
+				ChildTable:    ObjectNameFromString("orders"),
+				ChildColumns:  []string{"user_id"},
+				ParentTable:   ObjectNameFromString("users"),
+				ParentColumns: []string{"id"},
 			}},
 		},
 	})

@@ -191,21 +191,17 @@ type fkEdge struct {
 }
 
 type fkGraph struct {
-	children          map[string][]fkEdge
-	parents           map[string][]fkEdge
-	primaryKeys       map[string][]string
-	manualPrimaryKeys map[string][]string
-	warnings          []string
+	children map[string][]fkEdge
+	parents  map[string][]fkEdge
+	warnings []string
 }
 
 type effectiveRelationships struct {
-	physicalPrimaryKeys map[string][]string
-	primaryKeys         map[string][]string
-	manualPrimaryKeys   map[string][]string
-	manualFKColumns     map[string]bool
-	manualFKEdgeKeys    map[string]bool
-	manualFKEdges       []fkEdge
-	warnings            []string
+	primaryKeys      map[string][]string
+	manualFKColumns  map[string]bool
+	manualFKEdgeKeys map[string]bool
+	manualFKEdges    []fkEdge
+	warnings         []string
 }
 
 func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTableIndex, graph fkGraph) ([]*ExpandedTableGrant, []string) {
@@ -276,11 +272,7 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 		if direction == FKTraversalDirection_FKTraversalDirectionUnspecified {
 			direction = FKTraversalDirection_FKTraversalDirectionChildren
 		}
-		startColumns := roleStartColumns(auth.GetUserIDColumn(), graph.primaryKeys[startKey], graph.manualPrimaryKeys[startKey])
-		if manualPK := graph.manualPrimaryKeys[startKey]; len(manualPK) > 0 {
-			warnings = append(warnings, fmt.Sprintf("role %s includes manual primary key %s.(%s) for FK scope expansion", role.GetName(), startKey, strings.Join(manualPK, ", ")))
-		}
-		warnings = append(warnings, walkRoleScope(role.GetName(), startKey, startColumns, direction, maxDepth, index, graph, addGrant)...)
+		warnings = append(warnings, walkRoleScope(role.GetName(), startKey, auth.GetUserIDColumn(), direction, maxDepth, index, graph, addGrant)...)
 	default:
 		warnings = append(warnings, fmt.Sprintf("role %s uses unsupported FK traversal mode %s", role.GetName(), mode.String()))
 	}
@@ -309,7 +301,7 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	return out, warnings
 }
 
-func walkRoleScope(roleName, startKey string, startColumns []string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string)) []string {
+func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string)) []string {
 	var warnings []string
 	type step struct {
 		key       string
@@ -335,7 +327,7 @@ func walkRoleScope(roleName, startKey string, startColumns []string, direction F
 				next = edge.parentKey
 				scopeColumn = edge.refColumn
 			}
-			if current.key == startKey && len(startColumns) > 0 && !containsColumnFold(startColumns, edge.refColumn) {
+			if current.key == startKey && userIDColumn != "" && !strings.EqualFold(edge.refColumn, userIDColumn) {
 				continue
 			}
 			if containsAppString(current.path, next) {
@@ -352,8 +344,8 @@ func walkRoleScope(roleName, startKey string, startColumns []string, direction F
 		}
 	}
 
-	if len(startColumns) > 0 && !matchedDirectChild {
-		warnings = append(warnings, fmt.Sprintf("role %s found no child foreign keys referencing %s.(%s)", roleName, startKey, strings.Join(startColumns, ", ")))
+	if userIDColumn != "" && !matchedDirectChild {
+		warnings = append(warnings, fmt.Sprintf("role %s found no child foreign keys referencing %s.%s", roleName, startKey, userIDColumn))
 	}
 	return warnings
 }
@@ -376,10 +368,8 @@ func nextEdges(key string, direction FKTraversalDirection, graph fkGraph) []fkEd
 }
 
 func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRelationshipOverrides) fkGraph {
-	graph := fkGraph{children: map[string][]fkEdge{}, parents: map[string][]fkEdge{}, primaryKeys: map[string][]string{}, manualPrimaryKeys: map[string][]string{}}
+	graph := fkGraph{children: map[string][]fkEdge{}, parents: map[string][]fkEdge{}}
 	relationships := buildEffectiveRelationships(tables, index, overrides)
-	graph.primaryKeys = relationships.primaryKeys
-	graph.manualPrimaryKeys = relationships.manualPrimaryKeys
 	graph.warnings = append(graph.warnings, relationships.warnings...)
 	for _, edge := range relationships.manualFKEdges {
 		graph.add(edge)
@@ -411,7 +401,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 					refColumn := ""
 					if len(foreignCols) == 1 {
 						refColumn = foreignCols[0]
-					} else if cols := parentReferenceColumns(parentKey, relationships); len(cols) == 1 {
+					} else if cols := relationships.primaryKeys[parentKey]; len(cols) == 1 {
 						refColumn = cols[0]
 					}
 					edge := fkEdge{name: constraint.GetName(), parentKey: parentKey, childKey: childKey, localColumn: col.GetName(), refColumn: refColumn}
@@ -430,7 +420,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 			parentCols := cleanColumns(ref.GetKeyExpr().GetColumns())
 			if len(parentCols) == 0 {
 				parentKey, _ := index.resolve(ObjectNameFromString(ref.GetKeyExpr().GetTableName()))
-				parentCols = parentReferenceColumns(parentKey, relationships)
+				parentCols = relationships.primaryKeys[parentKey]
 			}
 			if len(ref.GetColumns()) != 1 || len(parentCols) != 1 {
 				graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s has composite FK; skipped role scope edge", childKey, constraint.GetName()))
@@ -464,16 +454,13 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 
 func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overrides *SchemaRelationshipOverrides) effectiveRelationships {
 	relationships := effectiveRelationships{
-		physicalPrimaryKeys: map[string][]string{},
-		primaryKeys:         map[string][]string{},
-		manualPrimaryKeys:   map[string][]string{},
-		manualFKColumns:     map[string]bool{},
-		manualFKEdgeKeys:    map[string]bool{},
+		primaryKeys:      map[string][]string{},
+		manualFKColumns:  map[string]bool{},
+		manualFKEdgeKeys: map[string]bool{},
 	}
 	for _, table := range tables {
 		if pks := primaryKeyColumns(table); len(pks) > 0 {
 			key := objectNameKey(table.GetName())
-			relationships.physicalPrimaryKeys[key] = pks
 			relationships.primaryKeys[key] = pks
 		}
 	}
@@ -495,8 +482,7 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 				relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s on %s references missing column %s", pk.GetName(), key, col))
 			}
 		}
-		relationships.primaryKeys[key] = uniqueAppStrings(append(relationships.primaryKeys[key], cols...))
-		relationships.manualPrimaryKeys[key] = cols
+		relationships.primaryKeys[key] = cols
 	}
 	for _, fk := range overrides.GetForeignKeys() {
 		childKey, childWarning := index.resolve(fk.GetChildTable())
@@ -516,7 +502,7 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 			relationships.manualFKColumns[fkColumnKey(childKey, childCols)] = true
 		}
 		if len(parentCols) == 0 {
-			parentCols = parentReferenceColumns(parentKey, relationships)
+			parentCols = relationships.primaryKeys[parentKey]
 		}
 		if len(childCols) == 0 {
 			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s has no child columns", fk.GetName(), childKey))
@@ -553,13 +539,6 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 		return relationships.manualFKEdges[i].localColumn < relationships.manualFKEdges[j].localColumn
 	})
 	return relationships
-}
-
-func parentReferenceColumns(parentKey string, relationships effectiveRelationships) []string {
-	if cols := relationships.manualPrimaryKeys[parentKey]; len(cols) > 0 {
-		return cols
-	}
-	return relationships.physicalPrimaryKeys[parentKey]
 }
 
 func (g fkGraph) add(edge fkEdge) {
@@ -647,19 +626,6 @@ func cleanColumns(cols []string) []string {
 		}
 	}
 	return out
-}
-
-func roleStartColumns(authColumn string, primaryKeys, manualPrimaryKeys []string) []string {
-	return uniqueAppStrings(append(append([]string{}, cleanColumns([]string{authColumn})...), append(primaryKeys, manualPrimaryKeys...)...))
-}
-
-func containsColumnFold(cols []string, needle string) bool {
-	for _, col := range cols {
-		if strings.EqualFold(col, needle) {
-			return true
-		}
-	}
-	return false
 }
 
 func fkColumnKey(tableKey string, cols []string) string {
