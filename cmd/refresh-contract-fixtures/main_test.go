@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/genelet/sqlmeta/xmeta"
 )
 
 func TestRunRefreshesManualPKFKFixtures(t *testing.T) {
@@ -12,7 +14,7 @@ func TestRunRefreshesManualPKFKFixtures(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, name := range []string{
-		"xmeta/testdata/contracts/manual_pk_fk.expanded_app_spec.json",
+		"xmeta/testdata/contracts/" + xmeta.ManualPKFKExpandedFixture,
 		"tavola/testdata/contracts/manual_pk_fk.project.json",
 		"tavola/testdata/contracts/manual_pk_fk.warnings.txt",
 	} {
