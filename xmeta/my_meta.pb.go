@@ -555,7 +555,7 @@ const file_my_meta_proto_rawDesc = "" +
 	"\n" +
 	"MYDatabase\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12'\n" +
-	"\x06Tables\x18\x02 \x03(\v2\x0f.mymeta.MYTableR\x06TablesB\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\x06Tables\x18\x02 \x03(\v2\x0f.mymeta.MYTableR\x06TablesB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_my_meta_proto_rawDescOnce sync.Once

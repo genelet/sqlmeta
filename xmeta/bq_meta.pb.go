@@ -659,7 +659,7 @@ const file_bq_meta_proto_rawDesc = "" +
 	"\tBQProject\x12\x1c\n" +
 	"\tProjectId\x18\x01 \x01(\tR\tProjectId\x12\"\n" +
 	"\fFriendlyName\x18\x02 \x01(\tR\fFriendlyName\x12-\n" +
-	"\bDatasets\x18\x03 \x03(\v2\x11.bqmeta.BQDatasetR\bDatasetsB\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\bDatasets\x18\x03 \x03(\v2\x11.bqmeta.BQDatasetR\bDatasetsB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_bq_meta_proto_rawDescOnce sync.Once

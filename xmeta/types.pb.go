@@ -3291,7 +3291,7 @@ const file_types_proto_rawDesc = "" +
 	"\x14AutoIncrementConfirm\x10\x01*O\n" +
 	"\x11NotNullColumnSpec\x12\x1c\n" +
 	"\x18NotNullColumnSpecUnknown\x10\x00\x12\x1c\n" +
-	"\x18NotNullColumnSpecConfirm\x10\x01B\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\x18NotNullColumnSpecConfirm\x10\x01B\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_types_proto_rawDescOnce sync.Once

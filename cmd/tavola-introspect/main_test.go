@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/tabilet/sqlmeta/tavola"
+	"github.com/genelet/sqlmeta/tavola"
 )
 
 func TestRunSQLiteWritesTavolaSpec(t *testing.T) {

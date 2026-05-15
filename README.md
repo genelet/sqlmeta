@@ -81,7 +81,7 @@ You can use the loaders in the `xmeta` package to inspect a connected database (
 import (
     "database/sql"
     _ "github.com/lib/pq"
-    "github.com/tabilet/sqlmeta/xmeta"
+    "github.com/genelet/sqlmeta/xmeta"
 )
 
 func main() {
@@ -223,7 +223,7 @@ import (
     "log"
 
     _ "github.com/lib/pq"
-    "github.com/tabilet/sqlmeta/xmeta"
+    "github.com/genelet/sqlmeta/xmeta"
 )
 
 func main() {

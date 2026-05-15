@@ -12,8 +12,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/tabilet/sqlmeta/tavola"
-	"github.com/tabilet/sqlmeta/xmeta"
+	"github.com/genelet/sqlmeta/tavola"
+	"github.com/genelet/sqlmeta/xmeta"
 )
 
 type stringList []string

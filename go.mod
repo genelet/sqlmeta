@@ -1,4 +1,4 @@
-module github.com/tabilet/sqlmeta
+module github.com/genelet/sqlmeta
 
 go 1.25.5
 

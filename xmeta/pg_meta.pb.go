@@ -1151,7 +1151,7 @@ const file_pg_meta_proto_rawDesc = "" +
 	"\n" +
 	"Extensions\x18\x04 \x03(\tR\n" +
 	"Extensions\x12\x18\n" +
-	"\aComment\x18\x05 \x01(\tR\aCommentB\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\aComment\x18\x05 \x01(\tR\aCommentB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_pg_meta_proto_rawDescOnce sync.Once

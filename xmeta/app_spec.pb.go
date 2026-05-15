@@ -1261,7 +1261,7 @@ const file_app_spec_proto_rawDesc = "" +
 	"\x1fFKTraversalDirectionUnspecified\x10\x00\x12 \n" +
 	"\x1cFKTraversalDirectionChildren\x10\x01\x12\x1f\n" +
 	"\x1bFKTraversalDirectionParents\x10\x02\x12\x1c\n" +
-	"\x18FKTraversalDirectionBoth\x10\x03B\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\x18FKTraversalDirectionBoth\x10\x03B\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_app_spec_proto_rawDescOnce sync.Once

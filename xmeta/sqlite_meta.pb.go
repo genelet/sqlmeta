@@ -505,7 +505,7 @@ const file_sqlite_meta_proto_rawDesc = "" +
 	"\bFilePath\x18\x02 \x01(\tR\bFilePath\x12/\n" +
 	"\x06Tables\x18\x03 \x03(\v2\x17.sqlitemeta.SQLiteTableR\x06Tables\x12,\n" +
 	"\x05Views\x18\x04 \x03(\v2\x16.sqlitemeta.SQLiteViewR\x05Views\x12\x1a\n" +
-	"\bTriggers\x18\x05 \x03(\tR\bTriggersB\"Z github.com/tabilet/sqlmeta/xmetab\x06proto3"
+	"\bTriggers\x18\x05 \x03(\tR\bTriggersB\"Z github.com/genelet/sqlmeta/xmetab\x06proto3"
 
 var (
 	file_sqlite_meta_proto_rawDescOnce sync.Once

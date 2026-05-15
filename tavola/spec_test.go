@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tabilet/sqlmeta/xmeta"
+	"github.com/genelet/sqlmeta/xmeta"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
