@@ -1,0 +1,304 @@
+{
+  "Spec": {
+    "Name": "Invalid Overrides",
+    "Datasource": {
+      "Name": "app.sqlite",
+      "Driver": "sqlite",
+      "Database": "app.sqlite"
+    },
+    "Components": [
+      {
+        "Name": "teams",
+        "TableName": {
+          "Idents": [
+            "archive",
+            "teams"
+          ]
+        },
+        "Description": "teams records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "audit_log",
+        "TableName": {
+          "Idents": [
+            "audit_log"
+          ]
+        },
+        "Description": "audit_log records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "memberships",
+        "TableName": {
+          "Idents": [
+            "memberships"
+          ]
+        },
+        "Description": "memberships records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "posts",
+        "TableName": {
+          "Idents": [
+            "posts"
+          ]
+        },
+        "Description": "posts records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "teams_2",
+        "TableName": {
+          "Idents": [
+            "public",
+            "teams"
+          ]
+        },
+        "Description": "teams records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "users",
+        "TableName": {
+          "Idents": [
+            "users"
+          ]
+        },
+        "Description": "users records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      }
+    ],
+    "Roles": [
+      {
+        "Name": "u",
+        "Description": "Signed-in user",
+        "Auth": {
+          "UserTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "UserIDColumn": "id",
+          "LoginColumn": "email",
+          "PasswordColumn": "passwd",
+          "FirstNameColumn": "firstname",
+          "LastNameColumn": "lastname"
+        },
+        "CrudPolicy": {
+          "Operations": [
+            "CRUDOperationList",
+            "CRUDOperationRead",
+            "CRUDOperationCreate",
+            "CRUDOperationUpdate",
+            "CRUDOperationDelete"
+          ]
+        },
+        "Scope": {
+          "Mode": "FKTraversalModeAuthUserDescendants",
+          "Direction": "FKTraversalDirectionChildren",
+          "MaxDepth": 32,
+          "IncludeStartTable": true
+        }
+      }
+    ],
+    "SchemaOverrides": {
+      "PrimaryKeys": [
+        {
+          "Name": "users_missing_public_id_pk",
+          "TableName": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "Columns": [
+            "missing_public_id"
+          ]
+        }
+      ],
+      "ForeignKeys": [
+        {
+          "Name": "posts_missing_child_fk",
+          "ChildTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ChildColumns": [
+            "missing_user_id"
+          ],
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumns": [
+            "id"
+          ]
+        },
+        {
+          "Name": "posts_ambiguous_team_fk",
+          "ChildTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ChildColumns": [
+            "team_id"
+          ],
+          "ParentTable": {
+            "Idents": [
+              "teams"
+            ]
+          },
+          "ParentColumns": [
+            "id"
+          ]
+        },
+        {
+          "Name": "memberships_user_composite_fk",
+          "ChildTable": {
+            "Idents": [
+              "memberships"
+            ]
+          },
+          "ChildColumns": [
+            "user_id",
+            "org_id"
+          ],
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumns": [
+            "id",
+            "org_id"
+          ]
+        }
+      ]
+    }
+  },
+  "ComponentGrants": [
+    {
+      "RoleName": "u",
+      "ComponentName": "posts",
+      "TableName": {
+        "Idents": [
+          "posts"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName": "u",
+      "ComponentName": "users",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    }
+  ],
+  "TableGrants": [
+    {
+      "RoleName": "u",
+      "TableName": {
+        "Idents": [
+          "posts"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        },
+        {
+          "Idents": [
+            "posts"
+          ]
+        }
+      ],
+      "ScopeColumn": "user_id",
+      "TraversalJoins": [
+        {
+          "ForeignKeyName": "posts_user_id_fk",
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumn": "id",
+          "ChildTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ChildColumn": "user_id"
+        }
+      ]
+    },
+    {
+      "RoleName": "u",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        }
+      ]
+    }
+  ],
+  "Warnings": [
+    "manual foreign key memberships_user_composite_fk on memberships has composite columns; skipped role scope edge",
+    "manual foreign key posts_ambiguous_team_fk parent table \"teams\": ambiguous table name matched archive.teams, public.teams",
+    "manual foreign key posts_missing_child_fk on posts references missing child column missing_user_id",
+    "manual primary key users_missing_public_id_pk on users references missing column missing_public_id"
+  ]
+}

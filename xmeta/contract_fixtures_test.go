@@ -9,7 +9,7 @@ import (
 
 func TestContractFixtures(t *testing.T) {
 	names := ContractFixtureNames()
-	if got := strings.Join(names, ","); got != "auth_descendants.expanded_app_spec.json,basic_crud.app_spec.json,manual_fk.expanded_app_spec.json,manual_pk.expanded_app_spec.json,manual_pk_fk.expanded_app_spec.json" {
+	if got := strings.Join(names, ","); got != "auth_descendants.expanded_app_spec.json,basic_crud.app_spec.json,invalid_overrides.expanded_app_spec.json,manual_fk.expanded_app_spec.json,manual_pk.expanded_app_spec.json,manual_pk_fk.expanded_app_spec.json" {
 		t.Fatalf("fixture names = %s", got)
 	}
 
@@ -50,6 +50,25 @@ func TestContractFixtures(t *testing.T) {
 		t.Fatal("posts grant missing")
 	} else if join := grant.GetTraversalJoins()[0]; join.GetChildColumn() != "user_public_id" || join.GetParentColumn() != "public_id" {
 		t.Fatalf("manual PK/FK traversal = %#v", join)
+	}
+
+	invalid := mustContractExpandedAppSpec(t, "invalid_overrides.expanded_app_spec.json")
+	if got := strings.Join(tableGrantKeys(invalid.GetTableGrants()), ","); got != "posts,users" {
+		t.Fatalf("invalid override grants = %s", got)
+	}
+	if findTableGrant(invalid.GetTableGrants(), "audit_log") != nil || findTableGrant(invalid.GetTableGrants(), "memberships") != nil {
+		t.Fatalf("invalid override unrelated tables were granted: %#v", invalid.GetTableGrants())
+	}
+	warnings := strings.Join(invalid.GetWarnings(), "\n")
+	for _, want := range []string{
+		"missing_public_id",
+		"ambiguous table name matched archive.teams, public.teams",
+		"composite columns; skipped role scope edge",
+		"missing_user_id",
+	} {
+		if !strings.Contains(warnings, want) {
+			t.Fatalf("expected invalid override warning containing %q, got:\n%s", want, warnings)
+		}
 	}
 }
 

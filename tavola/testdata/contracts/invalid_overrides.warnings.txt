@@ -1,0 +1,7 @@
+manual primary key users_missing_public_id_pk on users references missing column missing_public_id
+manual foreign key posts_missing_child_fk on posts references missing child column missing_user_id
+manual foreign key posts_ambiguous_team_fk parent table "teams": ambiguous table name matched archive.teams, public.teams
+manual foreign key memberships_user_composite_fk on memberships has composite columns; skipped virtual schema edge
+memberships has no primary key; using first column user_id as Tavola primaryKey
+auth role was generated without a login procedure; review schema.procedures before relying on login
+manual foreign key memberships_user_composite_fk on memberships has composite columns; skipped role scope edge
