@@ -9,11 +9,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/genelet/sqlmeta/tavola"
+	"github.com/genelet/sqlmeta/xmeta"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/genelet/sqlmeta/tavola"
-	"github.com/genelet/sqlmeta/xmeta"
 )
 
 type stringList []string
@@ -36,6 +36,7 @@ func main() {
 	var schemas stringList
 	var driver, dsn, database, project, script, ownerLogin, ownerEmail, out string
 	var datasourceType, datasourceNickname, datasourceHost, datasourcePort, datasourceUser, datasourcePassword, datasourcePath string
+	var schemaOverrides string
 	var force bool
 	var auth tavola.AuthOptions
 
@@ -55,6 +56,7 @@ func main() {
 	flag.StringVar(&datasourceUser, "ds-user", "", "Tavola datasource user")
 	flag.StringVar(&datasourcePassword, "ds-password", "", "Tavola datasource password")
 	flag.StringVar(&datasourcePath, "ds-path", "", "Tavola SQLite datasource path")
+	flag.StringVar(&schemaOverrides, "schema-overrides", "", "SchemaRelationshipOverrides protobuf file (.textpb, .json, .pb)")
 	flag.StringVar(&out, "out", "", "Output JSON file; stdout when omitted")
 	flag.BoolVar(&force, "force", false, "Overwrite --out when it already exists")
 	flag.StringVar(&auth.Role, "auth-role", "", "Protected role name")
@@ -67,7 +69,7 @@ func main() {
 	flag.StringVar(&auth.Restriction, "auth-restriction", "", "Authentication role restriction")
 	flag.Parse()
 
-	if err := run(driver, dsn, database, []string(schemas), project, out, force, tavola.Options{
+	opts := tavola.Options{
 		Project:            project,
 		Script:             script,
 		OwnerLogin:         ownerLogin,
@@ -82,7 +84,17 @@ func main() {
 		DatasourcePassword: datasourcePassword,
 		DatasourcePath:     defaultString(datasourcePath, sqlitePath(driver, dsn)),
 		Auth:               auth,
-	}); err != nil {
+	}
+	if schemaOverrides != "" {
+		overrides, err := xmeta.LoadSchemaRelationshipOverridesFromFile(schemaOverrides)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "tavola-introspect:", err)
+			os.Exit(1)
+		}
+		opts.SchemaOverrides = overrides
+	}
+
+	if err := run(driver, dsn, database, []string(schemas), project, out, force, opts); err != nil {
 		fmt.Fprintln(os.Stderr, "tavola-introspect:", err)
 		os.Exit(1)
 	}

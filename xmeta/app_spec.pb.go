@@ -1056,14 +1056,15 @@ func (x *ExpandedComponentGrant) GetOperations() []CRUDOperation {
 }
 
 type ExpandedTableGrant struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleName      string                 `protobuf:"bytes,1,opt,name=RoleName,proto3" json:"RoleName,omitempty"`
-	TableName     *ObjectName            `protobuf:"bytes,2,opt,name=TableName,proto3" json:"TableName,omitempty"`
-	Operations    []CRUDOperation        `protobuf:"varint,3,rep,packed,name=Operations,proto3,enum=sqlmeta.CRUDOperation" json:"Operations,omitempty"`
-	TraversalPath []*ObjectName          `protobuf:"bytes,4,rep,name=TraversalPath,proto3" json:"TraversalPath,omitempty"`
-	ScopeColumn   string                 `protobuf:"bytes,5,opt,name=ScopeColumn,proto3" json:"ScopeColumn,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState   `protogen:"open.v1"`
+	RoleName       string                   `protobuf:"bytes,1,opt,name=RoleName,proto3" json:"RoleName,omitempty"`
+	TableName      *ObjectName              `protobuf:"bytes,2,opt,name=TableName,proto3" json:"TableName,omitempty"`
+	Operations     []CRUDOperation          `protobuf:"varint,3,rep,packed,name=Operations,proto3,enum=sqlmeta.CRUDOperation" json:"Operations,omitempty"`
+	TraversalPath  []*ObjectName            `protobuf:"bytes,4,rep,name=TraversalPath,proto3" json:"TraversalPath,omitempty"`
+	ScopeColumn    string                   `protobuf:"bytes,5,opt,name=ScopeColumn,proto3" json:"ScopeColumn,omitempty"`
+	TraversalJoins []*ExpandedTraversalJoin `protobuf:"bytes,6,rep,name=TraversalJoins,proto3" json:"TraversalJoins,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *ExpandedTableGrant) Reset() {
@@ -1127,6 +1128,89 @@ func (x *ExpandedTableGrant) GetTraversalPath() []*ObjectName {
 func (x *ExpandedTableGrant) GetScopeColumn() string {
 	if x != nil {
 		return x.ScopeColumn
+	}
+	return ""
+}
+
+func (x *ExpandedTableGrant) GetTraversalJoins() []*ExpandedTraversalJoin {
+	if x != nil {
+		return x.TraversalJoins
+	}
+	return nil
+}
+
+type ExpandedTraversalJoin struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	ForeignKeyName string                 `protobuf:"bytes,1,opt,name=ForeignKeyName,proto3" json:"ForeignKeyName,omitempty"`
+	ParentTable    *ObjectName            `protobuf:"bytes,2,opt,name=ParentTable,proto3" json:"ParentTable,omitempty"`
+	ParentColumn   string                 `protobuf:"bytes,3,opt,name=ParentColumn,proto3" json:"ParentColumn,omitempty"`
+	ChildTable     *ObjectName            `protobuf:"bytes,4,opt,name=ChildTable,proto3" json:"ChildTable,omitempty"`
+	ChildColumn    string                 `protobuf:"bytes,5,opt,name=ChildColumn,proto3" json:"ChildColumn,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ExpandedTraversalJoin) Reset() {
+	*x = ExpandedTraversalJoin{}
+	mi := &file_app_spec_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpandedTraversalJoin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpandedTraversalJoin) ProtoMessage() {}
+
+func (x *ExpandedTraversalJoin) ProtoReflect() protoreflect.Message {
+	mi := &file_app_spec_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpandedTraversalJoin.ProtoReflect.Descriptor instead.
+func (*ExpandedTraversalJoin) Descriptor() ([]byte, []int) {
+	return file_app_spec_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ExpandedTraversalJoin) GetForeignKeyName() string {
+	if x != nil {
+		return x.ForeignKeyName
+	}
+	return ""
+}
+
+func (x *ExpandedTraversalJoin) GetParentTable() *ObjectName {
+	if x != nil {
+		return x.ParentTable
+	}
+	return nil
+}
+
+func (x *ExpandedTraversalJoin) GetParentColumn() string {
+	if x != nil {
+		return x.ParentColumn
+	}
+	return ""
+}
+
+func (x *ExpandedTraversalJoin) GetChildTable() *ObjectName {
+	if x != nil {
+		return x.ChildTable
+	}
+	return nil
+}
+
+func (x *ExpandedTraversalJoin) GetChildColumn() string {
+	if x != nil {
+		return x.ChildColumn
 	}
 	return ""
 }
@@ -1236,7 +1320,7 @@ const file_app_spec_proto_rawDesc = "" +
 	"\tTableName\x18\x03 \x01(\v2\x13.sqlmeta.ObjectNameR\tTableName\x126\n" +
 	"\n" +
 	"Operations\x18\x04 \x03(\x0e2\x16.sqlmeta.CRUDOperationR\n" +
-	"Operations\"\xf8\x01\n" +
+	"Operations\"\xc0\x02\n" +
 	"\x12ExpandedTableGrant\x12\x1a\n" +
 	"\bRoleName\x18\x01 \x01(\tR\bRoleName\x121\n" +
 	"\tTableName\x18\x02 \x01(\v2\x13.sqlmeta.ObjectNameR\tTableName\x126\n" +
@@ -1244,7 +1328,16 @@ const file_app_spec_proto_rawDesc = "" +
 	"Operations\x18\x03 \x03(\x0e2\x16.sqlmeta.CRUDOperationR\n" +
 	"Operations\x129\n" +
 	"\rTraversalPath\x18\x04 \x03(\v2\x13.sqlmeta.ObjectNameR\rTraversalPath\x12 \n" +
-	"\vScopeColumn\x18\x05 \x01(\tR\vScopeColumn*\xa2\x01\n" +
+	"\vScopeColumn\x18\x05 \x01(\tR\vScopeColumn\x12F\n" +
+	"\x0eTraversalJoins\x18\x06 \x03(\v2\x1e.sqlmeta.ExpandedTraversalJoinR\x0eTraversalJoins\"\xf1\x01\n" +
+	"\x15ExpandedTraversalJoin\x12&\n" +
+	"\x0eForeignKeyName\x18\x01 \x01(\tR\x0eForeignKeyName\x125\n" +
+	"\vParentTable\x18\x02 \x01(\v2\x13.sqlmeta.ObjectNameR\vParentTable\x12\"\n" +
+	"\fParentColumn\x18\x03 \x01(\tR\fParentColumn\x123\n" +
+	"\n" +
+	"ChildTable\x18\x04 \x01(\v2\x13.sqlmeta.ObjectNameR\n" +
+	"ChildTable\x12 \n" +
+	"\vChildColumn\x18\x05 \x01(\tR\vChildColumn*\xa2\x01\n" +
 	"\rCRUDOperation\x12\x18\n" +
 	"\x14CRUDOperationUnknown\x10\x00\x12\x15\n" +
 	"\x11CRUDOperationList\x10\x01\x12\x15\n" +
@@ -1276,7 +1369,7 @@ func file_app_spec_proto_rawDescGZIP() []byte {
 }
 
 var file_app_spec_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_app_spec_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_app_spec_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_app_spec_proto_goTypes = []any{
 	(CRUDOperation)(0),                  // 0: sqlmeta.CRUDOperation
 	(FKTraversalMode)(0),                // 1: sqlmeta.FKTraversalMode
@@ -1294,56 +1387,60 @@ var file_app_spec_proto_goTypes = []any{
 	(*ExpandedAppSpec)(nil),             // 13: sqlmeta.ExpandedAppSpec
 	(*ExpandedComponentGrant)(nil),      // 14: sqlmeta.ExpandedComponentGrant
 	(*ExpandedTableGrant)(nil),          // 15: sqlmeta.ExpandedTableGrant
-	nil,                                 // 16: sqlmeta.AppSpec.OptionsEntry
-	nil,                                 // 17: sqlmeta.DatasourceMetadata.OptionsEntry
-	nil,                                 // 18: sqlmeta.AppComponent.OptionsEntry
-	nil,                                 // 19: sqlmeta.AppRole.OptionsEntry
-	nil,                                 // 20: sqlmeta.AuthBinding.OptionsEntry
-	nil,                                 // 21: sqlmeta.ManualPrimaryKey.OptionsEntry
-	nil,                                 // 22: sqlmeta.ManualForeignKey.OptionsEntry
-	(*ObjectName)(nil),                  // 23: sqlmeta.ObjectName
+	(*ExpandedTraversalJoin)(nil),       // 16: sqlmeta.ExpandedTraversalJoin
+	nil,                                 // 17: sqlmeta.AppSpec.OptionsEntry
+	nil,                                 // 18: sqlmeta.DatasourceMetadata.OptionsEntry
+	nil,                                 // 19: sqlmeta.AppComponent.OptionsEntry
+	nil,                                 // 20: sqlmeta.AppRole.OptionsEntry
+	nil,                                 // 21: sqlmeta.AuthBinding.OptionsEntry
+	nil,                                 // 22: sqlmeta.ManualPrimaryKey.OptionsEntry
+	nil,                                 // 23: sqlmeta.ManualForeignKey.OptionsEntry
+	(*ObjectName)(nil),                  // 24: sqlmeta.ObjectName
 }
 var file_app_spec_proto_depIdxs = []int32{
 	4,  // 0: sqlmeta.AppSpec.Datasource:type_name -> sqlmeta.DatasourceMetadata
 	5,  // 1: sqlmeta.AppSpec.Components:type_name -> sqlmeta.AppComponent
 	6,  // 2: sqlmeta.AppSpec.Roles:type_name -> sqlmeta.AppRole
-	16, // 3: sqlmeta.AppSpec.Options:type_name -> sqlmeta.AppSpec.OptionsEntry
+	17, // 3: sqlmeta.AppSpec.Options:type_name -> sqlmeta.AppSpec.OptionsEntry
 	10, // 4: sqlmeta.AppSpec.SchemaOverrides:type_name -> sqlmeta.SchemaRelationshipOverrides
-	17, // 5: sqlmeta.DatasourceMetadata.Options:type_name -> sqlmeta.DatasourceMetadata.OptionsEntry
-	23, // 6: sqlmeta.AppComponent.TableName:type_name -> sqlmeta.ObjectName
+	18, // 5: sqlmeta.DatasourceMetadata.Options:type_name -> sqlmeta.DatasourceMetadata.OptionsEntry
+	24, // 6: sqlmeta.AppComponent.TableName:type_name -> sqlmeta.ObjectName
 	0,  // 7: sqlmeta.AppComponent.PublicOperations:type_name -> sqlmeta.CRUDOperation
-	18, // 8: sqlmeta.AppComponent.Options:type_name -> sqlmeta.AppComponent.OptionsEntry
+	19, // 8: sqlmeta.AppComponent.Options:type_name -> sqlmeta.AppComponent.OptionsEntry
 	7,  // 9: sqlmeta.AppRole.Auth:type_name -> sqlmeta.AuthBinding
 	8,  // 10: sqlmeta.AppRole.CrudPolicy:type_name -> sqlmeta.CRUDPolicy
 	9,  // 11: sqlmeta.AppRole.Scope:type_name -> sqlmeta.RoleScope
-	19, // 12: sqlmeta.AppRole.Options:type_name -> sqlmeta.AppRole.OptionsEntry
-	23, // 13: sqlmeta.AuthBinding.UserTable:type_name -> sqlmeta.ObjectName
-	20, // 14: sqlmeta.AuthBinding.Options:type_name -> sqlmeta.AuthBinding.OptionsEntry
+	20, // 12: sqlmeta.AppRole.Options:type_name -> sqlmeta.AppRole.OptionsEntry
+	24, // 13: sqlmeta.AuthBinding.UserTable:type_name -> sqlmeta.ObjectName
+	21, // 14: sqlmeta.AuthBinding.Options:type_name -> sqlmeta.AuthBinding.OptionsEntry
 	0,  // 15: sqlmeta.CRUDPolicy.Operations:type_name -> sqlmeta.CRUDOperation
 	1,  // 16: sqlmeta.RoleScope.Mode:type_name -> sqlmeta.FKTraversalMode
 	2,  // 17: sqlmeta.RoleScope.Direction:type_name -> sqlmeta.FKTraversalDirection
-	23, // 18: sqlmeta.RoleScope.IncludeTables:type_name -> sqlmeta.ObjectName
-	23, // 19: sqlmeta.RoleScope.ExcludeTables:type_name -> sqlmeta.ObjectName
+	24, // 18: sqlmeta.RoleScope.IncludeTables:type_name -> sqlmeta.ObjectName
+	24, // 19: sqlmeta.RoleScope.ExcludeTables:type_name -> sqlmeta.ObjectName
 	11, // 20: sqlmeta.SchemaRelationshipOverrides.PrimaryKeys:type_name -> sqlmeta.ManualPrimaryKey
 	12, // 21: sqlmeta.SchemaRelationshipOverrides.ForeignKeys:type_name -> sqlmeta.ManualForeignKey
-	23, // 22: sqlmeta.ManualPrimaryKey.TableName:type_name -> sqlmeta.ObjectName
-	21, // 23: sqlmeta.ManualPrimaryKey.Options:type_name -> sqlmeta.ManualPrimaryKey.OptionsEntry
-	23, // 24: sqlmeta.ManualForeignKey.ChildTable:type_name -> sqlmeta.ObjectName
-	23, // 25: sqlmeta.ManualForeignKey.ParentTable:type_name -> sqlmeta.ObjectName
-	22, // 26: sqlmeta.ManualForeignKey.Options:type_name -> sqlmeta.ManualForeignKey.OptionsEntry
+	24, // 22: sqlmeta.ManualPrimaryKey.TableName:type_name -> sqlmeta.ObjectName
+	22, // 23: sqlmeta.ManualPrimaryKey.Options:type_name -> sqlmeta.ManualPrimaryKey.OptionsEntry
+	24, // 24: sqlmeta.ManualForeignKey.ChildTable:type_name -> sqlmeta.ObjectName
+	24, // 25: sqlmeta.ManualForeignKey.ParentTable:type_name -> sqlmeta.ObjectName
+	23, // 26: sqlmeta.ManualForeignKey.Options:type_name -> sqlmeta.ManualForeignKey.OptionsEntry
 	3,  // 27: sqlmeta.ExpandedAppSpec.Spec:type_name -> sqlmeta.AppSpec
 	14, // 28: sqlmeta.ExpandedAppSpec.ComponentGrants:type_name -> sqlmeta.ExpandedComponentGrant
 	15, // 29: sqlmeta.ExpandedAppSpec.TableGrants:type_name -> sqlmeta.ExpandedTableGrant
-	23, // 30: sqlmeta.ExpandedComponentGrant.TableName:type_name -> sqlmeta.ObjectName
+	24, // 30: sqlmeta.ExpandedComponentGrant.TableName:type_name -> sqlmeta.ObjectName
 	0,  // 31: sqlmeta.ExpandedComponentGrant.Operations:type_name -> sqlmeta.CRUDOperation
-	23, // 32: sqlmeta.ExpandedTableGrant.TableName:type_name -> sqlmeta.ObjectName
+	24, // 32: sqlmeta.ExpandedTableGrant.TableName:type_name -> sqlmeta.ObjectName
 	0,  // 33: sqlmeta.ExpandedTableGrant.Operations:type_name -> sqlmeta.CRUDOperation
-	23, // 34: sqlmeta.ExpandedTableGrant.TraversalPath:type_name -> sqlmeta.ObjectName
-	35, // [35:35] is the sub-list for method output_type
-	35, // [35:35] is the sub-list for method input_type
-	35, // [35:35] is the sub-list for extension type_name
-	35, // [35:35] is the sub-list for extension extendee
-	0,  // [0:35] is the sub-list for field type_name
+	24, // 34: sqlmeta.ExpandedTableGrant.TraversalPath:type_name -> sqlmeta.ObjectName
+	16, // 35: sqlmeta.ExpandedTableGrant.TraversalJoins:type_name -> sqlmeta.ExpandedTraversalJoin
+	24, // 36: sqlmeta.ExpandedTraversalJoin.ParentTable:type_name -> sqlmeta.ObjectName
+	24, // 37: sqlmeta.ExpandedTraversalJoin.ChildTable:type_name -> sqlmeta.ObjectName
+	38, // [38:38] is the sub-list for method output_type
+	38, // [38:38] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_app_spec_proto_init() }
@@ -1358,7 +1455,7 @@ func file_app_spec_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_spec_proto_rawDesc), len(file_app_spec_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   20,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

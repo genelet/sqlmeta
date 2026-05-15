@@ -78,6 +78,39 @@ func LoadMetaTableFromFile(path string) (*MetaTable, error) {
 	return table, nil
 }
 
+// LoadSchemaRelationshipOverridesFromFile loads manual PK/FK app-schema overrides.
+// The format is detected from the file extension:
+//   - .textpb, .txtpb, .pbtxt -> Text proto format
+//   - .json -> JSON format
+//   - .pb, .bin -> Binary proto format
+func LoadSchemaRelationshipOverridesFromFile(path string) (*SchemaRelationshipOverrides, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("reading file: %w", err)
+	}
+
+	overrides := &SchemaRelationshipOverrides{}
+	ext := strings.ToLower(filepath.Ext(path))
+	switch ext {
+	case ".textpb", ".txtpb", ".pbtxt":
+		if err := prototext.Unmarshal(data, overrides); err != nil {
+			return nil, fmt.Errorf("parsing text proto: %w", err)
+		}
+	case ".json":
+		if err := protojson.Unmarshal(data, overrides); err != nil {
+			return nil, fmt.Errorf("parsing JSON: %w", err)
+		}
+	case ".pb", ".bin":
+		if err := proto.Unmarshal(data, overrides); err != nil {
+			return nil, fmt.Errorf("parsing binary proto: %w", err)
+		}
+	default:
+		return nil, fmt.Errorf("unknown file extension: %s (supported: .textpb, .json, .pb)", ext)
+	}
+
+	return overrides, nil
+}
+
 // SaveMetaDatabaseToFile saves a MetaDatabase to a file.
 // Format is determined by file extension.
 func SaveMetaDatabaseToFile(db *MetaDatabase, path string) error {

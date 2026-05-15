@@ -275,7 +275,7 @@ func loadSQLiteForeignKeyConstraints(db *sql.DB, tableName string) ([]*TableCons
 		list := parts[id]
 		sort.Slice(list, func(i, j int) bool { return list[i].seq < list[j].seq })
 		ref := &ReferentialTableConstraint{
-			KeyExpr:  &ReferenceKeyExpr{TableName: list[0].table},
+			KeyExpr:  &ReferenceKeyExpr{TableName: list[0].table, TableObjectName: ObjectNameFromString(list[0].table)},
 			OnUpdate: mapReferentialAction(list[0].onUpdate),
 			OnDelete: mapReferentialAction(list[0].onDelete),
 			Match:    mapMatchOption(list[0].match),

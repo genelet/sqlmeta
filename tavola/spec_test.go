@@ -216,6 +216,73 @@ func TestBuildSpecUsesManualPrimaryKeyOverride(t *testing.T) {
 	}
 }
 
+func TestBuildSpecSkipsInvalidManualPrimaryKeyOverride(t *testing.T) {
+	meta := &xmeta.MetaDatabase{
+		Name:    "appdb",
+		Options: map[string]string{"Driver": "postgres"},
+		Tables: []*xmeta.MetaTable{{
+			Name: &xmeta.ObjectName{Idents: []string{"public", "users"}},
+			Elements: []*xmeta.TableElement{
+				column("id", intDT(), false, true, true, nil),
+				column("email", textType(), false, false, false, nil),
+			},
+		}},
+	}
+
+	spec, err := BuildSpec(meta, Options{
+		Project: "ExampleApp",
+		SchemaOverrides: &xmeta.SchemaRelationshipOverrides{
+			PrimaryKeys: []*xmeta.ManualPrimaryKey{{
+				Name:      "users_bad_pk",
+				TableName: xmeta.ObjectNameFromString("users"),
+				Columns:   []string{"missing_id"},
+			}},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	users := findTable(spec, "users")
+	if users == nil {
+		t.Fatal("users table not found")
+	}
+	if users.PrimaryKey != "id" {
+		t.Fatalf("primaryKey = %q, want id", users.PrimaryKey)
+	}
+	if !strings.Contains(strings.Join(spec.Introspection.Warnings, "\n"), "missing_id") {
+		t.Fatalf("expected missing column warning, got %#v", spec.Introspection.Warnings)
+	}
+}
+
+func TestBuildSpecRequiresAuthUserTable(t *testing.T) {
+	meta := &xmeta.MetaDatabase{
+		Name:    "appdb",
+		Options: map[string]string{"Driver": "postgres"},
+		Tables: []*xmeta.MetaTable{{
+			Name: &xmeta.ObjectName{Idents: []string{"public", "users"}},
+			Elements: []*xmeta.TableElement{
+				column("id", intDT(), false, true, true, nil),
+				column("email", textType(), false, false, false, nil),
+				column("passwd", textType(), false, false, false, nil),
+			},
+		}},
+	}
+
+	_, err := BuildSpec(meta, Options{
+		Project: "ExampleApp",
+		Auth: AuthOptions{
+			Role:     "u",
+			Table:    "missing_users",
+			ID:       "id",
+			Login:    "email",
+			Password: "passwd",
+		},
+	})
+	if err == nil {
+		t.Fatal("expected missing auth user table error")
+	}
+}
+
 func findTable(spec *Spec, name string) *Table {
 	for i := range spec.Schema.Tables {
 		if spec.Schema.Tables[i].Name == name {

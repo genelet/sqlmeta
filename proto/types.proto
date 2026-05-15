@@ -151,8 +151,9 @@ message UniqueColumnSpec {
 
 // Foreign key column reference expression
 message ReferenceKeyExpr {
-    string TableName = 1;
+    string TableName = 1 [deprecated = true];
     repeated string Columns = 2;
+    ObjectName TableObjectName = 3;
 }
 
 // Column-level REFERENCES constraint (FOREIGN KEY)

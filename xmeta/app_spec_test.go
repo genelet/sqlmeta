@@ -86,6 +86,13 @@ func TestExpandRoleScopesTraversesChildrenAndDescendants(t *testing.T) {
 	if len(expanded.GetComponentGrants()) != 3 {
 		t.Fatalf("component grants = %d, want 3", len(expanded.GetComponentGrants()))
 	}
+	comments := findTableGrant(expanded.GetTableGrants(), "public.comments")
+	if comments == nil {
+		t.Fatal("comments grant not found")
+	}
+	if len(comments.GetTraversalJoins()) != 2 {
+		t.Fatalf("comments traversal joins = %d, want 2", len(comments.GetTraversalJoins()))
+	}
 }
 
 func TestExpandRoleScopesFallbackAllTablesIsExplicit(t *testing.T) {
@@ -255,6 +262,88 @@ func TestExpandRoleScopesManualFKOverridesPhysicalConflict(t *testing.T) {
 	}
 }
 
+func TestExpandRoleScopesSkipsInvalidManualOverrides(t *testing.T) {
+	meta := &MetaDatabase{
+		Name: "appdb",
+		Tables: []*MetaTable{
+			testAppTable("users", "id", "public_id"),
+			testAppTable("posts", "id", "user_id"),
+			testAppTable("orders", "id", "user_public_id"),
+		},
+	}
+	addTestFK(meta.Tables[1], "posts_user_fk", []string{"user_id"}, "users", []string{"id"})
+	spec, err := BuildDefaultAppSpec(meta, AppSpecOptions{
+		Name: "Example",
+		Auth: &AuthBinding{
+			UserTable:      ObjectNameFromString("users"),
+			UserIDColumn:   "id",
+			LoginColumn:    "email",
+			PasswordColumn: "passwd",
+		},
+		SchemaOverrides: &SchemaRelationshipOverrides{
+			PrimaryKeys: []*ManualPrimaryKey{{
+				Name:      "users_bad_pk",
+				TableName: ObjectNameFromString("users"),
+				Columns:   []string{"missing_public_id"},
+			}},
+			ForeignKeys: []*ManualForeignKey{{
+				Name:          "posts_bad_user_fk",
+				ChildTable:    ObjectNameFromString("posts"),
+				ChildColumns:  []string{"user_id"},
+				ParentTable:   ObjectNameFromString("users"),
+				ParentColumns: []string{"missing_id"},
+			}, {
+				Name:          "orders_bad_user_fk",
+				ChildTable:    ObjectNameFromString("orders"),
+				ChildColumns:  []string{"missing_user_public_id"},
+				ParentTable:   ObjectNameFromString("users"),
+				ParentColumns: []string{"id"},
+			}},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	expanded, err := ExpandRoleScopes(meta, spec)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got := strings.Join(tableGrantKeys(expanded.GetTableGrants()), ","); got != "posts,users" {
+		t.Fatalf("invalid manual overrides should be skipped without suppressing physical FK, grants = %s", got)
+	}
+	warnings := strings.Join(expanded.GetWarnings(), "\n")
+	for _, want := range []string{"missing_public_id", "missing_id", "missing_user_public_id"} {
+		if !strings.Contains(warnings, want) {
+			t.Fatalf("expected warning containing %q, got:\n%s", want, warnings)
+		}
+	}
+}
+
+func TestExpandRoleScopesRequiresAuthUserTable(t *testing.T) {
+	meta := &MetaDatabase{
+		Name: "appdb",
+		Tables: []*MetaTable{
+			testAppTable("users", "id"),
+		},
+	}
+	spec, err := BuildDefaultAppSpec(meta, AppSpecOptions{
+		Name: "Example",
+		Auth: &AuthBinding{
+			UserTable:      ObjectNameFromString("missing_users"),
+			UserIDColumn:   "id",
+			LoginColumn:    "email",
+			PasswordColumn: "passwd",
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ExpandRoleScopes(meta, spec); err == nil {
+		t.Fatal("expected missing auth user table error")
+	}
+}
+
 func TestExpandRoleScopesWarnsForCyclesAndCompositeFKs(t *testing.T) {
 	meta := &MetaDatabase{
 		Name: "appdb",
@@ -343,4 +432,13 @@ func tableGrantKeys(grants []*ExpandedTableGrant) []string {
 		keys = append(keys, objectNameKey(grant.GetTableName()))
 	}
 	return keys
+}
+
+func findTableGrant(grants []*ExpandedTableGrant, key string) *ExpandedTableGrant {
+	for _, grant := range grants {
+		if objectNameKey(grant.GetTableName()) == key {
+			return grant
+		}
+	}
+	return nil
 }

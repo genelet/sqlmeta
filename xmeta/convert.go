@@ -215,8 +215,9 @@ func PGForeignKeyToTableConstraint(fk *PGForeignKey) *TableConstraint {
 				ReferenceItem: &ReferentialTableConstraint{
 					Columns: fk.LocalColumns,
 					KeyExpr: &ReferenceKeyExpr{
-						TableName: formatObjectName(fk.ForeignTable),
-						Columns:   fk.ForeignColumns,
+						TableName:       formatObjectName(fk.ForeignTable),
+						TableObjectName: cloneObjectName(fk.ForeignTable),
+						Columns:         fk.ForeignColumns,
 					},
 					OnUpdate: mapReferentialAction(fk.OnUpdate),
 					OnDelete: mapReferentialAction(fk.OnDelete),
@@ -411,8 +412,9 @@ func MYForeignKeyToTableConstraint(fk *MYForeignKey) *TableConstraint {
 				ReferenceItem: &ReferentialTableConstraint{
 					Columns: fk.LocalColumns,
 					KeyExpr: &ReferenceKeyExpr{
-						TableName: formatObjectName(fk.ForeignTable),
-						Columns:   fk.ForeignColumns,
+						TableName:       formatObjectName(fk.ForeignTable),
+						TableObjectName: cloneObjectName(fk.ForeignTable),
+						Columns:         fk.ForeignColumns,
 					},
 					OnUpdate: mapReferentialAction(fk.OnUpdate),
 					OnDelete: mapReferentialAction(fk.OnDelete),

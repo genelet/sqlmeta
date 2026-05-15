@@ -126,4 +126,13 @@ message ExpandedTableGrant {
     repeated CRUDOperation Operations = 3;
     repeated ObjectName TraversalPath = 4;
     string ScopeColumn = 5;
+    repeated ExpandedTraversalJoin TraversalJoins = 6;
+}
+
+message ExpandedTraversalJoin {
+    string ForeignKeyName = 1;
+    ObjectName ParentTable = 2;
+    string ParentColumn = 3;
+    ObjectName ChildTable = 4;
+    string ChildColumn = 5;
 }

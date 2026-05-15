@@ -119,7 +119,10 @@ func ExpandRoleScopes(meta *MetaDatabase, spec *AppSpec) (*ExpandedAppSpec, erro
 	}
 
 	for _, role := range spec.GetRoles() {
-		grants, warnings := expandRole(meta, spec, role, index, graph)
+		grants, warnings, err := expandRole(meta, spec, role, index, graph)
+		if err != nil {
+			return nil, err
+		}
 		expanded.Warnings = append(expanded.Warnings, warnings...)
 		expanded.TableGrants = append(expanded.TableGrants, grants...)
 	}
@@ -204,7 +207,7 @@ type effectiveRelationships struct {
 	warnings         []string
 }
 
-func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTableIndex, graph fkGraph) ([]*ExpandedTableGrant, []string) {
+func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTableIndex, graph fkGraph) ([]*ExpandedTableGrant, []string, error) {
 	var warnings []string
 	ops := cloneOperations(role.GetCrudPolicy().GetOperations())
 	if len(ops) == 0 {
@@ -221,17 +224,18 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	}
 
 	grants := map[string]*ExpandedTableGrant{}
-	addGrant := func(key string, path []*ObjectName, scopeColumn string) {
+	addGrant := func(key string, path []*ObjectName, scopeColumn string, joins []fkEdge) {
 		table := index.byKey[key]
 		if table == nil {
 			return
 		}
 		grants[key] = &ExpandedTableGrant{
-			RoleName:      role.GetName(),
-			TableName:     cloneObjectName(table.GetName()),
-			Operations:    cloneOperations(ops),
-			TraversalPath: cloneObjectNames(path),
-			ScopeColumn:   scopeColumn,
+			RoleName:       role.GetName(),
+			TableName:      cloneObjectName(table.GetName()),
+			Operations:     cloneOperations(ops),
+			TraversalPath:  cloneObjectNames(path),
+			ScopeColumn:    scopeColumn,
+			TraversalJoins: traversalJoins(joins, index),
 		}
 	}
 
@@ -239,30 +243,29 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	case FKTraversalMode_FKTraversalModeNone:
 	case FKTraversalMode_FKTraversalModeAllTables:
 		for _, table := range sortedMetaTables(meta.GetTables()) {
-			addGrant(objectNameKey(table.GetName()), []*ObjectName{table.GetName()}, "")
+			addGrant(objectNameKey(table.GetName()), []*ObjectName{table.GetName()}, "", nil)
 		}
 	case FKTraversalMode_FKTraversalModeAuthUserDescendants:
 		auth := role.GetAuth()
 		if auth == nil || len(auth.GetUserTable().GetIdents()) == 0 {
-			warnings = append(warnings, fmt.Sprintf("role %s has no auth user table for FK scope expansion", role.GetName()))
-			break
+			return nil, warnings, fmt.Errorf("role %s has no auth user table for FK scope expansion", role.GetName())
 		}
 		startKey, warning := index.resolve(auth.GetUserTable())
 		if warning != "" {
 			warnings = append(warnings, fmt.Sprintf("role %s auth table %q: %s", role.GetName(), objectNameKey(auth.GetUserTable()), warning))
 		}
 		if startKey == "" {
-			break
+			return nil, warnings, fmt.Errorf("role %s auth user table %q is required but was not found", role.GetName(), objectNameKey(auth.GetUserTable()))
 		}
 		if auth.GetUserIDColumn() == "" {
-			warnings = append(warnings, fmt.Sprintf("role %s auth binding has no user id column", role.GetName()))
+			return nil, warnings, fmt.Errorf("role %s auth binding has no user id column", role.GetName())
 		} else if !tableHasColumn(index.byKey[startKey], auth.GetUserIDColumn()) {
-			warnings = append(warnings, fmt.Sprintf("role %s auth table %s has no user id column %s", role.GetName(), startKey, auth.GetUserIDColumn()))
+			return nil, warnings, fmt.Errorf("role %s auth table %s has no user id column %s", role.GetName(), startKey, auth.GetUserIDColumn())
 		}
 
 		includeStart := scope == nil || scope.GetIncludeStartTable()
 		if includeStart {
-			addGrant(startKey, []*ObjectName{index.byKey[startKey].GetName()}, "")
+			addGrant(startKey, []*ObjectName{index.byKey[startKey].GetName()}, "", nil)
 		}
 		maxDepth := int(scope.GetMaxDepth())
 		if maxDepth == 0 {
@@ -283,7 +286,7 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 			warnings = append(warnings, fmt.Sprintf("role %s include table %q: %s", role.GetName(), objectNameKey(include), warning))
 		}
 		if key != "" {
-			addGrant(key, []*ObjectName{index.byKey[key].GetName()}, "")
+			addGrant(key, []*ObjectName{index.byKey[key].GetName()}, "", nil)
 		}
 	}
 	for _, exclude := range scope.GetExcludeTables() {
@@ -298,19 +301,18 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	for _, grant := range grants {
 		out = append(out, grant)
 	}
-	return out, warnings
+	return out, warnings, nil
 }
 
-func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string)) []string {
+func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string, []fkEdge)) []string {
 	var warnings []string
 	type step struct {
-		key       string
-		depth     int
-		path      []string
-		scopeCol  string
-		directRef bool
+		key   string
+		depth int
+		path  []string
+		joins []fkEdge
 	}
-	queue := []step{{key: startKey, path: []string{startKey}, directRef: true}}
+	queue := []step{{key: startKey, path: []string{startKey}}}
 	visited := map[string]bool{startKey: true}
 	matchedDirectChild := false
 
@@ -335,11 +337,12 @@ func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversa
 				continue
 			}
 			path := append(append([]string{}, current.path...), next)
+			joins := append(append([]fkEdge{}, current.joins...), edge)
 			if !visited[next] {
 				visited[next] = true
 				matchedDirectChild = matchedDirectChild || current.key == startKey
-				addGrant(next, pathObjectNames(path, index), scopeColumn)
-				queue = append(queue, step{key: next, depth: current.depth + 1, path: path, scopeCol: scopeColumn})
+				addGrant(next, pathObjectNames(path, index), scopeColumn, joins)
+				queue = append(queue, step{key: next, depth: current.depth + 1, path: path, joins: joins})
 			}
 		}
 	}
@@ -417,9 +420,10 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 			if ref == nil {
 				continue
 			}
+			parentName := ReferenceKeyExprObjectName(ref.GetKeyExpr())
 			parentCols := cleanColumns(ref.GetKeyExpr().GetColumns())
 			if len(parentCols) == 0 {
-				parentKey, _ := index.resolve(ObjectNameFromString(ref.GetKeyExpr().GetTableName()))
+				parentKey, _ := index.resolve(parentName)
 				parentCols = relationships.primaryKeys[parentKey]
 			}
 			if len(ref.GetColumns()) != 1 || len(parentCols) != 1 {
@@ -429,9 +433,9 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 			if relationships.manualFKColumns[fkColumnKey(childKey, ref.GetColumns())] {
 				continue
 			}
-			parentKey, warning := index.resolve(ObjectNameFromString(ref.GetKeyExpr().GetTableName()))
+			parentKey, warning := index.resolve(parentName)
 			if warning != "" {
-				graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s FK target %q: %s", childKey, constraint.GetName(), ref.GetKeyExpr().GetTableName(), warning))
+				graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s FK target %q: %s", childKey, constraint.GetName(), objectNameKey(parentName), warning))
 			}
 			if parentKey == "" {
 				continue
@@ -477,10 +481,15 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s on %s has no columns", pk.GetName(), key))
 			continue
 		}
+		missingColumn := false
 		for _, col := range cols {
 			if !tableHasColumn(index.byKey[key], col) {
 				relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s on %s references missing column %s", pk.GetName(), key, col))
+				missingColumn = true
 			}
+		}
+		if missingColumn {
+			continue
 		}
 		relationships.primaryKeys[key] = cols
 	}
@@ -498,9 +507,6 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 		}
 		childCols := cleanColumns(fk.GetChildColumns())
 		parentCols := cleanColumns(fk.GetParentColumns())
-		if len(childCols) > 0 {
-			relationships.manualFKColumns[fkColumnKey(childKey, childCols)] = true
-		}
 		if len(parentCols) == 0 {
 			parentCols = relationships.primaryKeys[parentKey]
 		}
@@ -516,11 +522,17 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s has composite columns; skipped role scope edge", fk.GetName(), childKey))
 			continue
 		}
+		missingColumn := false
 		if !tableHasColumn(index.byKey[childKey], childCols[0]) {
 			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s references missing child column %s", fk.GetName(), childKey, childCols[0]))
+			missingColumn = true
 		}
 		if !tableHasColumn(index.byKey[parentKey], parentCols[0]) {
 			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s references missing parent column %s.%s", fk.GetName(), childKey, parentKey, parentCols[0]))
+			missingColumn = true
+		}
+		if missingColumn {
+			continue
 		}
 		edge := fkEdge{
 			name:        fk.GetName(),
@@ -529,6 +541,7 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 			localColumn: childCols[0],
 			refColumn:   parentCols[0],
 		}
+		relationships.manualFKColumns[fkColumnKey(childKey, childCols)] = true
 		relationships.manualFKEdgeKeys[fkEdgeKey(edge)] = true
 		relationships.manualFKEdges = append(relationships.manualFKEdges, edge)
 	}
@@ -648,6 +661,35 @@ func pathObjectNames(path []string, index appTableIndex) []*ObjectName {
 		}
 	}
 	return out
+}
+
+func traversalJoins(edges []fkEdge, index appTableIndex) []*ExpandedTraversalJoin {
+	out := make([]*ExpandedTraversalJoin, 0, len(edges))
+	for _, edge := range edges {
+		parent := index.byKey[edge.parentKey]
+		child := index.byKey[edge.childKey]
+		if parent == nil || child == nil {
+			continue
+		}
+		out = append(out, &ExpandedTraversalJoin{
+			ForeignKeyName: edge.name,
+			ParentTable:    cloneObjectName(parent.GetName()),
+			ParentColumn:   edge.refColumn,
+			ChildTable:     cloneObjectName(child.GetName()),
+			ChildColumn:    edge.localColumn,
+		})
+	}
+	return out
+}
+
+func ReferenceKeyExprObjectName(expr *ReferenceKeyExpr) *ObjectName {
+	if expr == nil {
+		return &ObjectName{}
+	}
+	if len(expr.GetTableObjectName().GetIdents()) > 0 {
+		return expr.GetTableObjectName()
+	}
+	return ObjectNameFromString(expr.GetTableName())
 }
 
 func lastAppIdent(name *ObjectName) string {

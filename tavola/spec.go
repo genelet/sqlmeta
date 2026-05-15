@@ -271,7 +271,10 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 	}
 
 	for _, appRole := range app.GetRoles() {
-		role, warningList := buildRoleFromApp(appRole, spec.Project.Default, tablesByName)
+		role, warningList, err := buildRoleFromApp(appRole, spec.Project.Default, tablesByName)
+		if err != nil {
+			return nil, err
+		}
 		warnings = append(warnings, warningList...)
 		spec.Roles = append(spec.Roles, role)
 	}
@@ -357,8 +360,14 @@ func manualPrimaryKeyOverrides(meta *xmeta.MetaDatabase, overrides *xmeta.Schema
 	out := map[string][]string{}
 	var warnings []string
 	tableNames := map[string]bool{}
+	tableColumns := map[string]map[string]bool{}
 	for _, mt := range meta.GetTables() {
-		tableNames[tableName(mt.GetName())] = true
+		table := tableName(mt.GetName())
+		tableNames[table] = true
+		tableColumns[table] = map[string]bool{}
+		for _, col := range columns(mt) {
+			tableColumns[table][strings.ToLower(col.GetName())] = true
+		}
 	}
 	for _, pk := range overrides.GetPrimaryKeys() {
 		table := tableName(pk.GetTableName())
@@ -380,17 +389,27 @@ func manualPrimaryKeyOverrides(meta *xmeta.MetaDatabase, overrides *xmeta.Schema
 			warnings = append(warnings, fmt.Sprintf("manual primary key %s on %s has no columns", pk.GetName(), table))
 			continue
 		}
+		missingColumn := false
+		for _, col := range cols {
+			if !tableColumns[table][strings.ToLower(col)] {
+				warnings = append(warnings, fmt.Sprintf("manual primary key %s on %s references missing column %s", pk.GetName(), table, col))
+				missingColumn = true
+			}
+		}
+		if missingColumn {
+			continue
+		}
 		out[table] = cols
 	}
 	return out, warnings
 }
 
-func buildRole(auth AuthOptions, def ProjectDefault, tables map[string]Table) (Role, []string) {
+func buildRole(auth AuthOptions, def ProjectDefault, tables map[string]Table) (Role, []string, error) {
 	var warnings []string
 	roleName := defaultString(auth.Role, "u")
 	table := resolveTable(auth.Table, tables)
 	if _, ok := tables[table]; !ok {
-		warnings = append(warnings, fmt.Sprintf("auth table %q was not found in introspected tables", table))
+		return Role{}, warnings, fmt.Errorf("auth table %q is required but was not found in introspected tables", table)
 	}
 	warnings = append(warnings, "auth role was generated without a login procedure; review schema.procedures before relying on login")
 	return Role{
@@ -409,11 +428,14 @@ func buildRole(auth AuthOptions, def ProjectDefault, tables map[string]Table) (R
 			LastName:  auth.LastName,
 		},
 		Restriction: defaultString(auth.Restriction, "1=1"),
-	}, warnings
+	}, warnings, nil
 }
 
-func buildRoleFromApp(appRole *xmeta.AppRole, def ProjectDefault, tables map[string]Table) (Role, []string) {
+func buildRoleFromApp(appRole *xmeta.AppRole, def ProjectDefault, tables map[string]Table) (Role, []string, error) {
 	auth := appRole.GetAuth()
+	if auth == nil || len(auth.GetUserTable().GetIdents()) == 0 {
+		return Role{}, nil, fmt.Errorf("role %s has no auth user table", appRole.GetName())
+	}
 	opts := auth.GetOptions()
 	return buildRole(AuthOptions{
 		Role:        appRole.GetName(),
@@ -487,7 +509,7 @@ func renderCreateTable(mt *xmeta.MetaTable, driver string) string {
 			lines = append(lines, kind+" ("+quoteIdents(unique.Columns, driver)+")")
 		}
 		if ref := constraint.GetSpec().GetReferenceItem(); ref != nil && ref.KeyExpr != nil && len(ref.Columns) > 0 {
-			line := "FOREIGN KEY (" + quoteIdents(ref.Columns, driver) + ") REFERENCES " + quoteTable(ref.KeyExpr.TableName, driver)
+			line := "FOREIGN KEY (" + quoteIdents(ref.Columns, driver) + ") REFERENCES " + quoteTable(referenceKeyTableName(ref.KeyExpr), driver)
 			if len(ref.KeyExpr.Columns) > 0 {
 				line += " (" + quoteIdents(ref.KeyExpr.Columns, driver) + ")"
 			}
@@ -806,6 +828,13 @@ func tableName(name *xmeta.ObjectName) string {
 		return idents[1]
 	}
 	return strings.Join(idents, ".")
+}
+
+func referenceKeyTableName(expr *xmeta.ReferenceKeyExpr) string {
+	if name := tableName(expr.GetTableObjectName()); name != "" {
+		return name
+	}
+	return expr.GetTableName()
 }
 
 func lastIdent(name *xmeta.ObjectName) string {

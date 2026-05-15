@@ -1276,11 +1276,13 @@ func (x *UniqueColumnSpec) GetIsPrimaryKey() bool {
 
 // Foreign key column reference expression
 type ReferenceKeyExpr struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TableName     string                 `protobuf:"bytes,1,opt,name=TableName,proto3" json:"TableName,omitempty"`
-	Columns       []string               `protobuf:"bytes,2,rep,name=Columns,proto3" json:"Columns,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Deprecated: Marked as deprecated in types.proto.
+	TableName       string      `protobuf:"bytes,1,opt,name=TableName,proto3" json:"TableName,omitempty"`
+	Columns         []string    `protobuf:"bytes,2,rep,name=Columns,proto3" json:"Columns,omitempty"`
+	TableObjectName *ObjectName `protobuf:"bytes,3,opt,name=TableObjectName,proto3" json:"TableObjectName,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ReferenceKeyExpr) Reset() {
@@ -1313,6 +1315,7 @@ func (*ReferenceKeyExpr) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{20}
 }
 
+// Deprecated: Marked as deprecated in types.proto.
 func (x *ReferenceKeyExpr) GetTableName() string {
 	if x != nil {
 		return x.TableName
@@ -1323,6 +1326,13 @@ func (x *ReferenceKeyExpr) GetTableName() string {
 func (x *ReferenceKeyExpr) GetColumns() []string {
 	if x != nil {
 		return x.Columns
+	}
+	return nil
+}
+
+func (x *ReferenceKeyExpr) GetTableObjectName() *ObjectName {
+	if x != nil {
+		return x.TableObjectName
 	}
 	return nil
 }
@@ -3102,10 +3112,11 @@ const file_types_proto_rawDesc = "" +
 	"\aSetType\x12\x16\n" +
 	"\x06Values\x18\x01 \x03(\tR\x06Values\"6\n" +
 	"\x10UniqueColumnSpec\x12\"\n" +
-	"\fIsPrimaryKey\x18\x01 \x01(\bR\fIsPrimaryKey\"J\n" +
-	"\x10ReferenceKeyExpr\x12\x1c\n" +
-	"\tTableName\x18\x01 \x01(\tR\tTableName\x12\x18\n" +
-	"\aColumns\x18\x02 \x03(\tR\aColumns\"\xcd\x02\n" +
+	"\fIsPrimaryKey\x18\x01 \x01(\bR\fIsPrimaryKey\"\x8d\x01\n" +
+	"\x10ReferenceKeyExpr\x12 \n" +
+	"\tTableName\x18\x01 \x01(\tB\x02\x18\x01R\tTableName\x12\x18\n" +
+	"\aColumns\x18\x02 \x03(\tR\aColumns\x12=\n" +
+	"\x0fTableObjectName\x18\x03 \x01(\v2\x13.sqlmeta.ObjectNameR\x0fTableObjectName\"\xcd\x02\n" +
 	"\x14ReferencesColumnSpec\x121\n" +
 	"\tTableName\x18\x01 \x01(\v2\x13.sqlmeta.ObjectNameR\tTableName\x12\x18\n" +
 	"\aColumns\x18\x02 \x03(\tR\aColumns\x126\n" +
@@ -3362,79 +3373,80 @@ var file_types_proto_depIdxs = []int32{
 	32, // 0: sqlmeta.CollateType.Type:type_name -> sqlmeta.DataType
 	35, // 1: sqlmeta.StructData.Fields:type_name -> sqlmeta.ColumnDef
 	32, // 2: sqlmeta.ArrayData.Type:type_name -> sqlmeta.DataType
-	6,  // 3: sqlmeta.ReferencesColumnSpec.TableName:type_name -> sqlmeta.ObjectName
-	1,  // 4: sqlmeta.ReferencesColumnSpec.OnDelete:type_name -> sqlmeta.ReferentialAction
-	1,  // 5: sqlmeta.ReferencesColumnSpec.OnUpdate:type_name -> sqlmeta.ReferentialAction
-	2,  // 6: sqlmeta.ReferencesColumnSpec.Match:type_name -> sqlmeta.MatchOption
-	48, // 7: sqlmeta.ExcludeConstraintElement.Expr:type_name -> google.protobuf.Any
-	29, // 8: sqlmeta.ExcludeTableConstraint.Elements:type_name -> sqlmeta.ExcludeConstraintElement
-	48, // 9: sqlmeta.ExcludeTableConstraint.Where:type_name -> google.protobuf.Any
-	26, // 10: sqlmeta.ReferentialTableConstraint.KeyExpr:type_name -> sqlmeta.ReferenceKeyExpr
-	1,  // 11: sqlmeta.ReferentialTableConstraint.OnDelete:type_name -> sqlmeta.ReferentialAction
-	1,  // 12: sqlmeta.ReferentialTableConstraint.OnUpdate:type_name -> sqlmeta.ReferentialAction
-	2,  // 13: sqlmeta.ReferentialTableConstraint.Match:type_name -> sqlmeta.MatchOption
-	9,  // 14: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
-	8,  // 15: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
-	7,  // 16: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
-	14, // 17: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
-	15, // 18: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
-	16, // 19: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
-	6,  // 20: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
-	22, // 21: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
-	21, // 22: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
-	0,  // 23: sqlmeta.DataType.UUIDData:type_name -> sqlmeta.DataTypeSingle
-	17, // 24: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
-	0,  // 25: sqlmeta.DataType.BooleanData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 26: sqlmeta.DataType.DateData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 27: sqlmeta.DataType.TimeData:type_name -> sqlmeta.DataTypeSingle
-	19, // 28: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
-	13, // 29: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
-	12, // 30: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
-	0,  // 31: sqlmeta.DataType.TextData:type_name -> sqlmeta.DataTypeSingle
-	18, // 32: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
-	0,  // 33: sqlmeta.DataType.RegclassData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 34: sqlmeta.DataType.ByteaData:type_name -> sqlmeta.DataTypeSingle
-	20, // 35: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
-	23, // 36: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
-	24, // 37: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
-	10, // 38: sqlmeta.DataType.TinyIntData:type_name -> sqlmeta.TinyInt
-	11, // 39: sqlmeta.DataType.MediumIntData:type_name -> sqlmeta.MediumInt
-	0,  // 40: sqlmeta.DataType.YearData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 41: sqlmeta.DataType.JSONData:type_name -> sqlmeta.DataTypeSingle
-	0,  // 42: sqlmeta.DataType.XMLData:type_name -> sqlmeta.DataTypeSingle
-	25, // 43: sqlmeta.ColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
-	48, // 44: sqlmeta.ColumnConstraintSpec.CheckItem:type_name -> google.protobuf.Any
-	27, // 45: sqlmeta.ColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
-	5,  // 46: sqlmeta.ColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
-	33, // 47: sqlmeta.ColumnConstraint.Spec:type_name -> sqlmeta.ColumnConstraintSpec
-	32, // 48: sqlmeta.ColumnDef.DataType:type_name -> sqlmeta.DataType
-	48, // 49: sqlmeta.ColumnDef.Default:type_name -> google.protobuf.Any
-	4,  // 50: sqlmeta.ColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
-	34, // 51: sqlmeta.ColumnDef.Constraints:type_name -> sqlmeta.ColumnConstraint
-	43, // 52: sqlmeta.ColumnDef.Options:type_name -> sqlmeta.ColumnDef.OptionsEntry
-	6,  // 53: sqlmeta.MetaTable.Name:type_name -> sqlmeta.ObjectName
-	42, // 54: sqlmeta.MetaTable.Elements:type_name -> sqlmeta.TableElement
-	44, // 55: sqlmeta.MetaTable.Options:type_name -> sqlmeta.MetaTable.OptionsEntry
-	6,  // 56: sqlmeta.MetaView.Name:type_name -> sqlmeta.ObjectName
-	45, // 57: sqlmeta.MetaView.Options:type_name -> sqlmeta.MetaView.OptionsEntry
-	6,  // 58: sqlmeta.MetaSequence.Name:type_name -> sqlmeta.ObjectName
-	46, // 59: sqlmeta.MetaSequence.Options:type_name -> sqlmeta.MetaSequence.OptionsEntry
-	36, // 60: sqlmeta.MetaDatabase.Tables:type_name -> sqlmeta.MetaTable
-	37, // 61: sqlmeta.MetaDatabase.Views:type_name -> sqlmeta.MetaView
-	38, // 62: sqlmeta.MetaDatabase.Sequences:type_name -> sqlmeta.MetaSequence
-	47, // 63: sqlmeta.MetaDatabase.Options:type_name -> sqlmeta.MetaDatabase.OptionsEntry
-	31, // 64: sqlmeta.TableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
-	48, // 65: sqlmeta.TableConstraintSpec.CheckItem:type_name -> google.protobuf.Any
-	28, // 66: sqlmeta.TableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
-	30, // 67: sqlmeta.TableConstraintSpec.ExcludeItem:type_name -> sqlmeta.ExcludeTableConstraint
-	40, // 68: sqlmeta.TableConstraint.Spec:type_name -> sqlmeta.TableConstraintSpec
-	35, // 69: sqlmeta.TableElement.ColumnDefElement:type_name -> sqlmeta.ColumnDef
-	41, // 70: sqlmeta.TableElement.TableConstraintElement:type_name -> sqlmeta.TableConstraint
-	71, // [71:71] is the sub-list for method output_type
-	71, // [71:71] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	6,  // 3: sqlmeta.ReferenceKeyExpr.TableObjectName:type_name -> sqlmeta.ObjectName
+	6,  // 4: sqlmeta.ReferencesColumnSpec.TableName:type_name -> sqlmeta.ObjectName
+	1,  // 5: sqlmeta.ReferencesColumnSpec.OnDelete:type_name -> sqlmeta.ReferentialAction
+	1,  // 6: sqlmeta.ReferencesColumnSpec.OnUpdate:type_name -> sqlmeta.ReferentialAction
+	2,  // 7: sqlmeta.ReferencesColumnSpec.Match:type_name -> sqlmeta.MatchOption
+	48, // 8: sqlmeta.ExcludeConstraintElement.Expr:type_name -> google.protobuf.Any
+	29, // 9: sqlmeta.ExcludeTableConstraint.Elements:type_name -> sqlmeta.ExcludeConstraintElement
+	48, // 10: sqlmeta.ExcludeTableConstraint.Where:type_name -> google.protobuf.Any
+	26, // 11: sqlmeta.ReferentialTableConstraint.KeyExpr:type_name -> sqlmeta.ReferenceKeyExpr
+	1,  // 12: sqlmeta.ReferentialTableConstraint.OnDelete:type_name -> sqlmeta.ReferentialAction
+	1,  // 13: sqlmeta.ReferentialTableConstraint.OnUpdate:type_name -> sqlmeta.ReferentialAction
+	2,  // 14: sqlmeta.ReferentialTableConstraint.Match:type_name -> sqlmeta.MatchOption
+	9,  // 15: sqlmeta.DataType.IntData:type_name -> sqlmeta.Int
+	8,  // 16: sqlmeta.DataType.SmallIntData:type_name -> sqlmeta.SmallInt
+	7,  // 17: sqlmeta.DataType.BigIntData:type_name -> sqlmeta.BigInt
+	14, // 18: sqlmeta.DataType.DecimalData:type_name -> sqlmeta.Decimal
+	15, // 19: sqlmeta.DataType.CharData:type_name -> sqlmeta.CharType
+	16, // 20: sqlmeta.DataType.VarcharData:type_name -> sqlmeta.VarcharType
+	6,  // 21: sqlmeta.DataType.CustomData:type_name -> sqlmeta.ObjectName
+	22, // 22: sqlmeta.DataType.ArrayData:type_name -> sqlmeta.ArrayData
+	21, // 23: sqlmeta.DataType.StructData:type_name -> sqlmeta.StructData
+	0,  // 24: sqlmeta.DataType.UUIDData:type_name -> sqlmeta.DataTypeSingle
+	17, // 25: sqlmeta.DataType.TimestampData:type_name -> sqlmeta.Timestamp
+	0,  // 26: sqlmeta.DataType.BooleanData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 27: sqlmeta.DataType.DateData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 28: sqlmeta.DataType.TimeData:type_name -> sqlmeta.DataTypeSingle
+	19, // 29: sqlmeta.DataType.DoubleData:type_name -> sqlmeta.DoubleType
+	13, // 30: sqlmeta.DataType.FloatData:type_name -> sqlmeta.Float
+	12, // 31: sqlmeta.DataType.RealData:type_name -> sqlmeta.Real
+	0,  // 32: sqlmeta.DataType.TextData:type_name -> sqlmeta.DataTypeSingle
+	18, // 33: sqlmeta.DataType.BitData:type_name -> sqlmeta.BitType
+	0,  // 34: sqlmeta.DataType.RegclassData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 35: sqlmeta.DataType.ByteaData:type_name -> sqlmeta.DataTypeSingle
+	20, // 36: sqlmeta.DataType.CollateData:type_name -> sqlmeta.CollateType
+	23, // 37: sqlmeta.DataType.EnumData:type_name -> sqlmeta.EnumType
+	24, // 38: sqlmeta.DataType.SetData:type_name -> sqlmeta.SetType
+	10, // 39: sqlmeta.DataType.TinyIntData:type_name -> sqlmeta.TinyInt
+	11, // 40: sqlmeta.DataType.MediumIntData:type_name -> sqlmeta.MediumInt
+	0,  // 41: sqlmeta.DataType.YearData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 42: sqlmeta.DataType.JSONData:type_name -> sqlmeta.DataTypeSingle
+	0,  // 43: sqlmeta.DataType.XMLData:type_name -> sqlmeta.DataTypeSingle
+	25, // 44: sqlmeta.ColumnConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueColumnSpec
+	48, // 45: sqlmeta.ColumnConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	27, // 46: sqlmeta.ColumnConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferencesColumnSpec
+	5,  // 47: sqlmeta.ColumnConstraintSpec.NotNullItem:type_name -> sqlmeta.NotNullColumnSpec
+	33, // 48: sqlmeta.ColumnConstraint.Spec:type_name -> sqlmeta.ColumnConstraintSpec
+	32, // 49: sqlmeta.ColumnDef.DataType:type_name -> sqlmeta.DataType
+	48, // 50: sqlmeta.ColumnDef.Default:type_name -> google.protobuf.Any
+	4,  // 51: sqlmeta.ColumnDef.MyDecos:type_name -> sqlmeta.AutoIncrement
+	34, // 52: sqlmeta.ColumnDef.Constraints:type_name -> sqlmeta.ColumnConstraint
+	43, // 53: sqlmeta.ColumnDef.Options:type_name -> sqlmeta.ColumnDef.OptionsEntry
+	6,  // 54: sqlmeta.MetaTable.Name:type_name -> sqlmeta.ObjectName
+	42, // 55: sqlmeta.MetaTable.Elements:type_name -> sqlmeta.TableElement
+	44, // 56: sqlmeta.MetaTable.Options:type_name -> sqlmeta.MetaTable.OptionsEntry
+	6,  // 57: sqlmeta.MetaView.Name:type_name -> sqlmeta.ObjectName
+	45, // 58: sqlmeta.MetaView.Options:type_name -> sqlmeta.MetaView.OptionsEntry
+	6,  // 59: sqlmeta.MetaSequence.Name:type_name -> sqlmeta.ObjectName
+	46, // 60: sqlmeta.MetaSequence.Options:type_name -> sqlmeta.MetaSequence.OptionsEntry
+	36, // 61: sqlmeta.MetaDatabase.Tables:type_name -> sqlmeta.MetaTable
+	37, // 62: sqlmeta.MetaDatabase.Views:type_name -> sqlmeta.MetaView
+	38, // 63: sqlmeta.MetaDatabase.Sequences:type_name -> sqlmeta.MetaSequence
+	47, // 64: sqlmeta.MetaDatabase.Options:type_name -> sqlmeta.MetaDatabase.OptionsEntry
+	31, // 65: sqlmeta.TableConstraintSpec.ReferenceItem:type_name -> sqlmeta.ReferentialTableConstraint
+	48, // 66: sqlmeta.TableConstraintSpec.CheckItem:type_name -> google.protobuf.Any
+	28, // 67: sqlmeta.TableConstraintSpec.UniqueItem:type_name -> sqlmeta.UniqueTableConstraint
+	30, // 68: sqlmeta.TableConstraintSpec.ExcludeItem:type_name -> sqlmeta.ExcludeTableConstraint
+	40, // 69: sqlmeta.TableConstraint.Spec:type_name -> sqlmeta.TableConstraintSpec
+	35, // 70: sqlmeta.TableElement.ColumnDefElement:type_name -> sqlmeta.ColumnDef
+	41, // 71: sqlmeta.TableElement.TableConstraintElement:type_name -> sqlmeta.TableConstraint
+	72, // [72:72] is the sub-list for method output_type
+	72, // [72:72] is the sub-list for method input_type
+	72, // [72:72] is the sub-list for extension type_name
+	72, // [72:72] is the sub-list for extension extendee
+	0,  // [0:72] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
