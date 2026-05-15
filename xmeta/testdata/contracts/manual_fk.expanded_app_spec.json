@@ -1,0 +1,193 @@
+{
+  "Spec": {
+    "Name": "Manual FK",
+    "Datasource": {
+      "Name": "appdb",
+      "Driver": "sqlite",
+      "Database": "appdb"
+    },
+    "Components": [
+      {
+        "Name": "orders",
+        "TableName": {
+          "Idents": [
+            "orders"
+          ]
+        },
+        "Description": "orders records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "users",
+        "TableName": {
+          "Idents": [
+            "users"
+          ]
+        },
+        "Description": "users records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      }
+    ],
+    "Roles": [
+      {
+        "Name": "member",
+        "Description": "Signed-in user",
+        "Auth": {
+          "UserTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "UserIDColumn": "id",
+          "LoginColumn": "email",
+          "PasswordColumn": "passwd"
+        },
+        "CrudPolicy": {
+          "Operations": [
+            "CRUDOperationList",
+            "CRUDOperationRead",
+            "CRUDOperationCreate",
+            "CRUDOperationUpdate",
+            "CRUDOperationDelete"
+          ]
+        },
+        "Scope": {
+          "Mode": "FKTraversalModeAuthUserDescendants",
+          "Direction": "FKTraversalDirectionChildren",
+          "MaxDepth": 32,
+          "IncludeStartTable": true
+        }
+      }
+    ],
+    "SchemaOverrides": {
+      "ForeignKeys": [
+        {
+          "Name": "orders_user_fk",
+          "ChildTable": {
+            "Idents": [
+              "orders"
+            ]
+          },
+          "ChildColumns": [
+            "user_id"
+          ],
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumns": [
+            "id"
+          ]
+        }
+      ]
+    }
+  },
+  "ComponentGrants": [
+    {
+      "RoleName": "member",
+      "ComponentName": "orders",
+      "TableName": {
+        "Idents": [
+          "orders"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName": "member",
+      "ComponentName": "users",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    }
+  ],
+  "TableGrants": [
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "orders"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        },
+        {
+          "Idents": [
+            "orders"
+          ]
+        }
+      ],
+      "ScopeColumn": "user_id",
+      "TraversalJoins": [
+        {
+          "ForeignKeyName": "orders_user_fk",
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumn": "id",
+          "ChildTable": {
+            "Idents": [
+              "orders"
+            ]
+          },
+          "ChildColumn": "user_id"
+        }
+      ]
+    },
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        }
+      ]
+    }
+  ]
+}

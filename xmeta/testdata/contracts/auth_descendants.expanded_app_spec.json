@@ -1,0 +1,275 @@
+{
+  "Spec": {
+    "Name": "Auth Descendants",
+    "Datasource": {
+      "Name": "appdb",
+      "Driver": "sqlite",
+      "Database": "appdb"
+    },
+    "Components": [
+      {
+        "Name": "audit_log",
+        "TableName": {
+          "Idents": [
+            "audit_log"
+          ]
+        },
+        "Description": "audit_log records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "comments",
+        "TableName": {
+          "Idents": [
+            "comments"
+          ]
+        },
+        "Description": "comments records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "posts",
+        "TableName": {
+          "Idents": [
+            "posts"
+          ]
+        },
+        "Description": "posts records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "users",
+        "TableName": {
+          "Idents": [
+            "users"
+          ]
+        },
+        "Description": "users records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      }
+    ],
+    "Roles": [
+      {
+        "Name": "member",
+        "Description": "Signed-in user",
+        "Auth": {
+          "UserTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "UserIDColumn": "id",
+          "LoginColumn": "email",
+          "PasswordColumn": "passwd"
+        },
+        "CrudPolicy": {
+          "Operations": [
+            "CRUDOperationList",
+            "CRUDOperationRead",
+            "CRUDOperationCreate",
+            "CRUDOperationUpdate",
+            "CRUDOperationDelete"
+          ]
+        },
+        "Scope": {
+          "Mode": "FKTraversalModeAuthUserDescendants",
+          "Direction": "FKTraversalDirectionChildren",
+          "MaxDepth": 32,
+          "IncludeStartTable": true
+        }
+      }
+    ]
+  },
+  "ComponentGrants": [
+    {
+      "RoleName": "member",
+      "ComponentName": "comments",
+      "TableName": {
+        "Idents": [
+          "comments"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName": "member",
+      "ComponentName": "posts",
+      "TableName": {
+        "Idents": [
+          "posts"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName": "member",
+      "ComponentName": "users",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    }
+  ],
+  "TableGrants": [
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "comments"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        },
+        {
+          "Idents": [
+            "posts"
+          ]
+        },
+        {
+          "Idents": [
+            "comments"
+          ]
+        }
+      ],
+      "ScopeColumn": "post_id",
+      "TraversalJoins": [
+        {
+          "ForeignKeyName": "posts_user_fk",
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumn": "id",
+          "ChildTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ChildColumn": "user_id"
+        },
+        {
+          "ForeignKeyName": "comments_post_fk",
+          "ParentTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ParentColumn": "id",
+          "ChildTable": {
+            "Idents": [
+              "comments"
+            ]
+          },
+          "ChildColumn": "post_id"
+        }
+      ]
+    },
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "posts"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        },
+        {
+          "Idents": [
+            "posts"
+          ]
+        }
+      ],
+      "ScopeColumn": "user_id",
+      "TraversalJoins": [
+        {
+          "ForeignKeyName": "posts_user_fk",
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumn": "id",
+          "ChildTable": {
+            "Idents": [
+              "posts"
+            ]
+          },
+          "ChildColumn": "user_id"
+        }
+      ]
+    },
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        }
+      ]
+    }
+  ]
+}

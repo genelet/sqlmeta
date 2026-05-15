@@ -1,0 +1,34 @@
+{
+  "Name": "Basic CRUD",
+  "Datasource": {
+    "Name": "appdb",
+    "Driver": "sqlite",
+    "Database": "appdb"
+  },
+  "Components": [
+    {
+      "Name": "posts",
+      "TableName": {
+        "Idents": [
+          "posts"
+        ]
+      },
+      "Description": "posts records",
+      "PublicOperations": [
+        "CRUDOperationList"
+      ]
+    },
+    {
+      "Name": "users",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Description": "users records",
+      "PublicOperations": [
+        "CRUDOperationList"
+      ]
+    }
+  ]
+}

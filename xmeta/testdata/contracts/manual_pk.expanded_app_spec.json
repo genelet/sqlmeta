@@ -1,0 +1,203 @@
+{
+  "Spec": {
+    "Name": "Manual PK",
+    "Datasource": {
+      "Name": "appdb",
+      "Driver": "sqlite",
+      "Database": "appdb"
+    },
+    "Components": [
+      {
+        "Name": "orders",
+        "TableName": {
+          "Idents": [
+            "orders"
+          ]
+        },
+        "Description": "orders records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      },
+      {
+        "Name": "users",
+        "TableName": {
+          "Idents": [
+            "users"
+          ]
+        },
+        "Description": "users records",
+        "PublicOperations": [
+          "CRUDOperationList"
+        ]
+      }
+    ],
+    "Roles": [
+      {
+        "Name": "member",
+        "Description": "Signed-in user",
+        "Auth": {
+          "UserTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "UserIDColumn": "public_id",
+          "LoginColumn": "email",
+          "PasswordColumn": "passwd"
+        },
+        "CrudPolicy": {
+          "Operations": [
+            "CRUDOperationList",
+            "CRUDOperationRead",
+            "CRUDOperationCreate",
+            "CRUDOperationUpdate",
+            "CRUDOperationDelete"
+          ]
+        },
+        "Scope": {
+          "Mode": "FKTraversalModeAuthUserDescendants",
+          "Direction": "FKTraversalDirectionChildren",
+          "MaxDepth": 32,
+          "IncludeStartTable": true
+        }
+      }
+    ],
+    "SchemaOverrides": {
+      "PrimaryKeys": [
+        {
+          "Name": "users_public_id_pk",
+          "TableName": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "Columns": [
+            "public_id"
+          ]
+        }
+      ],
+      "ForeignKeys": [
+        {
+          "Name": "orders_user_public_id_fk",
+          "ChildTable": {
+            "Idents": [
+              "orders"
+            ]
+          },
+          "ChildColumns": [
+            "user_public_id"
+          ],
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "ComponentGrants": [
+    {
+      "RoleName": "member",
+      "ComponentName": "orders",
+      "TableName": {
+        "Idents": [
+          "orders"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    },
+    {
+      "RoleName": "member",
+      "ComponentName": "users",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ]
+    }
+  ],
+  "TableGrants": [
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "orders"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        },
+        {
+          "Idents": [
+            "orders"
+          ]
+        }
+      ],
+      "ScopeColumn": "user_public_id",
+      "TraversalJoins": [
+        {
+          "ForeignKeyName": "orders_user_public_id_fk",
+          "ParentTable": {
+            "Idents": [
+              "users"
+            ]
+          },
+          "ParentColumn": "public_id",
+          "ChildTable": {
+            "Idents": [
+              "orders"
+            ]
+          },
+          "ChildColumn": "user_public_id"
+        }
+      ]
+    },
+    {
+      "RoleName": "member",
+      "TableName": {
+        "Idents": [
+          "users"
+        ]
+      },
+      "Operations": [
+        "CRUDOperationList",
+        "CRUDOperationRead",
+        "CRUDOperationCreate",
+        "CRUDOperationUpdate",
+        "CRUDOperationDelete"
+      ],
+      "TraversalPath": [
+        {
+          "Idents": [
+            "users"
+          ]
+        }
+      ]
+    }
+  ]
+}
