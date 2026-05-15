@@ -198,6 +198,11 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 	warnings := []string{}
 	driver := normalizeDriver(meta.GetOptions()["Driver"], opts.DatasourceType)
 	publicRole := defaultString(opts.PublicRole, "p")
+	virtualMeta, overrideWarnings, err := xmeta.ApplySchemaRelationshipOverrides(meta, app.GetSchemaOverrides())
+	if err != nil {
+		return nil, err
+	}
+	warnings = append(warnings, overrideWarnings...)
 
 	spec := &Spec{
 		Version: 1,
@@ -222,11 +227,10 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 		},
 	}
 
-	pkOverrides, pkWarnings := manualPrimaryKeyOverrides(meta, app.GetSchemaOverrides())
-	warnings = append(warnings, pkWarnings...)
+	pkOverrides, _ := manualPrimaryKeyOverrides(meta, app.GetSchemaOverrides())
 	tablesByName := map[string]Table{}
 	tableAvailable := map[string]bool{}
-	for _, mt := range meta.GetTables() {
+	for _, mt := range virtualMeta.GetTables() {
 		table, warningList, ok := buildTable(mt, driver, pkOverrides[tableName(mt.GetName())])
 		warnings = append(warnings, warningList...)
 		if !ok {
