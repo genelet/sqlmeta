@@ -13,6 +13,7 @@ The package serves three main purposes:
 
 - **`proto/`**: Contains the Protocol Buffer definitions.
   - `types.proto`: **Core Unified Types** (`MetaTable`, `ColumnDef`, `DataType`).
+  - `app_spec.proto`: Generic app/CRUD intent model (`AppSpec`, roles, auth bindings, role scopes, and expanded grants).
   - `pg_meta.proto`: PostgreSQL-specific metadata structures.
   - `my_meta.proto`: MySQL-specific metadata structures.
   - `bq_meta.proto`: BigQuery-specific metadata structures.
@@ -20,7 +21,12 @@ The package serves three main purposes:
 
 - **`xmeta/`**: Contains the generated Go code from the protos and the loader implementations.
   - `*_loader.go`: Dialect-specific loaders (e.g., `LoadPostgres`, `LoadMySQL`).
+  - `load.go`: Unified `LoadMetaDatabase` dispatcher for MySQL, PostgreSQL, and SQLite.
   - `convert.go`: **Conversion Layer** to transform dialect-specific structs into Unified Metadata.
+
+- **`tavola/`**: Maps unified metadata into Tavola v1 JSON project specs.
+
+- **`cmd/tavola-introspect/`**: CLI that introspects a live database and writes a Tavola JSON spec.
 
 ## Core Unified Types
 
@@ -37,6 +43,20 @@ message MetaTable {
     map<string, string> Options = 5; // Dialect-specific options (e.g. Engine, Owner)
 }
 ```
+
+## AppSpec
+
+`app_spec.proto` defines the canonical app intent layer above raw database metadata:
+
+```text
+MetaDatabase -> AppSpec -> ExpandedAppSpec -> output format
+```
+
+`AppSpec` is generic. It describes table-backed CRUD components, roles, auth bindings, and role scopes without depending on Tavola JSON. `ExpandedAppSpec` records the derived table/component grants after role scopes are evaluated.
+
+`SchemaRelationshipOverrides` lets callers add operation-level primary keys and foreign keys that are not present in the database schema, or intentionally choose a better key for app behavior. Manual primary keys override physical primary keys for app expansion and Tavola table generation. Manual foreign keys override physical foreign keys with the same child table and child columns, so role expansion follows the relationship the app intends rather than the relationship the database happens to declare.
+
+The default auth role scope starts at `AuthBinding.UserTable` and `UserIDColumn`, includes the auth table, follows child tables that reference that user ID through single-column foreign keys, and then follows descendants up to `RoleScope.MaxDepth`. The FK graph uses manual relationships first, then non-conflicting physical relationships. Composite FKs, missing FK targets, ambiguous table names, and cycles are reported as expansion warnings. The old "grant every table to the auth role" behavior is available only through `FKTraversalModeAllTables`.
 
 ### `ColumnDef`
 A unified column definition. Defaults and Check Expressions are stored as `google.protobuf.Any` to support both simple strings (`wrapperspb.StringValue`) and complex AST nodes.
@@ -61,7 +81,7 @@ You can use the loaders in the `xmeta` package to inspect a connected database (
 import (
     "database/sql"
     _ "github.com/lib/pq"
-    "github.com/genelet/sqlmeta/xmeta"
+    "github.com/tabilet/sqlmeta/xmeta"
 )
 
 func main() {
@@ -72,6 +92,17 @@ func main() {
     pgMeta, err := xmeta.LoadPostgres(db)
     if err != nil { panic(err) }
 }
+```
+
+You can also load directly into the unified model:
+
+```go
+meta, err := xmeta.LoadMetaDatabase(db, xmeta.LoadOptions{
+    Driver:   "postgres",
+    Database: "mydb",
+    Schemas:  []string{"public"},
+})
+if err != nil { panic(err) }
 ```
 
 ### 2. Converting to Unified Metadata
@@ -125,6 +156,60 @@ The **Diff Engine** compares two `MetaDatabase` states and outputs a list of cha
 - Changes are automatically sorted for safe execution order (drop constraints before tables).
 - Diffs are schema-aware: table identity uses the full `ObjectName.Idents` chain (e.g., `schema.table`).
 
+### 4. Generating A Tavola Spec
+
+`tavola-introspect` reads an existing database and writes a Tavola JSON source-of-truth draft.
+
+```bash
+go run ./cmd/tavola-introspect \
+  --driver postgres \
+  --dsn "$DATABASE_URL" \
+  --schema public \
+  --project my_app \
+  --owner-login local \
+  --owner-email local@example.test \
+  --out specs/my_app.json
+```
+
+SQLite works the same way:
+
+```bash
+go run ./cmd/tavola-introspect \
+  --driver sqlite3 \
+  --dsn ./app.db \
+  --project my_app \
+  --out specs/my_app.json
+```
+
+MySQL needs the database name because metadata lives under `information_schema`:
+
+```bash
+go run ./cmd/tavola-introspect \
+  --driver mysql \
+  --dsn 'user:pass@tcp(127.0.0.1:3306)/appdb' \
+  --database appdb \
+  --project my_app \
+  --out specs/my_app.json
+```
+
+Authentication is opt-in and explicit:
+
+```bash
+go run ./cmd/tavola-introspect \
+  --driver postgres \
+  --dsn "$DATABASE_URL" \
+  --schema public \
+  --project my_app \
+  --auth-role u \
+  --auth-table users \
+  --auth-id id \
+  --auth-login email \
+  --auth-password passwd \
+  --out specs/my_app.json
+```
+
+The Tavola mapper consumes `ExpandedAppSpec`, so auth role CRUD grants are limited to the auth table and FK-scoped descendants by default. The generated JSON may include `introspection.warnings` for choices that need review, such as synthesized DDL, missing primary keys, composite primary keys, skipped role-scope FKs, cycles, or auth without a login procedure.
+
 ## Complete Migration Workflow Example
 
 This example demonstrates the full declarative migration cycle:
@@ -138,7 +223,7 @@ import (
     "log"
 
     _ "github.com/lib/pq"
-    "github.com/genelet/sqlmeta/xmeta"
+    "github.com/tabilet/sqlmeta/xmeta"
 )
 
 func main() {
