@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pgmeta;
 
-option go_package = "github.com/genelet/sqlmeta/xmeta";
+option go_package = "github.com/tabilet/sqlmeta/xmeta";
 
 import "types.proto";
 
