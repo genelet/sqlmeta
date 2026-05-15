@@ -291,6 +291,9 @@ func MYTableToMetaTable(t *MYTable) *MetaTable {
 	if t.Collation != "" {
 		meta.Options["Collation"] = t.Collation
 	}
+	if t.CreateOptions != "" {
+		meta.Options["CreateStatement"] = t.CreateOptions
+	}
 
 	var elements []*TableElement
 
@@ -459,8 +462,15 @@ func SQLiteTableToMetaTable(t *SQLiteTable) *MetaTable {
 		Type:    t.Type,
 		Options: make(map[string]string),
 	}
-	// Definition SQL could be stored in options if needed?
-	// meta.Options["Definition"] = t.Definition
+	if t.Definition != "" {
+		meta.Options["CreateStatement"] = t.Definition
+	}
+	if t.WithoutRowId {
+		meta.Options["WithoutRowId"] = "true"
+	}
+	if t.Strict {
+		meta.Options["Strict"] = "true"
+	}
 
 	var elements []*TableElement
 
@@ -469,6 +479,29 @@ func SQLiteTableToMetaTable(t *SQLiteTable) *MetaTable {
 		elements = append(elements, &TableElement{
 			TableElementClause: &TableElement_ColumnDefElement{
 				ColumnDefElement: SQLiteColumnToColumnDef(col),
+			},
+		})
+	}
+
+	for _, idx := range t.Indexes {
+		if !idx.IsUnique || len(idx.Columns) == 0 {
+			continue
+		}
+		elements = append(elements, &TableElement{
+			TableElementClause: &TableElement_TableConstraintElement{
+				TableConstraintElement: &TableConstraint{
+					Name: idx.Name,
+					Spec: &TableConstraintSpec{
+						TableConstraintSpecClause: &TableConstraintSpec_UniqueItem{
+							UniqueItem: &UniqueTableConstraint{
+								IsPrimary:   strings.EqualFold(idx.Origin, "pk"),
+								Columns:     idx.Columns,
+								IndexName:   idx.Name,
+								IsJustIndex: strings.EqualFold(idx.Origin, "c"),
+							},
+						},
+					},
+				},
 			},
 		})
 	}
@@ -499,6 +532,10 @@ func SQLiteColumnToColumnDef(c *SQLiteColumn) *ColumnDef {
 				},
 			},
 		})
+	}
+
+	if c.AutoIncrement {
+		colDef.MyDecos = append(colDef.MyDecos, AutoIncrement_AutoIncrementConfirm)
 	}
 
 	// Not Null
