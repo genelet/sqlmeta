@@ -11,8 +11,10 @@ const (
 	DiagnosticUnknown                     = "unknown"
 	DiagnosticAuthMissingLoginProcedure   = "auth_missing_login_procedure"
 	DiagnosticAuthTableMissing            = "auth_table_missing"
+	DiagnosticAuthTableAmbiguous          = "auth_table_ambiguous"
 	DiagnosticAuthUserIDMissing           = "auth_user_id_missing"
 	DiagnosticManualPKMissingTable        = "manual_pk_missing_table"
+	DiagnosticManualPKAmbiguousTable      = "manual_pk_ambiguous_table"
 	DiagnosticManualPKMissingColumn       = "manual_pk_missing_column"
 	DiagnosticManualPKEmptyColumns        = "manual_pk_empty_columns"
 	DiagnosticManualFKMissingTable        = "manual_fk_missing_table"
@@ -27,6 +29,8 @@ const (
 	DiagnosticRoleFKMissingTarget         = "role_fk_missing_target"
 	DiagnosticRoleFKCycle                 = "role_fk_cycle"
 	DiagnosticRoleFKNoChildren            = "role_fk_no_children"
+	DiagnosticRoleTableMissing            = "role_table_missing"
+	DiagnosticRoleTableAmbiguous          = "role_table_ambiguous"
 	DiagnosticTableSynthesizedDDL         = "table_synthesized_ddl"
 	DiagnosticTableManualPK               = "table_manual_primary_key"
 	DiagnosticTableMissingPK              = "table_missing_primary_key"
@@ -43,6 +47,18 @@ type Diagnostic struct {
 	Message  string `json:"message"`
 }
 
+func WarningDiagnostic(code, message string) Diagnostic {
+	message = strings.TrimSpace(message)
+	if code == "" {
+		code = DiagnosticCode(message)
+	}
+	return Diagnostic{
+		Code:     code,
+		Severity: DiagnosticSeverityWarning,
+		Message:  message,
+	}
+}
+
 func WarningDiagnostics(messages []string) []Diagnostic {
 	out := make([]Diagnostic, 0, len(messages))
 	for _, message := range messages {
@@ -50,13 +66,53 @@ func WarningDiagnostics(messages []string) []Diagnostic {
 		if message == "" {
 			continue
 		}
-		out = append(out, Diagnostic{
-			Code:     DiagnosticCode(message),
-			Severity: DiagnosticSeverityWarning,
-			Message:  message,
-		})
+		out = append(out, WarningDiagnostic("", message))
 	}
 	return out
+}
+
+func DiagnosticMessages(diagnostics []Diagnostic) []string {
+	out := make([]string, 0, len(diagnostics))
+	for _, diagnostic := range diagnostics {
+		message := strings.TrimSpace(diagnostic.Message)
+		if message == "" {
+			continue
+		}
+		out = append(out, message)
+	}
+	return uniqueAppStrings(out)
+}
+
+func MergeWarningDiagnostics(primary []Diagnostic, fallbackMessages []string) []Diagnostic {
+	seen := map[string]bool{}
+	out := make([]Diagnostic, 0, len(primary)+len(fallbackMessages))
+	for _, diagnostic := range primary {
+		message := strings.TrimSpace(diagnostic.Message)
+		if message == "" || seen[message] {
+			continue
+		}
+		if diagnostic.Code == "" {
+			diagnostic.Code = DiagnosticCode(message)
+		}
+		if diagnostic.Severity == "" {
+			diagnostic.Severity = DiagnosticSeverityWarning
+		}
+		diagnostic.Message = message
+		out = append(out, diagnostic)
+		seen[message] = true
+	}
+	for _, diagnostic := range WarningDiagnostics(fallbackMessages) {
+		if seen[diagnostic.Message] {
+			continue
+		}
+		out = append(out, diagnostic)
+		seen[diagnostic.Message] = true
+	}
+	return out
+}
+
+func uniqueDiagnostics(diagnostics []Diagnostic) []Diagnostic {
+	return MergeWarningDiagnostics(diagnostics, nil)
 }
 
 func ErrorDiagnostic(err error) Diagnostic {
@@ -78,8 +134,12 @@ func DiagnosticCode(message string) string {
 		return DiagnosticAuthMissingLoginProcedure
 	case (strings.Contains(m, "auth user table") || strings.Contains(m, "auth table")) && strings.Contains(m, "required but was not found"):
 		return DiagnosticAuthTableMissing
+	case strings.Contains(m, "auth table") && strings.Contains(m, "ambiguous table name"):
+		return DiagnosticAuthTableAmbiguous
 	case strings.Contains(m, "has no user id column") || strings.Contains(m, "auth binding has no user id column"):
 		return DiagnosticAuthUserIDMissing
+	case strings.Contains(m, "manual primary key") && strings.Contains(m, "ambiguous table name"):
+		return DiagnosticManualPKAmbiguousTable
 	case strings.Contains(m, "manual primary key") && strings.Contains(m, "table was not found"):
 		return DiagnosticManualPKMissingTable
 	case strings.Contains(m, "manual primary key") && strings.Contains(m, "references missing column"):
@@ -110,6 +170,10 @@ func DiagnosticCode(message string) string {
 		return DiagnosticRoleFKCycle
 	case strings.Contains(m, "found no child foreign keys"):
 		return DiagnosticRoleFKNoChildren
+	case (strings.Contains(m, "include table") || strings.Contains(m, "exclude table")) && strings.Contains(m, "ambiguous table name"):
+		return DiagnosticRoleTableAmbiguous
+	case (strings.Contains(m, "include table") || strings.Contains(m, "exclude table")) && strings.Contains(m, "table was not found"):
+		return DiagnosticRoleTableMissing
 	case strings.Contains(m, "uses synthesized create table statement"):
 		return DiagnosticTableSynthesizedDDL
 	case strings.Contains(m, "uses manual primary key override"):

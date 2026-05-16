@@ -2,6 +2,7 @@ package xmeta
 
 import (
 	"os"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -124,11 +125,16 @@ func TestCurrentContractScenarioDiagnosticsHaveKnownCodes(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			expanded, err := ExpandRoleScopes(scenario.Meta, spec)
+			expanded, diagnostics, err := ExpandRoleScopesWithDiagnostics(scenario.Meta, spec)
 			if err != nil {
 				t.Fatal(err)
 			}
-			for _, diagnostic := range WarningDiagnostics(expanded.GetWarnings()) {
+			messages := DiagnosticMessages(diagnostics)
+			sort.Strings(messages)
+			if got, want := strings.Join(messages, "\n"), strings.Join(expanded.GetWarnings(), "\n"); got != want {
+				t.Fatalf("diagnostic messages =\n%s\nwant warnings =\n%s", got, want)
+			}
+			for _, diagnostic := range diagnostics {
 				if diagnostic.Code == DiagnosticUnknown {
 					t.Fatalf("unknown diagnostic code for warning %q", diagnostic.Message)
 				}

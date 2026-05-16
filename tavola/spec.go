@@ -181,14 +181,18 @@ func BuildSpec(meta *xmeta.MetaDatabase, opts Options) (*Spec, error) {
 	if err != nil {
 		return nil, err
 	}
-	expanded, err := xmeta.ExpandRoleScopes(meta, app)
+	expanded, diagnostics, err := xmeta.ExpandRoleScopesWithDiagnostics(meta, app)
 	if err != nil {
 		return nil, err
 	}
-	return BuildTavolaSpec(meta, expanded, opts)
+	return BuildTavolaSpecWithDiagnostics(meta, expanded, diagnostics, opts)
 }
 
 func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, opts Options) (*Spec, error) {
+	return BuildTavolaSpecWithDiagnostics(meta, expanded, nil, opts)
+}
+
+func BuildTavolaSpecWithDiagnostics(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, expansionDiagnostics []xmeta.Diagnostic, opts Options) (*Spec, error) {
 	if meta == nil {
 		return nil, fmt.Errorf("metadata database is nil")
 	}
@@ -202,13 +206,15 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 	}
 
 	warnings := []string{}
+	diagnostics := []xmeta.Diagnostic{}
 	driver := normalizeDriver(meta.GetOptions()["Driver"], opts.DatasourceType)
 	publicRole := defaultString(opts.PublicRole, "p")
-	virtualMeta, overrideWarnings, err := xmeta.ApplySchemaRelationshipOverrides(meta, app.GetSchemaOverrides())
+	virtualMeta, overrideDiagnostics, err := xmeta.ApplySchemaRelationshipOverridesWithDiagnostics(meta, app.GetSchemaOverrides())
 	if err != nil {
 		return nil, err
 	}
-	warnings = append(warnings, overrideWarnings...)
+	warnings = append(warnings, xmeta.DiagnosticMessages(overrideDiagnostics)...)
+	diagnostics = append(diagnostics, overrideDiagnostics...)
 
 	spec := &Spec{
 		Version: 1,
@@ -262,7 +268,9 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 	for _, appComponent := range app.GetComponents() {
 		table := tableName(appComponent.GetTableName())
 		if !tableAvailable[table] {
-			warnings = append(warnings, fmt.Sprintf("component %s skipped because table %s is not introspectable", appComponent.GetName(), table))
+			warning := fmt.Sprintf("component %s skipped because table %s is not introspectable", appComponent.GetName(), table)
+			warnings = append(warnings, warning)
+			diagnostics = append(diagnostics, xmeta.WarningDiagnostic(xmeta.DiagnosticComponentSkipped, warning))
 			continue
 		}
 		component := Component{
@@ -297,7 +305,8 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 	sort.Slice(spec.Components, func(i, j int) bool { return spec.Components[i].Name < spec.Components[j].Name })
 	sort.Slice(spec.Roles, func(i, j int) bool { return spec.Roles[i].Name < spec.Roles[j].Name })
 	warnings = append(warnings, expanded.GetWarnings()...)
-	setIntrospectionWarnings(spec.Introspection, warnings)
+	diagnostics = append(diagnostics, expansionDiagnostics...)
+	setIntrospectionDiagnostics(spec.Introspection, warnings, diagnostics)
 	if err := ValidateSpec(spec); err != nil {
 		return nil, err
 	}
@@ -489,11 +498,27 @@ func loginProcedureFromRole(appRole *xmeta.AppRole, role Role) *Procedure {
 }
 
 func setIntrospectionWarnings(introspection *Introspection, warnings []string) {
+	setIntrospectionDiagnostics(introspection, warnings, nil)
+}
+
+func setIntrospectionDiagnostics(introspection *Introspection, warnings []string, diagnostics []xmeta.Diagnostic) {
 	if introspection == nil {
 		return
 	}
 	introspection.Warnings = unique(warnings)
-	introspection.WarningDetails = xmeta.WarningDiagnostics(introspection.Warnings)
+	merged := xmeta.MergeWarningDiagnostics(diagnostics, introspection.Warnings)
+	byMessage := map[string]xmeta.Diagnostic{}
+	for _, diagnostic := range merged {
+		byMessage[diagnostic.Message] = diagnostic
+	}
+	introspection.WarningDetails = nil
+	for _, warning := range introspection.Warnings {
+		if diagnostic, ok := byMessage[warning]; ok {
+			introspection.WarningDetails = append(introspection.WarningDetails, diagnostic)
+			continue
+		}
+		introspection.WarningDetails = append(introspection.WarningDetails, xmeta.WarningDiagnostic("", warning))
+	}
 }
 
 func tavolaActions(ops []xmeta.CRUDOperation, public bool) []string {

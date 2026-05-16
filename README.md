@@ -378,6 +378,15 @@ You can edit this file directly and reload it to drive migrations.
 
 ## Development
 
+The GitHub workflow is manual-dispatch only. When a change affects Tavola JSON
+contracts or downstream consumers, run Tavola's local cross-repo gate before
+pushing the dependency ladder:
+
+```bash
+cd /home/peter/Workspace/tavola
+script/verify-sqlmeta-workflow --all
+```
+
 If you modify the `.proto` files, you must regenerate the Go code. The output location is fixed to `xmeta/`.
 
 ```bash

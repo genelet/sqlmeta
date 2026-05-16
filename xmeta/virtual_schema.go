@@ -11,6 +11,13 @@ import (
 // app-level PK/FK relationships applied as a virtual schema. The database is
 // not modified. Invalid overrides are skipped and returned as warnings.
 func ApplySchemaRelationshipOverrides(meta *MetaDatabase, overrides *SchemaRelationshipOverrides) (*MetaDatabase, []string, error) {
+	virtual, diagnostics, err := ApplySchemaRelationshipOverridesWithDiagnostics(meta, overrides)
+	return virtual, DiagnosticMessages(diagnostics), err
+}
+
+// ApplySchemaRelationshipOverridesWithDiagnostics is ApplySchemaRelationshipOverrides
+// with stable diagnostic codes retained beside each warning message.
+func ApplySchemaRelationshipOverridesWithDiagnostics(meta *MetaDatabase, overrides *SchemaRelationshipOverrides) (*MetaDatabase, []Diagnostic, error) {
 	if meta == nil {
 		return nil, nil, fmt.Errorf("metadata database is nil")
 	}
@@ -27,10 +34,10 @@ func ApplySchemaRelationshipOverrides(meta *MetaDatabase, overrides *SchemaRelat
 		}
 	}
 
-	var warnings []string
+	var diagnostics []Diagnostic
 	for _, pk := range overrides.GetPrimaryKeys() {
 		override := resolveManualPrimaryKeyOverride(index, pk)
-		warnings = append(warnings, override.warnings...)
+		diagnostics = append(diagnostics, override.diagnostics...)
 		if !override.ok {
 			continue
 		}
@@ -41,7 +48,7 @@ func ApplySchemaRelationshipOverrides(meta *MetaDatabase, overrides *SchemaRelat
 
 	for _, fk := range overrides.GetForeignKeys() {
 		override := resolveManualForeignKeyOverride(index, effectivePKs, fk, "virtual schema")
-		warnings = append(warnings, override.warnings...)
+		diagnostics = append(diagnostics, override.diagnostics...)
 		if !override.ok {
 			continue
 		}
@@ -49,7 +56,7 @@ func ApplySchemaRelationshipOverrides(meta *MetaDatabase, overrides *SchemaRelat
 		addMetaForeignKey(index.byKey[override.childKey], defaultOverrideName(fk.GetName(), "manual_fk"), override.childCols[0], index.byKey[override.parentKey].GetName(), override.parentCols[0])
 	}
 
-	return virtual, uniqueAppStrings(warnings), nil
+	return virtual, uniqueDiagnostics(diagnostics), nil
 }
 
 func missingColumns(table *MetaTable, columns []string) []string {

@@ -104,26 +104,35 @@ func BuildDefaultAppSpec(meta *MetaDatabase, opts AppSpecOptions) (*AppSpec, err
 }
 
 func ExpandRoleScopes(meta *MetaDatabase, spec *AppSpec) (*ExpandedAppSpec, error) {
+	expanded, _, err := ExpandRoleScopesWithDiagnostics(meta, spec)
+	return expanded, err
+}
+
+// ExpandRoleScopesWithDiagnostics resolves role grants and returns the stable
+// diagnostic code for every warning emitted during expansion.
+func ExpandRoleScopesWithDiagnostics(meta *MetaDatabase, spec *AppSpec) (*ExpandedAppSpec, []Diagnostic, error) {
 	if meta == nil {
-		return nil, fmt.Errorf("metadata database is nil")
+		return nil, nil, fmt.Errorf("metadata database is nil")
 	}
 	if spec == nil {
-		return nil, fmt.Errorf("app spec is nil")
+		return nil, nil, fmt.Errorf("app spec is nil")
 	}
 
 	index := newAppTableIndex(meta.GetTables())
 	graph := buildFKGraph(meta.GetTables(), index, spec.GetSchemaOverrides())
 	expanded := &ExpandedAppSpec{
 		Spec:     proto.Clone(spec).(*AppSpec),
-		Warnings: append([]string{}, graph.warnings...),
+		Warnings: DiagnosticMessages(graph.diagnostics),
 	}
+	diagnostics := append([]Diagnostic{}, graph.diagnostics...)
 
 	for _, role := range spec.GetRoles() {
-		grants, warnings, err := expandRole(meta, spec, role, index, graph)
+		grants, roleDiagnostics, err := expandRole(meta, spec, role, index, graph)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		expanded.Warnings = append(expanded.Warnings, warnings...)
+		diagnostics = append(diagnostics, roleDiagnostics...)
+		expanded.Warnings = append(expanded.Warnings, DiagnosticMessages(roleDiagnostics)...)
 		expanded.TableGrants = append(expanded.TableGrants, grants...)
 	}
 
@@ -160,8 +169,9 @@ func ExpandRoleScopes(meta *MetaDatabase, spec *AppSpec) (*ExpandedAppSpec, erro
 	})
 	sort.Strings(expanded.Warnings)
 	expanded.Warnings = uniqueAppStrings(expanded.Warnings)
+	diagnostics = uniqueDiagnostics(diagnostics)
 
-	return expanded, nil
+	return expanded, diagnostics, nil
 }
 
 func ObjectNameFromString(name string) *ObjectName {
@@ -194,9 +204,9 @@ type fkEdge struct {
 }
 
 type fkGraph struct {
-	children map[string][]fkEdge
-	parents  map[string][]fkEdge
-	warnings []string
+	children    map[string][]fkEdge
+	parents     map[string][]fkEdge
+	diagnostics []Diagnostic
 }
 
 type effectiveRelationships struct {
@@ -204,11 +214,11 @@ type effectiveRelationships struct {
 	manualFKColumns  map[string]bool
 	manualFKEdgeKeys map[string]bool
 	manualFKEdges    []fkEdge
-	warnings         []string
+	diagnostics      []Diagnostic
 }
 
-func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTableIndex, graph fkGraph) ([]*ExpandedTableGrant, []string, error) {
-	var warnings []string
+func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTableIndex, graph fkGraph) ([]*ExpandedTableGrant, []Diagnostic, error) {
+	var diagnostics []Diagnostic
 	ops := cloneOperations(role.GetCrudPolicy().GetOperations())
 	if len(ops) == 0 {
 		ops = []CRUDOperation{CRUDOperation_CRUDOperationList}
@@ -248,19 +258,19 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	case FKTraversalMode_FKTraversalModeAuthUserDescendants:
 		auth := role.GetAuth()
 		if auth == nil || len(auth.GetUserTable().GetIdents()) == 0 {
-			return nil, warnings, fmt.Errorf("role %s has no auth user table for FK scope expansion", role.GetName())
+			return nil, diagnostics, fmt.Errorf("role %s has no auth user table for FK scope expansion", role.GetName())
 		}
 		startKey, warning := index.resolve(auth.GetUserTable())
 		if warning != "" {
-			warnings = append(warnings, fmt.Sprintf("role %s auth table %q: %s", role.GetName(), objectNameKey(auth.GetUserTable()), warning))
+			diagnostics = append(diagnostics, WarningDiagnostic(authTableDiagnosticCode(warning), fmt.Sprintf("role %s auth table %q: %s", role.GetName(), objectNameKey(auth.GetUserTable()), warning)))
 		}
 		if startKey == "" {
-			return nil, warnings, fmt.Errorf("role %s auth user table %q is required but was not found", role.GetName(), objectNameKey(auth.GetUserTable()))
+			return nil, diagnostics, fmt.Errorf("role %s auth user table %q is required but was not found", role.GetName(), objectNameKey(auth.GetUserTable()))
 		}
 		if auth.GetUserIDColumn() == "" {
-			return nil, warnings, fmt.Errorf("role %s auth binding has no user id column", role.GetName())
+			return nil, diagnostics, fmt.Errorf("role %s auth binding has no user id column", role.GetName())
 		} else if !tableHasColumn(index.byKey[startKey], auth.GetUserIDColumn()) {
-			return nil, warnings, fmt.Errorf("role %s auth table %s has no user id column %s", role.GetName(), startKey, auth.GetUserIDColumn())
+			return nil, diagnostics, fmt.Errorf("role %s auth table %s has no user id column %s", role.GetName(), startKey, auth.GetUserIDColumn())
 		}
 
 		includeStart := scope == nil || scope.GetIncludeStartTable()
@@ -275,15 +285,15 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 		if direction == FKTraversalDirection_FKTraversalDirectionUnspecified {
 			direction = FKTraversalDirection_FKTraversalDirectionChildren
 		}
-		warnings = append(warnings, walkRoleScope(role.GetName(), startKey, auth.GetUserIDColumn(), direction, maxDepth, index, graph, addGrant)...)
+		diagnostics = append(diagnostics, walkRoleScope(role.GetName(), startKey, auth.GetUserIDColumn(), direction, maxDepth, index, graph, addGrant)...)
 	default:
-		warnings = append(warnings, fmt.Sprintf("role %s uses unsupported FK traversal mode %s", role.GetName(), mode.String()))
+		diagnostics = append(diagnostics, WarningDiagnostic(DiagnosticUnsupportedFKTraversal, fmt.Sprintf("role %s uses unsupported FK traversal mode %s", role.GetName(), mode.String())))
 	}
 
 	for _, include := range scope.GetIncludeTables() {
 		key, warning := index.resolve(include)
 		if warning != "" {
-			warnings = append(warnings, fmt.Sprintf("role %s include table %q: %s", role.GetName(), objectNameKey(include), warning))
+			diagnostics = append(diagnostics, WarningDiagnostic(roleTableDiagnosticCode(warning), fmt.Sprintf("role %s include table %q: %s", role.GetName(), objectNameKey(include), warning)))
 		}
 		if key != "" {
 			addGrant(key, []*ObjectName{index.byKey[key].GetName()}, "", nil)
@@ -292,7 +302,7 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	for _, exclude := range scope.GetExcludeTables() {
 		key, warning := index.resolve(exclude)
 		if warning != "" {
-			warnings = append(warnings, fmt.Sprintf("role %s exclude table %q: %s", role.GetName(), objectNameKey(exclude), warning))
+			diagnostics = append(diagnostics, WarningDiagnostic(roleTableDiagnosticCode(warning), fmt.Sprintf("role %s exclude table %q: %s", role.GetName(), objectNameKey(exclude), warning)))
 		}
 		delete(grants, key)
 	}
@@ -301,11 +311,11 @@ func expandRole(meta *MetaDatabase, spec *AppSpec, role *AppRole, index appTable
 	for _, grant := range grants {
 		out = append(out, grant)
 	}
-	return out, warnings, nil
+	return out, diagnostics, nil
 }
 
-func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string, []fkEdge)) []string {
-	var warnings []string
+func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversalDirection, maxDepth int, index appTableIndex, graph fkGraph, addGrant func(string, []*ObjectName, string, []fkEdge)) []Diagnostic {
+	var diagnostics []Diagnostic
 	type step struct {
 		key   string
 		depth int
@@ -333,7 +343,7 @@ func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversa
 				continue
 			}
 			if containsAppString(current.path, next) {
-				warnings = append(warnings, fmt.Sprintf("role %s FK scope skipped cycle %s -> %s", roleName, current.key, next))
+				diagnostics = append(diagnostics, WarningDiagnostic(DiagnosticRoleFKCycle, fmt.Sprintf("role %s FK scope skipped cycle %s -> %s", roleName, current.key, next)))
 				continue
 			}
 			path := append(append([]string{}, current.path...), next)
@@ -348,9 +358,9 @@ func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversa
 	}
 
 	if userIDColumn != "" && !matchedDirectChild {
-		warnings = append(warnings, fmt.Sprintf("role %s found no child foreign keys referencing %s.%s", roleName, startKey, userIDColumn))
+		diagnostics = append(diagnostics, WarningDiagnostic(DiagnosticRoleFKNoChildren, fmt.Sprintf("role %s found no child foreign keys referencing %s.%s", roleName, startKey, userIDColumn)))
 	}
-	return warnings
+	return diagnostics
 }
 
 func nextEdges(key string, direction FKTraversalDirection, graph fkGraph) []fkEdge {
@@ -373,7 +383,7 @@ func nextEdges(key string, direction FKTraversalDirection, graph fkGraph) []fkEd
 func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRelationshipOverrides) fkGraph {
 	graph := fkGraph{children: map[string][]fkEdge{}, parents: map[string][]fkEdge{}}
 	relationships := buildEffectiveRelationships(tables, index, overrides)
-	graph.warnings = append(graph.warnings, relationships.warnings...)
+	graph.diagnostics = append(graph.diagnostics, relationships.diagnostics...)
 	for _, edge := range relationships.manualFKEdges {
 		graph.add(edge)
 	}
@@ -388,7 +398,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 					}
 					foreignCols := ref.GetColumns()
 					if len(foreignCols) > 1 {
-						graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s has composite column FK; skipped role scope edge", childKey, col.GetName()))
+						graph.diagnostics = append(graph.diagnostics, WarningDiagnostic(DiagnosticRoleFKComposite, fmt.Sprintf("%s.%s has composite column FK; skipped role scope edge", childKey, col.GetName())))
 						continue
 					}
 					if relationships.manualFKColumns[fkColumnKey(childKey, []string{col.GetName()})] {
@@ -396,7 +406,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 					}
 					parentKey, warning := index.resolve(ref.GetTableName())
 					if warning != "" {
-						graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s FK target %q: %s", childKey, col.GetName(), objectNameKey(ref.GetTableName()), warning))
+						graph.diagnostics = append(graph.diagnostics, WarningDiagnostic(roleFKTargetDiagnosticCode(warning), fmt.Sprintf("%s.%s FK target %q: %s", childKey, col.GetName(), objectNameKey(ref.GetTableName()), warning)))
 					}
 					if parentKey == "" {
 						continue
@@ -427,7 +437,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 				parentCols = relationships.primaryKeys[parentKey]
 			}
 			if len(ref.GetColumns()) != 1 || len(parentCols) != 1 {
-				graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s has composite FK; skipped role scope edge", childKey, constraint.GetName()))
+				graph.diagnostics = append(graph.diagnostics, WarningDiagnostic(DiagnosticRoleFKComposite, fmt.Sprintf("%s.%s has composite FK; skipped role scope edge", childKey, constraint.GetName())))
 				continue
 			}
 			if relationships.manualFKColumns[fkColumnKey(childKey, ref.GetColumns())] {
@@ -435,7 +445,7 @@ func buildFKGraph(tables []*MetaTable, index appTableIndex, overrides *SchemaRel
 			}
 			parentKey, warning := index.resolve(parentName)
 			if warning != "" {
-				graph.warnings = append(graph.warnings, fmt.Sprintf("%s.%s FK target %q: %s", childKey, constraint.GetName(), objectNameKey(parentName), warning))
+				graph.diagnostics = append(graph.diagnostics, WarningDiagnostic(roleFKTargetDiagnosticCode(warning), fmt.Sprintf("%s.%s FK target %q: %s", childKey, constraint.GetName(), objectNameKey(parentName), warning)))
 			}
 			if parentKey == "" {
 				continue
@@ -470,7 +480,7 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 	}
 	for _, pk := range overrides.GetPrimaryKeys() {
 		override := resolveManualPrimaryKeyOverride(index, pk)
-		relationships.warnings = append(relationships.warnings, override.warnings...)
+		relationships.diagnostics = append(relationships.diagnostics, override.diagnostics...)
 		if !override.ok {
 			continue
 		}
@@ -478,7 +488,7 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 	}
 	for _, fk := range overrides.GetForeignKeys() {
 		override := resolveManualForeignKeyOverride(index, relationships.primaryKeys, fk, "role scope")
-		relationships.warnings = append(relationships.warnings, override.warnings...)
+		relationships.diagnostics = append(relationships.diagnostics, override.diagnostics...)
 		if !override.ok {
 			continue
 		}
@@ -500,6 +510,27 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 		return relationships.manualFKEdges[i].localColumn < relationships.manualFKEdges[j].localColumn
 	})
 	return relationships
+}
+
+func authTableDiagnosticCode(warning string) string {
+	if strings.Contains(warning, "ambiguous table name") {
+		return DiagnosticAuthTableAmbiguous
+	}
+	return DiagnosticAuthTableMissing
+}
+
+func roleFKTargetDiagnosticCode(warning string) string {
+	if strings.Contains(warning, "ambiguous table name") {
+		return DiagnosticRoleFKAmbiguousTable
+	}
+	return DiagnosticRoleFKMissingTarget
+}
+
+func roleTableDiagnosticCode(warning string) string {
+	if strings.Contains(warning, "ambiguous table name") {
+		return DiagnosticRoleTableAmbiguous
+	}
+	return DiagnosticRoleTableMissing
 }
 
 func (g fkGraph) add(edge fkEdge) {
