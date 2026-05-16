@@ -2,7 +2,7 @@ package xmeta
 
 import (
 	"os"
-	"sort"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -130,7 +130,7 @@ func TestCurrentContractScenarioDiagnosticsHaveKnownCodes(t *testing.T) {
 				t.Fatal(err)
 			}
 			messages := DiagnosticMessages(diagnostics)
-			sort.Strings(messages)
+			slices.Sort(messages)
 			if got, want := strings.Join(messages, "\n"), strings.Join(expanded.GetWarnings(), "\n"); got != want {
 				t.Fatalf("diagnostic messages =\n%s\nwant warnings =\n%s", got, want)
 			}

@@ -1,10 +1,11 @@
 package xmeta
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
 	"io/fs"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -37,7 +38,7 @@ func ContractFixture(name string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading contract fixture %q: %w", name, err)
 	}
-	return append([]byte(nil), data...), nil
+	return bytes.Clone(data), nil
 }
 
 // ContractFixtureNames lists the canonical sqlmeta contract fixture names.
@@ -52,7 +53,7 @@ func ContractFixtureNames() []string {
 			names = append(names, entry.Name())
 		}
 	}
-	sort.Strings(names)
+	slices.Sort(names)
 	return names
 }
 
@@ -62,7 +63,7 @@ func ContractArtifactBytes(path string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading contract artifact %q: %w", path, err)
 	}
-	return append([]byte(nil), data...), nil
+	return bytes.Clone(data), nil
 }
 
 func ContractScenarioArtifacts(name string) (ContractArtifacts, error) {

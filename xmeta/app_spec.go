@@ -1,9 +1,10 @@
 package xmeta
 
 import (
+	"cmp"
 	"fmt"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
 
 	"google.golang.org/protobuf/proto"
@@ -124,7 +125,7 @@ func ExpandRoleScopesWithDiagnostics(meta *MetaDatabase, spec *AppSpec) (*Expand
 		Spec:     proto.Clone(spec).(*AppSpec),
 		Warnings: DiagnosticMessages(graph.diagnostics),
 	}
-	diagnostics := append([]Diagnostic{}, graph.diagnostics...)
+	diagnostics := slices.Clone(graph.diagnostics)
 
 	for _, role := range spec.GetRoles() {
 		grants, roleDiagnostics, err := expandRole(meta, spec, role, index, graph)
@@ -153,21 +154,19 @@ func ExpandRoleScopesWithDiagnostics(meta *MetaDatabase, spec *AppSpec) (*Expand
 		}
 	}
 
-	sort.Slice(expanded.TableGrants, func(i, j int) bool {
-		a, b := expanded.TableGrants[i], expanded.TableGrants[j]
-		if a.GetRoleName() != b.GetRoleName() {
-			return a.GetRoleName() < b.GetRoleName()
-		}
-		return objectNameKey(a.GetTableName()) < objectNameKey(b.GetTableName())
+	slices.SortFunc(expanded.TableGrants, func(a, b *ExpandedTableGrant) int {
+		return cmp.Or(
+			cmp.Compare(a.GetRoleName(), b.GetRoleName()),
+			cmp.Compare(objectNameKey(a.GetTableName()), objectNameKey(b.GetTableName())),
+		)
 	})
-	sort.Slice(expanded.ComponentGrants, func(i, j int) bool {
-		a, b := expanded.ComponentGrants[i], expanded.ComponentGrants[j]
-		if a.GetRoleName() != b.GetRoleName() {
-			return a.GetRoleName() < b.GetRoleName()
-		}
-		return a.GetComponentName() < b.GetComponentName()
+	slices.SortFunc(expanded.ComponentGrants, func(a, b *ExpandedComponentGrant) int {
+		return cmp.Or(
+			cmp.Compare(a.GetRoleName(), b.GetRoleName()),
+			cmp.Compare(a.GetComponentName(), b.GetComponentName()),
+		)
 	})
-	sort.Strings(expanded.Warnings)
+	slices.Sort(expanded.Warnings)
 	expanded.Warnings = uniqueAppStrings(expanded.Warnings)
 	diagnostics = uniqueDiagnostics(diagnostics)
 
@@ -346,8 +345,8 @@ func walkRoleScope(roleName, startKey, userIDColumn string, direction FKTraversa
 				diagnostics = append(diagnostics, WarningDiagnostic(DiagnosticRoleFKCycle, fmt.Sprintf("role %s FK scope skipped cycle %s -> %s", roleName, current.key, next)))
 				continue
 			}
-			path := append(append([]string{}, current.path...), next)
-			joins := append(append([]fkEdge{}, current.joins...), edge)
+			path := append(slices.Clone(current.path), next)
+			joins := append(slices.Clone(current.joins), edge)
 			if !visited[next] {
 				visited[next] = true
 				matchedDirectChild = matchedDirectChild || current.key == startKey
@@ -371,11 +370,11 @@ func nextEdges(key string, direction FKTraversalDirection, graph fkGraph) []fkEd
 	if direction == FKTraversalDirection_FKTraversalDirectionParents || direction == FKTraversalDirection_FKTraversalDirectionBoth {
 		out = append(out, graph.parents[key]...)
 	}
-	sort.Slice(out, func(i, j int) bool {
-		if out[i].childKey != out[j].childKey {
-			return out[i].childKey < out[j].childKey
-		}
-		return out[i].parentKey < out[j].parentKey
+	slices.SortFunc(out, func(a, b fkEdge) int {
+		return cmp.Or(
+			cmp.Compare(a.childKey, b.childKey),
+			cmp.Compare(a.parentKey, b.parentKey),
+		)
 	})
 	return out
 }
@@ -503,11 +502,11 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 		relationships.manualFKEdgeKeys[fkEdgeKey(edge)] = true
 		relationships.manualFKEdges = append(relationships.manualFKEdges, edge)
 	}
-	sort.Slice(relationships.manualFKEdges, func(i, j int) bool {
-		if relationships.manualFKEdges[i].childKey != relationships.manualFKEdges[j].childKey {
-			return relationships.manualFKEdges[i].childKey < relationships.manualFKEdges[j].childKey
-		}
-		return relationships.manualFKEdges[i].localColumn < relationships.manualFKEdges[j].localColumn
+	slices.SortFunc(relationships.manualFKEdges, func(a, b fkEdge) int {
+		return cmp.Or(
+			cmp.Compare(a.childKey, b.childKey),
+			cmp.Compare(a.localColumn, b.localColumn),
+		)
 	})
 	return relationships
 }
@@ -547,7 +546,7 @@ func newAppTableIndex(tables []*MetaTable) appTableIndex {
 		index.byLast[last] = append(index.byLast[last], key)
 	}
 	for last := range index.byLast {
-		sort.Strings(index.byLast[last])
+		slices.Sort(index.byLast[last])
 	}
 	return index
 }
@@ -573,9 +572,9 @@ func (i appTableIndex) resolve(name *ObjectName) (string, string) {
 }
 
 func sortedMetaTables(tables []*MetaTable) []*MetaTable {
-	out := append([]*MetaTable{}, tables...)
-	sort.Slice(out, func(i, j int) bool {
-		return objectNameKey(out[i].GetName()) < objectNameKey(out[j].GetName())
+	out := slices.Clone(tables)
+	slices.SortFunc(out, func(a, b *MetaTable) int {
+		return cmp.Compare(objectNameKey(a.GetName()), objectNameKey(b.GetName()))
 	})
 	return out
 }
@@ -731,7 +730,7 @@ func cloneObjectName(name *ObjectName) *ObjectName {
 	if name == nil {
 		return nil
 	}
-	return &ObjectName{Idents: append([]string{}, name.GetIdents()...)}
+	return &ObjectName{Idents: slices.Clone(name.GetIdents())}
 }
 
 func cloneObjectNames(names []*ObjectName) []*ObjectName {
@@ -743,7 +742,7 @@ func cloneObjectNames(names []*ObjectName) []*ObjectName {
 }
 
 func cloneOperations(ops []CRUDOperation) []CRUDOperation {
-	return append([]CRUDOperation{}, ops...)
+	return slices.Clone(ops)
 }
 
 func uniqueAppStrings(values []string) []string {

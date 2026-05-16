@@ -1,9 +1,10 @@
 package xmeta
 
 import (
+	"cmp"
 	"database/sql"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -92,7 +93,7 @@ func sortMetaDatabase(meta *MetaDatabase) {
 	if meta == nil {
 		return
 	}
-	sort.Slice(meta.Tables, func(i, j int) bool {
-		return objectNameKey(meta.Tables[i].Name) < objectNameKey(meta.Tables[j].Name)
+	slices.SortFunc(meta.Tables, func(a, b *MetaTable) int {
+		return cmp.Compare(objectNameKey(a.GetName()), objectNameKey(b.GetName()))
 	})
 }

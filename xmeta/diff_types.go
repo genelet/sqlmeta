@@ -1,7 +1,8 @@
 package xmeta
 
 import (
-	"reflect"
+	"cmp"
+	"slices"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -86,7 +87,7 @@ func (c AlterColumn) IsDestructive() bool {
 	if !proto.Equal(c.OldColumn.GetDataType(), c.NewColumn.GetDataType()) {
 		return true
 	}
-	if !reflect.DeepEqual(c.OldColumn.GetMyDecos(), c.NewColumn.GetMyDecos()) {
+	if !slices.Equal(c.OldColumn.GetMyDecos(), c.NewColumn.GetMyDecos()) {
 		return true
 	}
 	oldConstraints := &ColumnDef{Constraints: c.OldColumn.GetConstraints()}
@@ -129,12 +130,7 @@ func (c DropConstraint) Priority() int {
 
 // SortChanges sorts schema changes by priority for safe execution order.
 func SortChanges(changes []SchemaChange) {
-	// Simple bubble sort for clarity; could use sort.Slice
-	for i := 0; i < len(changes); i++ {
-		for j := i + 1; j < len(changes); j++ {
-			if changes[i].Priority() > changes[j].Priority() {
-				changes[i], changes[j] = changes[j], changes[i]
-			}
-		}
-	}
+	slices.SortStableFunc(changes, func(a, b SchemaChange) int {
+		return cmp.Compare(a.Priority(), b.Priority())
+	})
 }

@@ -1,9 +1,10 @@
 package xmeta
 
 import (
+	"cmp"
 	"database/sql"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -275,11 +276,11 @@ func loadSQLiteForeignKeyConstraints(db *sql.DB, tableName string) ([]*TableCons
 	for id := range parts {
 		ids = append(ids, id)
 	}
-	sort.Ints(ids)
+	slices.Sort(ids)
 	var constraints []*TableConstraint
 	for _, id := range ids {
 		list := parts[id]
-		sort.Slice(list, func(i, j int) bool { return list[i].seq < list[j].seq })
+		slices.SortFunc(list, func(a, b fkPart) int { return cmp.Compare(a.seq, b.seq) })
 		ref := &ReferentialTableConstraint{
 			KeyExpr:  &ReferenceKeyExpr{TableName: list[0].table, TableObjectName: ObjectNameFromString(list[0].table)},
 			OnUpdate: mapReferentialAction(list[0].onUpdate),
