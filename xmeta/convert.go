@@ -2,35 +2,7 @@ package xmeta
 
 import (
 	"strings"
-
-	"google.golang.org/protobuf/types/known/anypb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
-
-// =============================================================================
-// Shared Helpers
-// =============================================================================
-
-// stringToAny packs a string into a wrapperspb.StringValue and then into anypb.Any.
-// If the string is empty, it returns nil to avoid cluttering specific fields (checking if this is desired).
-// Actually, for functional fields, explicit empty string might differ from nil.
-// But for "DefaultValue", "" usually means no default.
-func stringToAny(s string) *anypb.Any {
-	if s == "" {
-		return nil
-	}
-	sVal := &wrapperspb.StringValue{Value: s}
-	anyVal, err := anypb.New(sVal)
-	if err != nil {
-		// Should not happen for basic string packing
-		return nil
-	}
-	return anyVal
-}
-
-// =============================================================================
-// Postgres Conversion
-// =============================================================================
 
 // PGTableToMetaTable converts a PGTable to a unified MetaTable.
 func PGTableToMetaTable(t *PGTable) *MetaTable {
@@ -113,7 +85,7 @@ func PGColumnToColumnDef(c *PGColumn) *ColumnDef {
 	colDef := &ColumnDef{
 		Name:     c.Name,
 		DataType: c.DataType,
-		Default:  stringToAny(c.DefaultValue),
+		Default:  PackStringAny(c.DefaultValue),
 		Comment:  c.Comment,
 		Options:  make(map[string]string),
 	}
@@ -191,7 +163,7 @@ func PGConstraintToTableConstraint(c *PGConstraint) *TableConstraint {
 	case "c": // Check
 		tc.Spec = &TableConstraintSpec{
 			TableConstraintSpecClause: &TableConstraintSpec_CheckItem{
-				CheckItem: stringToAny(c.Definition), // Definition usually contains the check expression
+				CheckItem: PackStringAny(c.Definition), // Definition usually contains the check expression
 			},
 		}
 	default:
@@ -346,7 +318,7 @@ func MYColumnToColumnDef(c *MYColumn) *ColumnDef {
 	colDef := &ColumnDef{
 		Name:     c.Name,
 		DataType: c.DataType,
-		Default:  stringToAny(c.DefaultValue),
+		Default:  PackStringAny(c.DefaultValue),
 		Comment:  c.Comment,
 		Options:  make(map[string]string),
 	}
@@ -507,6 +479,16 @@ func SQLiteTableToMetaTable(t *SQLiteTable) *MetaTable {
 			},
 		})
 	}
+	for _, fk := range t.ForeignKeys {
+		if fk == nil {
+			continue
+		}
+		elements = append(elements, &TableElement{
+			TableElementClause: &TableElement_TableConstraintElement{
+				TableConstraintElement: fk,
+			},
+		})
+	}
 
 	meta.Elements = elements
 	return meta
@@ -521,7 +503,7 @@ func SQLiteColumnToColumnDef(c *SQLiteColumn) *ColumnDef {
 	colDef := &ColumnDef{
 		Name:     c.Name,
 		DataType: c.DataType,
-		Default:  stringToAny(c.DefaultValue),
+		Default:  PackStringAny(c.DefaultValue),
 	}
 
 	// Primary Key

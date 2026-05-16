@@ -1,5 +1,11 @@
 package xmeta
 
+import (
+	"reflect"
+
+	"google.golang.org/protobuf/proto"
+)
+
 // diff_types.go defines the types representing schema changes.
 // These are used as the output of the Diff engine.
 
@@ -72,12 +78,20 @@ type AlterColumn struct {
 	NewColumn *ColumnDef
 }
 
-// IsDestructive: true if type is being narrowed or changed incompatibly.
-// For now, any type change is considered potentially destructive.
+// IsDestructive is conservative for changes that can invalidate stored data.
 func (c AlterColumn) IsDestructive() bool {
-	// Conservative: any type change is destructive
-	// A smarter implementation would check if it's a widening change
-	return true
+	if c.OldColumn == nil || c.NewColumn == nil {
+		return true
+	}
+	if !proto.Equal(c.OldColumn.GetDataType(), c.NewColumn.GetDataType()) {
+		return true
+	}
+	if !reflect.DeepEqual(c.OldColumn.GetMyDecos(), c.NewColumn.GetMyDecos()) {
+		return true
+	}
+	oldConstraints := &ColumnDef{Constraints: c.OldColumn.GetConstraints()}
+	newConstraints := &ColumnDef{Constraints: c.NewColumn.GetConstraints()}
+	return !proto.Equal(oldConstraints, newConstraints)
 }
 func (c AlterColumn) Priority() int { return 70 }
 

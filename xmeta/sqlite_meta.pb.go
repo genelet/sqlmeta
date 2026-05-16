@@ -223,10 +223,11 @@ type SQLiteTable struct {
 	Columns []*SQLiteColumn        `protobuf:"bytes,3,rep,name=Columns,proto3" json:"Columns,omitempty"`
 	Indexes []*SQLiteIndex         `protobuf:"bytes,4,rep,name=Indexes,proto3" json:"Indexes,omitempty"`
 	// SQLite Specific Options
-	WithoutRowId  bool   `protobuf:"varint,5,opt,name=WithoutRowId,proto3" json:"WithoutRowId,omitempty"` // WITHOUT ROWID optimization
-	Strict        bool   `protobuf:"varint,6,opt,name=Strict,proto3" json:"Strict,omitempty"`             // STRICT tables (SQLite 3.37+)
-	Definition    string `protobuf:"bytes,7,opt,name=Definition,proto3" json:"Definition,omitempty"`      // Original CREATE statement
-	RootPage      int64  `protobuf:"varint,8,opt,name=RootPage,proto3" json:"RootPage,omitempty"`         // Root page number in DB file
+	WithoutRowId  bool               `protobuf:"varint,5,opt,name=WithoutRowId,proto3" json:"WithoutRowId,omitempty"` // WITHOUT ROWID optimization
+	Strict        bool               `protobuf:"varint,6,opt,name=Strict,proto3" json:"Strict,omitempty"`             // STRICT tables (SQLite 3.37+)
+	Definition    string             `protobuf:"bytes,7,opt,name=Definition,proto3" json:"Definition,omitempty"`      // Original CREATE statement
+	RootPage      int64              `protobuf:"varint,8,opt,name=RootPage,proto3" json:"RootPage,omitempty"`         // Root page number in DB file
+	ForeignKeys   []*TableConstraint `protobuf:"bytes,9,rep,name=ForeignKeys,proto3" json:"ForeignKeys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -315,6 +316,13 @@ func (x *SQLiteTable) GetRootPage() int64 {
 		return x.RootPage
 	}
 	return 0
+}
+
+func (x *SQLiteTable) GetForeignKeys() []*TableConstraint {
+	if x != nil {
+		return x.ForeignKeys
+	}
+	return nil
 }
 
 // Represents a View
@@ -481,7 +489,7 @@ const file_sqlite_meta_proto_rawDesc = "" +
 	"\x06Origin\x18\x06 \x01(\tR\x06Origin\x12\x1e\n" +
 	"\n" +
 	"Definition\x18\a \x01(\tR\n" +
-	"Definition\"\x94\x02\n" +
+	"Definition\"\xd0\x02\n" +
 	"\vSQLiteTable\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12\x12\n" +
 	"\x04Type\x18\x02 \x01(\tR\x04Type\x122\n" +
@@ -492,7 +500,8 @@ const file_sqlite_meta_proto_rawDesc = "" +
 	"\n" +
 	"Definition\x18\a \x01(\tR\n" +
 	"Definition\x12\x1a\n" +
-	"\bRootPage\x18\b \x01(\x03R\bRootPage\"t\n" +
+	"\bRootPage\x18\b \x01(\x03R\bRootPage\x12:\n" +
+	"\vForeignKeys\x18\t \x03(\v2\x18.sqlmeta.TableConstraintR\vForeignKeys\"t\n" +
 	"\n" +
 	"SQLiteView\x12\x12\n" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\x12\x1e\n" +
@@ -521,25 +530,27 @@ func file_sqlite_meta_proto_rawDescGZIP() []byte {
 
 var file_sqlite_meta_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_sqlite_meta_proto_goTypes = []any{
-	(*SQLiteColumn)(nil),   // 0: sqlitemeta.SQLiteColumn
-	(*SQLiteIndex)(nil),    // 1: sqlitemeta.SQLiteIndex
-	(*SQLiteTable)(nil),    // 2: sqlitemeta.SQLiteTable
-	(*SQLiteView)(nil),     // 3: sqlitemeta.SQLiteView
-	(*SQLiteDatabase)(nil), // 4: sqlitemeta.SQLiteDatabase
-	(*DataType)(nil),       // 5: sqlmeta.DataType
+	(*SQLiteColumn)(nil),    // 0: sqlitemeta.SQLiteColumn
+	(*SQLiteIndex)(nil),     // 1: sqlitemeta.SQLiteIndex
+	(*SQLiteTable)(nil),     // 2: sqlitemeta.SQLiteTable
+	(*SQLiteView)(nil),      // 3: sqlitemeta.SQLiteView
+	(*SQLiteDatabase)(nil),  // 4: sqlitemeta.SQLiteDatabase
+	(*DataType)(nil),        // 5: sqlmeta.DataType
+	(*TableConstraint)(nil), // 6: sqlmeta.TableConstraint
 }
 var file_sqlite_meta_proto_depIdxs = []int32{
 	5, // 0: sqlitemeta.SQLiteColumn.DataType:type_name -> sqlmeta.DataType
 	0, // 1: sqlitemeta.SQLiteTable.Columns:type_name -> sqlitemeta.SQLiteColumn
 	1, // 2: sqlitemeta.SQLiteTable.Indexes:type_name -> sqlitemeta.SQLiteIndex
-	0, // 3: sqlitemeta.SQLiteView.Columns:type_name -> sqlitemeta.SQLiteColumn
-	2, // 4: sqlitemeta.SQLiteDatabase.Tables:type_name -> sqlitemeta.SQLiteTable
-	3, // 5: sqlitemeta.SQLiteDatabase.Views:type_name -> sqlitemeta.SQLiteView
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	6, // 3: sqlitemeta.SQLiteTable.ForeignKeys:type_name -> sqlmeta.TableConstraint
+	0, // 4: sqlitemeta.SQLiteView.Columns:type_name -> sqlitemeta.SQLiteColumn
+	2, // 5: sqlitemeta.SQLiteDatabase.Tables:type_name -> sqlitemeta.SQLiteTable
+	3, // 6: sqlitemeta.SQLiteDatabase.Views:type_name -> sqlitemeta.SQLiteView
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_sqlite_meta_proto_init() }

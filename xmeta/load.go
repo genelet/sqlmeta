@@ -63,17 +63,6 @@ func LoadMetaDatabase(db *sql.DB, opts LoadOptions) (*MetaDatabase, error) {
 			if mt == nil {
 				continue
 			}
-			fks, err := loadSQLiteForeignKeyConstraints(db, table.Name)
-			if err != nil {
-				return nil, err
-			}
-			for _, fk := range fks {
-				mt.Elements = append(mt.Elements, &TableElement{
-					TableElementClause: &TableElement_TableConstraintElement{
-						TableConstraintElement: fk,
-					},
-				})
-			}
 			meta.Tables = append(meta.Tables, mt)
 		}
 		sortMetaDatabase(meta)

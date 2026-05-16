@@ -129,4 +129,18 @@ func assertWarningSnapshot(t *testing.T, scenario string, spec *Spec) {
 	if strings.TrimSpace(string(warnings)) != strings.Join(spec.Introspection.Warnings, "\n") {
 		t.Fatalf("%s warning snapshot does not match project JSON", scenario)
 	}
+	if spec.Introspection == nil {
+		t.Fatalf("%s introspection is nil", scenario)
+	}
+	if got := len(spec.Introspection.WarningDetails); got != len(spec.Introspection.Warnings) {
+		t.Fatalf("%s warning detail count = %d, want %d", scenario, got, len(spec.Introspection.Warnings))
+	}
+	for i, detail := range spec.Introspection.WarningDetails {
+		if detail.Message != spec.Introspection.Warnings[i] {
+			t.Fatalf("%s warningDetails[%d].message = %q, want %q", scenario, i, detail.Message, spec.Introspection.Warnings[i])
+		}
+		if detail.Code == "" || detail.Code == xmeta.DiagnosticUnknown {
+			t.Fatalf("%s warningDetails[%d] has unknown code for %q", scenario, i, detail.Message)
+		}
+	}
 }

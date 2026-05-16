@@ -75,6 +75,12 @@ func loadSQLiteTables(db *sql.DB) ([]*SQLiteTable, error) {
 		}
 		table.Indexes = indexes
 
+		fks, err := loadSQLiteForeignKeyConstraints(db, row.name)
+		if err != nil {
+			return nil, err
+		}
+		table.ForeignKeys = fks
+
 		tables = append(tables, table)
 	}
 	return tables, nil

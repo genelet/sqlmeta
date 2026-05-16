@@ -42,6 +42,7 @@ message SQLiteTable {
     
     string Definition = 7;       // Original CREATE statement
     int64 RootPage = 8;          // Root page number in DB file
+    repeated sqlmeta.TableConstraint ForeignKeys = 9;
 }
 
 // Represents a View

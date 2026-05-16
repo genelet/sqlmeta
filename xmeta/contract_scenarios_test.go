@@ -108,6 +108,58 @@ func TestMissingAuthTableContractScenarioErrors(t *testing.T) {
 	}
 }
 
+func TestCurrentContractScenarioDiagnosticsHaveKnownCodes(t *testing.T) {
+	for _, name := range []string{ContractScenarioManualPKFK, ContractScenarioInvalidOverrides} {
+		t.Run(name, func(t *testing.T) {
+			scenario, err := LoadContractScenario(name)
+			if err != nil {
+				t.Fatal(err)
+			}
+			spec, err := BuildDefaultAppSpec(scenario.Meta, AppSpecOptions{
+				Name:            scenario.AppName,
+				Auth:            scenario.Auth,
+				RoleName:        scenario.RoleName,
+				SchemaOverrides: scenario.SchemaOverrides,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			expanded, err := ExpandRoleScopes(scenario.Meta, spec)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, diagnostic := range WarningDiagnostics(expanded.GetWarnings()) {
+				if diagnostic.Code == DiagnosticUnknown {
+					t.Fatalf("unknown diagnostic code for warning %q", diagnostic.Message)
+				}
+			}
+		})
+	}
+
+	t.Run(ContractScenarioMissingAuthTable, func(t *testing.T) {
+		scenario, err := LoadContractScenario(ContractScenarioMissingAuthTable)
+		if err != nil {
+			t.Fatal(err)
+		}
+		spec, err := BuildDefaultAppSpec(scenario.Meta, AppSpecOptions{
+			Name:            scenario.AppName,
+			Auth:            scenario.Auth,
+			RoleName:        scenario.RoleName,
+			SchemaOverrides: scenario.SchemaOverrides,
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = ExpandRoleScopes(scenario.Meta, spec)
+		if err == nil {
+			t.Fatal("expected missing auth table error")
+		}
+		if diagnostic := ErrorDiagnostic(err); diagnostic.Code == DiagnosticUnknown {
+			t.Fatalf("unknown diagnostic code for error %q", diagnostic.Message)
+		}
+	})
+}
+
 func TestLoadContractScenarioRejectsUnknownName(t *testing.T) {
 	if _, err := LoadContractScenario("missing"); err == nil {
 		t.Fatal("expected unknown scenario error")

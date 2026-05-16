@@ -49,8 +49,50 @@ func TestLoadMetaDatabaseSQLiteIncludesDDLIndexesAndFKs(t *testing.T) {
 	if !hasReferenceConstraint(users, "orgs", "org_id", "id") {
 		t.Fatalf("users FK to orgs(id) not found: %#v", users.Elements)
 	}
+	if got := countReferenceConstraints(users, "orgs", "org_id", "id"); got != 1 {
+		t.Fatalf("users FK count = %d, want 1", got)
+	}
 	if !hasUniqueConstraint(users, "email") {
 		t.Fatalf("users unique(email) not found: %#v", users.Elements)
+	}
+}
+
+func TestLoadSQLiteStoresForeignKeysOnSQLiteTable(t *testing.T) {
+	db, err := sql.Open("sqlite3", ":memory:")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	db.SetMaxOpenConns(1)
+
+	for _, statement := range []string{
+		`CREATE TABLE orgs (id integer primary key)`,
+		`CREATE TABLE users (id integer primary key, org_id integer references orgs(id) on update cascade on delete restrict)`,
+	} {
+		if _, err := db.Exec(statement); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	sqliteDB, err := LoadSQLite(db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var users *SQLiteTable
+	for _, table := range sqliteDB.Tables {
+		if table.Name == "users" {
+			users = table
+		}
+	}
+	if users == nil {
+		t.Fatalf("users table not found in %#v", sqliteDB.Tables)
+	}
+	if len(users.ForeignKeys) != 1 {
+		t.Fatalf("sqlite table FKs = %#v", users.ForeignKeys)
+	}
+	meta := SQLiteTableToMetaTable(users)
+	if !hasReferenceConstraint(meta, "orgs", "org_id", "id") {
+		t.Fatalf("converted users FK to orgs(id) not found: %#v", meta.Elements)
 	}
 }
 
@@ -64,16 +106,21 @@ func findMetaTable(meta *MetaDatabase, name string) *MetaTable {
 }
 
 func hasReferenceConstraint(table *MetaTable, fkTable, local, foreign string) bool {
+	return countReferenceConstraints(table, fkTable, local, foreign) > 0
+}
+
+func countReferenceConstraints(table *MetaTable, fkTable, local, foreign string) int {
+	count := 0
 	for _, constraint := range constraintsFromElements(table.Elements) {
 		ref := constraint.GetSpec().GetReferenceItem()
 		if ref == nil || ref.KeyExpr == nil {
 			continue
 		}
 		if ref.KeyExpr.TableName == fkTable && len(ref.Columns) == 1 && ref.Columns[0] == local && len(ref.KeyExpr.Columns) == 1 && ref.KeyExpr.Columns[0] == foreign {
-			return true
+			count++
 		}
 	}
-	return false
+	return count
 }
 
 func hasUniqueConstraint(table *MetaTable, col string) bool {

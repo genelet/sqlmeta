@@ -199,6 +199,94 @@ func TestDiffDatabase_AlterColumn(t *testing.T) {
 	}
 }
 
+func TestAlterColumnIsDestructive(t *testing.T) {
+	base := &ColumnDef{
+		Name:     "status",
+		DataType: testVarcharType(20),
+		Default:  PackStringAny("'new'"),
+		Comment:  "current status",
+		Options:  map[string]string{"visible": "true"},
+	}
+	tests := []struct {
+		name string
+		new  *ColumnDef
+		want bool
+	}{
+		{
+			name: "type change",
+			new: &ColumnDef{
+				Name:     "status",
+				DataType: testTextType(),
+				Default:  PackStringAny("'new'"),
+				Comment:  "current status",
+				Options:  map[string]string{"visible": "true"},
+			},
+			want: true,
+		},
+		{
+			name: "default only",
+			new: &ColumnDef{
+				Name:     "status",
+				DataType: testVarcharType(20),
+				Default:  PackStringAny("'active'"),
+				Comment:  "current status",
+				Options:  map[string]string{"visible": "true"},
+			},
+			want: false,
+		},
+		{
+			name: "comment and options only",
+			new: &ColumnDef{
+				Name:        "status",
+				DataType:    testVarcharType(20),
+				Default:     PackStringAny("'new'"),
+				Comment:     "updated status label",
+				Options:     map[string]string{"visible": "false"},
+				WithOptions: true,
+			},
+			want: false,
+		},
+		{
+			name: "decorator change",
+			new: &ColumnDef{
+				Name:     "status",
+				DataType: testVarcharType(20),
+				Default:  PackStringAny("'new'"),
+				Comment:  "current status",
+				Options:  map[string]string{"visible": "true"},
+				MyDecos:  []AutoIncrement{AutoIncrement_AutoIncrementConfirm},
+			},
+			want: true,
+		},
+		{
+			name: "constraint change",
+			new: &ColumnDef{
+				Name:     "status",
+				DataType: testVarcharType(20),
+				Default:  PackStringAny("'new'"),
+				Comment:  "current status",
+				Options:  map[string]string{"visible": "true"},
+				Constraints: []*ColumnConstraint{{
+					Spec: &ColumnConstraintSpec{
+						ColumnConstraintSpecClause: &ColumnConstraintSpec_NotNullItem{
+							NotNullItem: NotNullColumnSpec_NotNullColumnSpecConfirm,
+						},
+					},
+				}},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := (AlterColumn{OldColumn: base, NewColumn: tt.new}).IsDestructive()
+			if got != tt.want {
+				t.Fatalf("IsDestructive() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestDiffDatabase_ChangeOrdering(t *testing.T) {
 	// Verify that DropConstraint comes before DropTable
 	current := &MetaDatabase{
@@ -241,4 +329,12 @@ func TestDiffDatabase_ChangeOrdering(t *testing.T) {
 	if _, ok := changes[1].(DropTable); !ok {
 		t.Errorf("Second change should be DropTable, got %T", changes[1])
 	}
+}
+
+func testVarcharType(size uint32) *DataType {
+	return &DataType{TypeClause: &DataType_VarcharData{VarcharData: &VarcharType{Size: size}}}
+}
+
+func testTextType() *DataType {
+	return &DataType{TypeClause: &DataType_TextData{TextData: DataTypeSingle_Text}}
 }

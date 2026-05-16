@@ -8,7 +8,6 @@ import (
 
 	"github.com/genelet/sqlmeta/xmeta"
 	"google.golang.org/protobuf/types/known/anypb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type Options struct {
@@ -739,14 +738,7 @@ func sizedType(base string, size uint32) string {
 }
 
 func anyToString(a *anypb.Any) string {
-	if a == nil {
-		return ""
-	}
-	var sv wrapperspb.StringValue
-	if err := a.UnmarshalTo(&sv); err == nil {
-		return sv.Value
-	}
-	return ""
+	return xmeta.UnpackStringAny(a)
 }
 
 func referentialAction(action xmeta.ReferentialAction) string {
