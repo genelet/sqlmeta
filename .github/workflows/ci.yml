@@ -1,6 +1,11 @@
 name: CI
 
 on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -40,3 +45,11 @@ jobs:
 
       - name: Test
         run: GOWORK=off go test ./...
+
+      - name: Vet
+        run: GOWORK=off go vet ./...
+
+      - name: Staticcheck
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          GOWORK=off staticcheck ./...
