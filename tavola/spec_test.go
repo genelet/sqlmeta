@@ -75,6 +75,12 @@ func TestBuildSpecMapsTableActionsAndWarnings(t *testing.T) {
 	if len(spec.Introspection.Warnings) == 0 {
 		t.Fatal("expected warnings for synthesized DDL and composite key")
 	}
+	if !hasDiagnostic(spec, xmeta.DiagnosticTableSynthesizedDDL) || !hasDiagnostic(spec, xmeta.DiagnosticTableCompositePK) {
+		t.Fatalf("warningDetails = %#v", spec.Introspection.WarningDetails)
+	}
+	if err := ValidateSpec(spec); err != nil {
+		t.Fatalf("ValidateSpec: %v", err)
+	}
 }
 
 func TestBuildSpecAuthIsExplicit(t *testing.T) {
@@ -115,6 +121,49 @@ func TestBuildSpecAuthIsExplicit(t *testing.T) {
 	}
 	if got := spec.Components[0].Roles["u"]; strings.Join(got, ",") != "startnew,insert,edit,update,delete,topics" {
 		t.Fatalf("role actions = %#v", got)
+	}
+}
+
+func TestBuildSpecAuthCanEmitLoginProcedure(t *testing.T) {
+	meta := &xmeta.MetaDatabase{
+		Name:    "appdb",
+		Options: map[string]string{"Driver": "mysql"},
+		Tables: []*xmeta.MetaTable{{
+			Name: &xmeta.ObjectName{Idents: []string{"appdb", "app_user"}},
+			Options: map[string]string{
+				"CreateStatement": "CREATE TABLE app_user (id int primary key, email text, passwd text)",
+			},
+			Elements: []*xmeta.TableElement{
+				column("id", intDT(), false, true, true, nil),
+				column("email", textType(), false, false, false, nil),
+				column("passwd", textType(), false, false, false, nil),
+			},
+		}},
+	}
+
+	spec, err := BuildSpec(meta, Options{
+		Project: "ExampleApp",
+		Auth: AuthOptions{
+			Role:               "u",
+			Table:              "appdb.app_user",
+			ID:                 "id",
+			Login:              "email",
+			Password:           "passwd",
+			ProcedureName:      "proc_u_login",
+			ProcedureStatement: "SELECT id FROM app_user WHERE email = ?;",
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(spec.Schema.Procedures) != 1 {
+		t.Fatalf("procedures = %#v", spec.Schema.Procedures)
+	}
+	if got := spec.Schema.Procedures[0]; got.Name != "proc_u_login" || got.Table != "appdb.app_user" || strings.HasSuffix(got.Statement, ";") {
+		t.Fatalf("login procedure = %#v", got)
+	}
+	if hasDiagnostic(spec, xmeta.DiagnosticAuthMissingLoginProcedure) {
+		t.Fatalf("unexpected missing-login diagnostic: %#v", spec.Introspection.WarningDetails)
 	}
 }
 
@@ -214,6 +263,9 @@ func TestBuildSpecUsesManualPrimaryKeyOverride(t *testing.T) {
 	if !strings.Contains(strings.Join(spec.Introspection.Warnings, "\n"), "manual primary key override") {
 		t.Fatalf("expected manual PK warning, got %#v", spec.Introspection.Warnings)
 	}
+	if !hasDiagnostic(spec, xmeta.DiagnosticTableManualPK) {
+		t.Fatalf("expected manual PK diagnostic, got %#v", spec.Introspection.WarningDetails)
+	}
 }
 
 func TestBuildSpecSkipsInvalidManualPrimaryKeyOverride(t *testing.T) {
@@ -281,6 +333,48 @@ func TestBuildSpecRequiresAuthUserTable(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected missing auth user table error")
 	}
+	if xmeta.ErrorDiagnostic(err).Code != xmeta.DiagnosticAuthTableMissing {
+		t.Fatalf("missing auth diagnostic = %#v", xmeta.ErrorDiagnostic(err))
+	}
+}
+
+func TestValidateSpecRejectsDanglingRoleReference(t *testing.T) {
+	spec := &Spec{
+		Version: 1,
+		Owner: Owner{
+			Login:  "local",
+			Email:  "local@example.test",
+			TypeID: 1,
+		},
+		Project: Project{
+			Name:       "ExampleApp",
+			Script:     "/example/app.php",
+			PublicRole: "p",
+			Default:    ProjectDefault{Component: "users", Action: "topics"},
+		},
+		Datasource: Datasource{
+			Type:     "SQLite",
+			Nickname: "app",
+			Database: "app.sqlite",
+		},
+		Schema: Schema{
+			Tables: []Table{{
+				Name:       "users",
+				PrimaryKey: "id",
+				Statement:  "CREATE TABLE users (id integer primary key)",
+			}},
+		},
+		Components: []Component{{
+			Name:        "users",
+			Description: "User records",
+			Table:       "users",
+			Roles:       map[string][]string{"missing": {"topics"}},
+		}},
+		Overlays: map[string]any{},
+	}
+	if err := ValidateSpec(spec); err == nil || !strings.Contains(err.Error(), "unknown role") {
+		t.Fatalf("ValidateSpec error = %v", err)
+	}
 }
 
 func findTable(spec *Spec, name string) *Table {
@@ -290,6 +384,18 @@ func findTable(spec *Spec, name string) *Table {
 		}
 	}
 	return nil
+}
+
+func hasDiagnostic(spec *Spec, code string) bool {
+	if spec == nil || spec.Introspection == nil {
+		return false
+	}
+	for _, diagnostic := range spec.Introspection.WarningDetails {
+		if diagnostic.Code == code {
+			return true
+		}
+	}
+	return false
 }
 
 func column(name string, typ *xmeta.DataType, notNull, primary, auto bool, def *anypb.Any) *xmeta.TableElement {

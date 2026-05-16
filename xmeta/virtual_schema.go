@@ -29,72 +29,24 @@ func ApplySchemaRelationshipOverrides(meta *MetaDatabase, overrides *SchemaRelat
 
 	var warnings []string
 	for _, pk := range overrides.GetPrimaryKeys() {
-		key, warning := index.resolve(pk.GetTableName())
-		if warning != "" {
-			warnings = append(warnings, fmt.Sprintf("manual primary key %s target %q: %s", pk.GetName(), objectNameKey(pk.GetTableName()), warning))
-		}
-		if key == "" {
+		override := resolveManualPrimaryKeyOverride(index, pk)
+		warnings = append(warnings, override.warnings...)
+		if !override.ok {
 			continue
 		}
-		cols := cleanColumns(pk.GetColumns())
-		if len(cols) == 0 {
-			warnings = append(warnings, fmt.Sprintf("manual primary key %s on %s has no columns", pk.GetName(), key))
-			continue
-		}
-		if missing := missingColumns(index.byKey[key], cols); len(missing) > 0 {
-			for _, col := range missing {
-				warnings = append(warnings, fmt.Sprintf("manual primary key %s on %s references missing column %s", pk.GetName(), key, col))
-			}
-			continue
-		}
-		removeMetaPrimaryKey(index.byKey[key])
-		addMetaPrimaryKey(index.byKey[key], defaultOverrideName(pk.GetName(), "manual_pk"), cols)
-		effectivePKs[key] = cols
+		removeMetaPrimaryKey(index.byKey[override.key])
+		addMetaPrimaryKey(index.byKey[override.key], defaultOverrideName(pk.GetName(), "manual_pk"), override.columns)
+		effectivePKs[override.key] = override.columns
 	}
 
 	for _, fk := range overrides.GetForeignKeys() {
-		childKey, childWarning := index.resolve(fk.GetChildTable())
-		parentKey, parentWarning := index.resolve(fk.GetParentTable())
-		if childWarning != "" {
-			warnings = append(warnings, fmt.Sprintf("manual foreign key %s child table %q: %s", fk.GetName(), objectNameKey(fk.GetChildTable()), childWarning))
-		}
-		if parentWarning != "" {
-			warnings = append(warnings, fmt.Sprintf("manual foreign key %s parent table %q: %s", fk.GetName(), objectNameKey(fk.GetParentTable()), parentWarning))
-		}
-		if childKey == "" || parentKey == "" {
+		override := resolveManualForeignKeyOverride(index, effectivePKs, fk, "virtual schema")
+		warnings = append(warnings, override.warnings...)
+		if !override.ok {
 			continue
 		}
-		childCols := cleanColumns(fk.GetChildColumns())
-		parentCols := cleanColumns(fk.GetParentColumns())
-		if len(parentCols) == 0 {
-			parentCols = effectivePKs[parentKey]
-		}
-		if len(childCols) == 0 {
-			warnings = append(warnings, fmt.Sprintf("manual foreign key %s on %s has no child columns", fk.GetName(), childKey))
-			continue
-		}
-		if len(parentCols) == 0 {
-			warnings = append(warnings, fmt.Sprintf("manual foreign key %s on %s has no parent columns and %s has no primary key", fk.GetName(), childKey, parentKey))
-			continue
-		}
-		if len(childCols) != 1 || len(parentCols) != 1 {
-			warnings = append(warnings, fmt.Sprintf("manual foreign key %s on %s has composite columns; skipped virtual schema edge", fk.GetName(), childKey))
-			continue
-		}
-		if missing := missingColumns(index.byKey[childKey], childCols); len(missing) > 0 {
-			for _, col := range missing {
-				warnings = append(warnings, fmt.Sprintf("manual foreign key %s on %s references missing child column %s", fk.GetName(), childKey, col))
-			}
-			continue
-		}
-		if missing := missingColumns(index.byKey[parentKey], parentCols); len(missing) > 0 {
-			for _, col := range missing {
-				warnings = append(warnings, fmt.Sprintf("manual foreign key %s on %s references missing parent column %s.%s", fk.GetName(), childKey, parentKey, col))
-			}
-			continue
-		}
-		removeMetaForeignKey(index.byKey[childKey], childCols)
-		addMetaForeignKey(index.byKey[childKey], defaultOverrideName(fk.GetName(), "manual_fk"), childCols[0], index.byKey[parentKey].GetName(), parentCols[0])
+		removeMetaForeignKey(index.byKey[override.childKey], override.childCols)
+		addMetaForeignKey(index.byKey[override.childKey], defaultOverrideName(fk.GetName(), "manual_fk"), override.childCols[0], index.byKey[override.parentKey].GetName(), override.parentCols[0])
 	}
 
 	return virtual, uniqueAppStrings(warnings), nil

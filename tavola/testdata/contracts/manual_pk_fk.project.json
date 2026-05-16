@@ -185,6 +185,18 @@
     "warnings": [
       "users uses manual primary key override (public_id)",
       "auth role was generated without a login procedure; review schema.procedures before relying on login"
+    ],
+    "warningDetails": [
+      {
+        "code": "table_manual_primary_key",
+        "severity": "warning",
+        "message": "users uses manual primary key override (public_id)"
+      },
+      {
+        "code": "auth_missing_login_procedure",
+        "severity": "warning",
+        "message": "auth role was generated without a login procedure; review schema.procedures before relying on login"
+      }
     ]
   }
 }

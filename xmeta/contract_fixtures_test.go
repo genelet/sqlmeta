@@ -72,6 +72,73 @@ func TestContractFixtures(t *testing.T) {
 	}
 }
 
+func TestContractScenarioArtifacts(t *testing.T) {
+	manual, err := ContractScenarioArtifacts(ContractScenarioManualPKFK)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manual.PrimaryJSONKind != ContractArtifactExpandedAppSpec {
+		t.Fatalf("primary JSON kind = %q", manual.PrimaryJSONKind)
+	}
+	if len(manual.Artifacts) != 3 || manual.Artifacts[0].Path != "xmeta/testdata/contracts/manual_pk_fk.expanded_app_spec.json" || !manual.Artifacts[0].Primary {
+		t.Fatalf("manual artifacts = %#v", manual.Artifacts)
+	}
+	if _, err := ContractArtifactBytes(manual.Artifacts[0].Path); err != nil {
+		t.Fatalf("read embedded expanded app artifact: %v", err)
+	}
+	if _, err := ContractArtifactBytes(manual.Artifacts[1].Path); err == nil {
+		t.Fatal("expected Tavola artifact read to fail from xmeta embed")
+	}
+
+	missing, err := ContractScenarioArtifacts(ContractScenarioMissingAuthTable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(missing.Artifacts) != 2 || missing.Artifacts[0].Kind != ContractArtifactExpandError {
+		t.Fatalf("missing-auth artifacts = %#v", missing.Artifacts)
+	}
+	if missing.PrimaryJSONKind != "" {
+		t.Fatalf("missing-auth primary JSON kind = %q", missing.PrimaryJSONKind)
+	}
+	data, err := ContractArtifactBytes(missing.Artifacts[0].Path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(data), "auth user table") {
+		t.Fatalf("missing auth expand error = %q", string(data))
+	}
+}
+
+func TestDiagnosticCodes(t *testing.T) {
+	diagnostics := WarningDiagnostics([]string{
+		"manual foreign key memberships_user_composite_fk on memberships has composite columns; skipped role scope edge",
+		"auth role was generated without a login procedure; review schema.procedures before relying on login",
+		"",
+	})
+	if len(diagnostics) != 2 {
+		t.Fatalf("diagnostics = %#v", diagnostics)
+	}
+	if diagnostics[0].Code != DiagnosticManualFKComposite || diagnostics[0].Severity != DiagnosticSeverityWarning {
+		t.Fatalf("first diagnostic = %#v", diagnostics[0])
+	}
+	if diagnostics[1].Code != DiagnosticAuthMissingLoginProcedure {
+		t.Fatalf("second diagnostic = %#v", diagnostics[1])
+	}
+
+	errDiagnostic := ErrorDiagnostic(&testError{"role u auth user table \"missing_users\" is required but was not found"})
+	if errDiagnostic.Code != DiagnosticAuthTableMissing || errDiagnostic.Severity != DiagnosticSeverityError {
+		t.Fatalf("error diagnostic = %#v", errDiagnostic)
+	}
+}
+
+type testError struct {
+	message string
+}
+
+func (e *testError) Error() string {
+	return e.message
+}
+
 func mustContractAppSpec(t *testing.T, name string) *AppSpec {
 	t.Helper()
 	data, err := ContractFixture(name)

@@ -31,16 +31,18 @@ type Options struct {
 }
 
 type AuthOptions struct {
-	Role              string
-	Table             string
-	ID                string
-	Login             string
-	Password          string
-	FirstName         string
-	LastName          string
-	Description       string
-	Restriction       string
-	FallbackAllTables bool
+	Role               string
+	Table              string
+	ID                 string
+	Login              string
+	Password           string
+	FirstName          string
+	LastName           string
+	Description        string
+	Restriction        string
+	FallbackAllTables  bool
+	ProcedureName      string
+	ProcedureStatement string
 }
 
 type Spec struct {
@@ -136,8 +138,9 @@ type Component struct {
 }
 
 type Introspection struct {
-	Source   string   `json:"source"`
-	Warnings []string `json:"warnings,omitempty"`
+	Source         string             `json:"source"`
+	Warnings       []string           `json:"warnings,omitempty"`
+	WarningDetails []xmeta.Diagnostic `json:"warningDetails,omitempty"`
 }
 
 func BuildSpec(meta *xmeta.MetaDatabase, opts Options) (*Spec, error) {
@@ -164,7 +167,11 @@ func BuildSpec(meta *xmeta.MetaDatabase, opts Options) (*Spec, error) {
 			PasswordColumn:  opts.Auth.Password,
 			FirstNameColumn: opts.Auth.FirstName,
 			LastNameColumn:  opts.Auth.LastName,
-			Options:         map[string]string{"Restriction": opts.Auth.Restriction},
+			Options: map[string]string{
+				"Restriction":             opts.Auth.Restriction,
+				"LoginProcedureName":      opts.Auth.ProcedureName,
+				"LoginProcedureStatement": opts.Auth.ProcedureStatement,
+			},
 		}
 		appOpts.RoleName = opts.Auth.Role
 		appOpts.RoleDescription = opts.Auth.Description
@@ -281,15 +288,19 @@ func BuildTavolaSpec(meta *xmeta.MetaDatabase, expanded *xmeta.ExpandedAppSpec, 
 		}
 		warnings = append(warnings, warningList...)
 		spec.Roles = append(spec.Roles, role)
+		if procedure := loginProcedureFromRole(appRole, role); procedure != nil {
+			spec.Schema.Procedures = append(spec.Schema.Procedures, *procedure)
+		}
 	}
 
 	sort.Slice(spec.Schema.Tables, func(i, j int) bool { return spec.Schema.Tables[i].Name < spec.Schema.Tables[j].Name })
+	sort.Slice(spec.Schema.Procedures, func(i, j int) bool { return spec.Schema.Procedures[i].Name < spec.Schema.Procedures[j].Name })
 	sort.Slice(spec.Components, func(i, j int) bool { return spec.Components[i].Name < spec.Components[j].Name })
 	sort.Slice(spec.Roles, func(i, j int) bool { return spec.Roles[i].Name < spec.Roles[j].Name })
 	warnings = append(warnings, expanded.GetWarnings()...)
-	spec.Introspection.Warnings = unique(warnings)
-	if len(warnings) == 0 {
-		spec.Introspection = &Introspection{Source: "sqlmeta"}
+	setIntrospectionWarnings(spec.Introspection, warnings)
+	if err := ValidateSpec(spec); err != nil {
+		return nil, err
 	}
 	return spec, nil
 }
@@ -415,7 +426,9 @@ func buildRole(auth AuthOptions, def ProjectDefault, tables map[string]Table) (R
 	if _, ok := tables[table]; !ok {
 		return Role{}, warnings, fmt.Errorf("auth table %q is required but was not found in introspected tables", table)
 	}
-	warnings = append(warnings, "auth role was generated without a login procedure; review schema.procedures before relying on login")
+	if strings.TrimSpace(auth.ProcedureStatement) == "" {
+		warnings = append(warnings, "auth role was generated without a login procedure; review schema.procedures before relying on login")
+	}
 	return Role{
 		Name:        roleName,
 		Description: defaultString(auth.Description, "Signed-in user"),
@@ -442,16 +455,46 @@ func buildRoleFromApp(appRole *xmeta.AppRole, def ProjectDefault, tables map[str
 	}
 	opts := auth.GetOptions()
 	return buildRole(AuthOptions{
-		Role:        appRole.GetName(),
-		Table:       tableName(auth.GetUserTable()),
-		ID:          auth.GetUserIDColumn(),
-		Login:       auth.GetLoginColumn(),
-		Password:    auth.GetPasswordColumn(),
-		FirstName:   auth.GetFirstNameColumn(),
-		LastName:    auth.GetLastNameColumn(),
-		Description: appRole.GetDescription(),
-		Restriction: opts["Restriction"],
+		Role:               appRole.GetName(),
+		Table:              tableName(auth.GetUserTable()),
+		ID:                 auth.GetUserIDColumn(),
+		Login:              auth.GetLoginColumn(),
+		Password:           auth.GetPasswordColumn(),
+		FirstName:          auth.GetFirstNameColumn(),
+		LastName:           auth.GetLastNameColumn(),
+		Description:        appRole.GetDescription(),
+		Restriction:        opts["Restriction"],
+		ProcedureName:      opts["LoginProcedureName"],
+		ProcedureStatement: opts["LoginProcedureStatement"],
 	}, def, tables)
+}
+
+func loginProcedureFromRole(appRole *xmeta.AppRole, role Role) *Procedure {
+	if appRole == nil || appRole.GetAuth() == nil {
+		return nil
+	}
+	opts := appRole.GetAuth().GetOptions()
+	statement := strings.TrimSpace(opts["LoginProcedureStatement"])
+	if statement == "" {
+		return nil
+	}
+	name := strings.TrimSpace(opts["LoginProcedureName"])
+	if name == "" {
+		name = "proc_" + safeName(role.Name) + "_login"
+	}
+	return &Procedure{
+		Name:      name,
+		Table:     role.Table,
+		Statement: strings.TrimSuffix(statement, ";"),
+	}
+}
+
+func setIntrospectionWarnings(introspection *Introspection, warnings []string) {
+	if introspection == nil {
+		return
+	}
+	introspection.Warnings = unique(warnings)
+	introspection.WarningDetails = xmeta.WarningDiagnostics(introspection.Warnings)
 }
 
 func tavolaActions(ops []xmeta.CRUDOperation, public bool) []string {

@@ -67,6 +67,8 @@ func main() {
 	flag.StringVar(&auth.FirstName, "auth-firstname", "", "Authentication first-name column")
 	flag.StringVar(&auth.LastName, "auth-lastname", "", "Authentication last-name column")
 	flag.StringVar(&auth.Restriction, "auth-restriction", "", "Authentication role restriction")
+	flag.StringVar(&auth.ProcedureName, "auth-procedure", "", "Authentication login procedure name")
+	flag.StringVar(&auth.ProcedureStatement, "auth-procedure-sql", "", "Authentication login procedure SQL")
 	flag.Parse()
 
 	opts := tavola.Options{
@@ -132,6 +134,9 @@ func run(driver, dsn, database string, schemas []string, project, out string, fo
 
 	spec, err := tavola.BuildSpec(meta, opts)
 	if err != nil {
+		return err
+	}
+	if err := tavola.ValidateSpec(spec); err != nil {
 		return err
 	}
 	data, err := json.MarshalIndent(spec, "", "  ")

@@ -469,79 +469,27 @@ func buildEffectiveRelationships(tables []*MetaTable, index appTableIndex, overr
 		}
 	}
 	for _, pk := range overrides.GetPrimaryKeys() {
-		key, warning := index.resolve(pk.GetTableName())
-		if warning != "" {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s target %q: %s", pk.GetName(), objectNameKey(pk.GetTableName()), warning))
-		}
-		if key == "" {
+		override := resolveManualPrimaryKeyOverride(index, pk)
+		relationships.warnings = append(relationships.warnings, override.warnings...)
+		if !override.ok {
 			continue
 		}
-		cols := cleanColumns(pk.GetColumns())
-		if len(cols) == 0 {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s on %s has no columns", pk.GetName(), key))
-			continue
-		}
-		missingColumn := false
-		for _, col := range cols {
-			if !tableHasColumn(index.byKey[key], col) {
-				relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual primary key %s on %s references missing column %s", pk.GetName(), key, col))
-				missingColumn = true
-			}
-		}
-		if missingColumn {
-			continue
-		}
-		relationships.primaryKeys[key] = cols
+		relationships.primaryKeys[override.key] = override.columns
 	}
 	for _, fk := range overrides.GetForeignKeys() {
-		childKey, childWarning := index.resolve(fk.GetChildTable())
-		parentKey, parentWarning := index.resolve(fk.GetParentTable())
-		if childWarning != "" {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s child table %q: %s", fk.GetName(), objectNameKey(fk.GetChildTable()), childWarning))
-		}
-		if parentWarning != "" {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s parent table %q: %s", fk.GetName(), objectNameKey(fk.GetParentTable()), parentWarning))
-		}
-		if childKey == "" || parentKey == "" {
-			continue
-		}
-		childCols := cleanColumns(fk.GetChildColumns())
-		parentCols := cleanColumns(fk.GetParentColumns())
-		if len(parentCols) == 0 {
-			parentCols = relationships.primaryKeys[parentKey]
-		}
-		if len(childCols) == 0 {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s has no child columns", fk.GetName(), childKey))
-			continue
-		}
-		if len(parentCols) == 0 {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s has no parent columns and %s has no primary key", fk.GetName(), childKey, parentKey))
-			continue
-		}
-		if len(childCols) != 1 || len(parentCols) != 1 {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s has composite columns; skipped role scope edge", fk.GetName(), childKey))
-			continue
-		}
-		missingColumn := false
-		if !tableHasColumn(index.byKey[childKey], childCols[0]) {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s references missing child column %s", fk.GetName(), childKey, childCols[0]))
-			missingColumn = true
-		}
-		if !tableHasColumn(index.byKey[parentKey], parentCols[0]) {
-			relationships.warnings = append(relationships.warnings, fmt.Sprintf("manual foreign key %s on %s references missing parent column %s.%s", fk.GetName(), childKey, parentKey, parentCols[0]))
-			missingColumn = true
-		}
-		if missingColumn {
+		override := resolveManualForeignKeyOverride(index, relationships.primaryKeys, fk, "role scope")
+		relationships.warnings = append(relationships.warnings, override.warnings...)
+		if !override.ok {
 			continue
 		}
 		edge := fkEdge{
 			name:        fk.GetName(),
-			parentKey:   parentKey,
-			childKey:    childKey,
-			localColumn: childCols[0],
-			refColumn:   parentCols[0],
+			parentKey:   override.parentKey,
+			childKey:    override.childKey,
+			localColumn: override.childCols[0],
+			refColumn:   override.parentCols[0],
 		}
-		relationships.manualFKColumns[fkColumnKey(childKey, childCols)] = true
+		relationships.manualFKColumns[fkColumnKey(override.childKey, override.childCols)] = true
 		relationships.manualFKEdgeKeys[fkEdgeKey(edge)] = true
 		relationships.manualFKEdges = append(relationships.manualFKEdges, edge)
 	}
