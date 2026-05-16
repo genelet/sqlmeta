@@ -80,21 +80,18 @@ func TestContractScenarioArtifacts(t *testing.T) {
 	if manual.PrimaryJSONKind != ContractArtifactExpandedAppSpec {
 		t.Fatalf("primary JSON kind = %q", manual.PrimaryJSONKind)
 	}
-	if len(manual.Artifacts) != 3 || manual.Artifacts[0].Path != "xmeta/testdata/contracts/manual_pk_fk.expanded_app_spec.json" || !manual.Artifacts[0].Primary {
+	if len(manual.Artifacts) != 1 || manual.Artifacts[0].Path != "xmeta/testdata/contracts/manual_pk_fk.expanded_app_spec.json" || !manual.Artifacts[0].Primary {
 		t.Fatalf("manual artifacts = %#v", manual.Artifacts)
 	}
 	if _, err := ContractArtifactBytes(manual.Artifacts[0].Path); err != nil {
 		t.Fatalf("read embedded expanded app artifact: %v", err)
-	}
-	if _, err := ContractArtifactBytes(manual.Artifacts[1].Path); err == nil {
-		t.Fatal("expected Tavola artifact read to fail from xmeta embed")
 	}
 
 	missing, err := ContractScenarioArtifacts(ContractScenarioMissingAuthTable)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(missing.Artifacts) != 2 || missing.Artifacts[0].Kind != ContractArtifactExpandError {
+	if len(missing.Artifacts) != 1 || missing.Artifacts[0].Kind != ContractArtifactExpandError {
 		t.Fatalf("missing-auth artifacts = %#v", missing.Artifacts)
 	}
 	if missing.PrimaryJSONKind != "" {

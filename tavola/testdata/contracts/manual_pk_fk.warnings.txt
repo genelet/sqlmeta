@@ -1,2 +1,0 @@
-users uses manual primary key override (public_id)
-auth role was generated without a login procedure; review schema.procedures before relying on login

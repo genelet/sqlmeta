@@ -15,10 +15,7 @@ type ContractArtifactKind string
 
 const (
 	ContractArtifactExpandedAppSpec ContractArtifactKind = "expanded_app_spec"
-	ContractArtifactTavolaProject   ContractArtifactKind = "tavola_project"
-	ContractArtifactWarnings        ContractArtifactKind = "warnings"
 	ContractArtifactExpandError     ContractArtifactKind = "expand_error"
-	ContractArtifactTavolaError     ContractArtifactKind = "tavola_error"
 )
 
 type ContractArtifact struct {
@@ -60,9 +57,6 @@ func ContractFixtureNames() []string {
 }
 
 func ContractArtifactBytes(path string) ([]byte, error) {
-	if strings.HasPrefix(path, "tavola/") {
-		return nil, fmt.Errorf("contract artifact %q is not embedded in xmeta", path)
-	}
 	path = strings.TrimPrefix(path, "xmeta/testdata/contracts/")
 	data, err := contractFixtures.ReadFile("testdata/contracts/" + path)
 	if err != nil {
@@ -86,16 +80,6 @@ func ContractScenarioArtifacts(name string) (ContractArtifacts, error) {
 				Path:     "xmeta/testdata/contracts/" + name + ".expanded_app_spec.json",
 				Primary:  true,
 			},
-			ContractArtifact{
-				Scenario: name,
-				Kind:     ContractArtifactTavolaProject,
-				Path:     "tavola/testdata/contracts/" + name + ".project.json",
-			},
-			ContractArtifact{
-				Scenario: name,
-				Kind:     ContractArtifactWarnings,
-				Path:     "tavola/testdata/contracts/" + name + ".warnings.txt",
-			},
 		)
 	case ContractScenarioMissingAuthTable:
 		artifacts.Artifacts = append(artifacts.Artifacts,
@@ -103,11 +87,6 @@ func ContractScenarioArtifacts(name string) (ContractArtifacts, error) {
 				Scenario: name,
 				Kind:     ContractArtifactExpandError,
 				Path:     "xmeta/testdata/contracts/" + name + ".expand_error.txt",
-			},
-			ContractArtifact{
-				Scenario: name,
-				Kind:     ContractArtifactTavolaError,
-				Path:     "tavola/testdata/contracts/" + name + ".tavola_error.txt",
 			},
 		)
 	}

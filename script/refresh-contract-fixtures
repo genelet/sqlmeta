@@ -3,10 +3,5 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-args=(--root "$ROOT")
-if [[ -d "$ROOT/../tavola/specs" ]]; then
-  args+=(--tavola-out "$ROOT/../tavola/specs/sqlmeta.project.json")
-fi
-
 cd "$ROOT"
-GOWORK=off go run ./cmd/refresh-contract-fixtures "${args[@]}"
+GOWORK=off go run ./cmd/refresh-contract-fixtures --root "$ROOT"

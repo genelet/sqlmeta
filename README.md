@@ -24,10 +24,6 @@ The package serves three main purposes:
   - `load.go`: Unified `LoadMetaDatabase` dispatcher for MySQL, PostgreSQL, and SQLite.
   - `convert.go`: **Conversion Layer** to transform dialect-specific structs into Unified Metadata.
 
-- **`tavola/`**: Maps unified metadata into Tavola v1 JSON project specs.
-
-- **`cmd/tavola-introspect/`**: CLI that introspects a live database and writes a Tavola JSON spec.
-
 ## Core Unified Types
 
 `sqlmeta` introduces a Unified Metadata Model in `types.proto` to act as a pivot format.
@@ -54,9 +50,9 @@ MetaDatabase -> AppSpec -> ExpandedAppSpec -> output format
 
 `AppSpec` is generic. It describes table-backed CRUD components, roles, auth bindings, and role scopes without depending on Tavola JSON. `ExpandedAppSpec` records the derived table/component grants after role scopes are evaluated.
 
-For cross-package contracts, `ExpandedAppSpec` JSON is the canonical neutral artifact. Tavola project JSON is a downstream adapter artifact generated from the same scenario and validated as Tavola v1 input. Contract scenarios live in `xmeta` code and are refreshed with `script/refresh-contract-fixtures`, so fixture JSON is generated output rather than hand-authored source.
+For cross-package contracts, `ExpandedAppSpec` JSON is the canonical neutral artifact. Contract scenarios live in `xmeta` code and are refreshed with `script/refresh-contract-fixtures`, so fixture JSON is generated output rather than hand-authored source. Downstream adapters, including Tavola, own their generated output fixtures in their own repositories.
 
-`SchemaRelationshipOverrides` lets callers add operation-level primary keys and foreign keys that are not present in the database schema, or intentionally choose a better key for app behavior. Manual primary keys override physical primary keys in the virtual app schema and Tavola table generation. Manual foreign keys override physical foreign keys with the same child table and child columns, so role expansion follows the relationship the app intends rather than the relationship the database happens to declare. Invalid manual keys are reported as warnings and skipped, leaving the physical schema behavior intact.
+`SchemaRelationshipOverrides` lets callers add operation-level primary keys and foreign keys that are not present in the database schema, or intentionally choose a better key for app behavior. Manual primary keys override physical primary keys in the virtual app schema. Manual foreign keys override physical foreign keys with the same child table and child columns, so role expansion follows the relationship the app intends rather than the relationship the database happens to declare. Invalid manual keys are reported as warnings and skipped, leaving the physical schema behavior intact.
 
 Every authenticated role must bind to an existing user table through `AuthBinding.UserTable`; without that table there is no root for role-scoped traversal and expansion fails. The default auth role scope starts at `AuthBinding.UserTable` and `UserIDColumn`, includes the auth table, follows child tables that reference that user ID through single-column foreign keys in the virtual app schema, and then follows descendants up to `RoleScope.MaxDepth`. If auth traversal should start from a manual primary key column, set `AuthBinding.UserIDColumn` to that column. `ExpandedTableGrant.TraversalJoins` records each FK hop in the grant path for downstream scoped predicates. Composite FKs, missing FK targets, ambiguous table names, and cycles are reported as expansion warnings. The old "grant every table to the auth role" behavior is available only through `FKTraversalModeAllTables`.
 
@@ -158,70 +154,13 @@ The **Diff Engine** compares two `MetaDatabase` states and outputs a list of cha
 - Changes are automatically sorted for safe execution order (drop constraints before tables).
 - Diffs are schema-aware: table identity uses the full `ObjectName.Idents` chain (e.g., `schema.table`).
 
-### 4. Generating A Tavola Spec
-
-`tavola-introspect` reads an existing database and writes a Tavola JSON source-of-truth draft.
-
-```bash
-go run ./cmd/tavola-introspect \
-  --driver postgres \
-  --dsn "$DATABASE_URL" \
-  --schema public \
-  --project my_app \
-  --owner-login local \
-  --owner-email local@example.test \
-  --out specs/my_app.json
-```
-
-SQLite works the same way:
-
-```bash
-go run ./cmd/tavola-introspect \
-  --driver sqlite3 \
-  --dsn ./app.db \
-  --project my_app \
-  --out specs/my_app.json
-```
-
-MySQL needs the database name because metadata lives under `information_schema`:
-
-```bash
-go run ./cmd/tavola-introspect \
-  --driver mysql \
-  --dsn 'user:pass@tcp(127.0.0.1:3306)/appdb' \
-  --database appdb \
-  --project my_app \
-  --out specs/my_app.json
-```
-
-Authentication is opt-in and explicit:
-
-```bash
-go run ./cmd/tavola-introspect \
-  --driver postgres \
-  --dsn "$DATABASE_URL" \
-  --schema public \
-  --project my_app \
-  --auth-role u \
-  --auth-table users \
-  --auth-id id \
-  --auth-login email \
-  --auth-password passwd \
-  --schema-overrides overrides.textpb \
-  --out specs/my_app.json
-```
-
-Use `--auth-procedure` and `--auth-procedure-sql` when the generated Tavola JSON should include a login procedure for the auth role. Without them, the auth role is still emitted but `introspection.warnings` records that login needs review.
-
-The optional `--schema-overrides` file is a `SchemaRelationshipOverrides` protobuf in text, JSON, or binary format. The Tavola mapper consumes `ExpandedAppSpec`, so auth role CRUD grants are limited to the auth table and FK-scoped descendants by default. The generated JSON may include `introspection.warnings` for choices that need review, such as synthesized DDL, missing primary keys, invalid manual overrides, composite primary keys, skipped role-scope FKs, cycles, or auth without a login procedure. Tavola JSON also includes `introspection.warningDetails`, a machine-readable list of `{code,severity,message}` diagnostics that mirrors the warning strings.
-
 ### Contract Fixtures
 
 `xmeta.LoadContractScenario` is the source of truth for generated workflow fixtures:
 
-- `manual_pk_fk`: green auth/manual PK/FK scenario. This is the only scenario synced to Tavola's `specs/sqlmeta.project.json`.
+- `manual_pk_fk`: green auth/manual PK/FK scenario.
 - `invalid_overrides`: expansion succeeds but preserves warning diagnostics for invalid manual overrides.
-- `missing_auth_table`: expansion and Tavola JSON generation fail because the mandatory auth table is absent. The generated artifacts are text error snapshots, not JSON specs.
+- `missing_auth_table`: expansion fails because the mandatory auth table is absent. The generated artifact is a text error snapshot, not a JSON spec.
 
 ## Complete Migration Workflow Example
 
@@ -378,8 +317,8 @@ You can edit this file directly and reload it to drive migrations.
 
 ## Development
 
-The GitHub workflow is manual-dispatch only. When a change affects Tavola JSON
-contracts or downstream consumers, run Tavola's local cross-repo gate before
+The GitHub workflow is manual-dispatch only. When a change affects contract
+scenarios or downstream consumers, run Tavola's local cross-repo gate before
 pushing the dependency ladder:
 
 ```bash
